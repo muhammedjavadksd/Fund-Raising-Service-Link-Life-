@@ -4,7 +4,11 @@ let authMiddleware = {
 
     isValidUser: (req, res, next) => {
         next()
+    },
+
+    isValidAdmin: (req, res, next) => {
+        next()
     }
 }
 
-authMiddleware();
+module.exports = authMiddleware

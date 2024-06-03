@@ -213,7 +213,11 @@ const const_data = {
             "Cultural Exchanges"
         ]
     },
-    USER_TYPE: ['ADMIN', 'USER', 'ORGANIZATION']
+    USER_TYPE: ['ADMIN', 'USER', 'ORGANIZATION'],
+    OTP_LENGTH: 6,
+    OTP_EXPIRE_TIME: () => {
+        return Date.now() + 1800000
+    },
 };
 
 module.exports = const_data;

@@ -9,22 +9,16 @@ let _fundRaiseSchema = {
     },
     amount: {
         type: Number,
-        required: function () {
-            return this.status;
-        }
+        required: true,
     },
     category: {
         type: String,
-        required: function () {
-            return this.status;
-        },
+        required: true,
         enum: [...Object.keys(const_data.fund_raise_category)]
     },
     sub_category: {
         type: String,
-        required: function () {
-            return this.status;
-        },
+        required: true,
         enum: function () {
             return const_data.fund_raise_category[this.category]
         }
@@ -36,7 +30,6 @@ let _fundRaiseSchema = {
     validate: {
         otp: {
             type: Number,
-
         },
         otp_expired: {
             type: Number
@@ -48,57 +41,7 @@ let _fundRaiseSchema = {
     },
     full_name: {
         type: String,
-        required: true
-    },
-    age: {
-        type: Number,
-        required: true
-    },
-    city: {
-        type: String,
-        required: true
-    },
-    pincode: {
-        type: Number,
-        required: true
-    },
-    state: {
-        type: String,
-        required: true
-    },
-    district: {
-        type: String,
-        required: true
-    },
-    full_address: {
-        type: String,
-        required: true
-    },
-    picture: {
-        type: Array,
-        required: true
-    },
-    documents: {
-        type: Array,
-        required: true
-    },
-    description: {
-        type: String,
-        required: function () {
-            return this.status;
-        },
-    },
-    closed: {
-        type: Boolean,
-        default: false,
-    },
-    status: {
-        type: Boolean,
-        default: false,
-    },
-    deadline: {
-        type: String,
-        required: true
+        required: false
     },
     created_date: {
         type: String,
@@ -112,9 +55,48 @@ let _fundRaiseSchema = {
     user_id: {
         type: mongoose.Types.ObjectId,
         required: true
-    }
+    },
+    age: {
+        type: Number,
+    },
+    city: {
+        type: String,
+    },
+    pincode: {
+        type: Number,
+    },
+    state: {
+        type: String,
+    },
+    district: {
+        type: String,
+    },
+    full_address: {
+        type: String,
+    },
+    picture: {
+        type: Array,
+    },
+    documents: {
+        type: Array,
+    },
+    description: {
+        type: String,
+    },
+    closed: {
+        type: Boolean,
+        default: false,
+    },
+    status: {
+        type: Boolean,
+        default: false,
+    },
+    deadline: {
+        type: String,
+        required: false
+    },
 }
 
 let schemeFundRaise = new mongoose.Schema(_fundRaiseSchema);
-let FundRaisingModel = mongoose.model("fund_raising", schemeFundRaise, "fund_raising");
-module.exports = FundRaisingModel;
+let InitFundRaisingModel = mongoose.model("init_fund_raising", schemeFundRaise, "init_fund_raising");
+module.exports = InitFundRaisingModel;
