@@ -4,8 +4,8 @@ const tokenHelper = require("../util/helper/tokenHelper");
 let authMiddleware = {
 
     isValidUser: async (req, res, next) => {
-
         let headers = req.headers;
+        console.log(headers);
 
         console.log(req.headers);
         if (headers.authorization && req.headers.authorization.split(' ')[0] === 'Bearer') {
@@ -18,10 +18,11 @@ let authMiddleware = {
             if (checkValidity) {
                 console.log('Decode jwt is : ');
 
-                if (checkValidity?.email_id) {
-                    req.context.email_id = checkValidity?.email_id;
+                if (checkValidity?.email) {
+                    req.context.email_id = checkValidity?.email;
                     req.context.token = token;
-                    console.log("Requested phone number is", checkValidity?.email_id);
+                    req.context.user_id = checkValidity.id;
+                    console.log("Requested phone number is", checkValidity?.email);
                     next()
                 } else {
                     res.status(401).json({

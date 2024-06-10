@@ -1,5 +1,5 @@
 
-œ
+
 const const_data = {
     fund_raise_category: {
         "Education": [

@@ -7,6 +7,8 @@ let userController = {
 
     createFundRaise: (req, res) => {
 
+        console.log("Create fund raise controller");
+
         try {
 
             //Create fund id
@@ -17,23 +19,29 @@ let userController = {
                 category,
                 sub_category,
                 phone_number,
+                email
             } = req.body;
+
+
+            console.log(req.body);
 
 
             let otpNumber = utilHelper.generateAnOTP(const_data.OTP_LENGTH);
             let otpExpire = const_data.OTP_EXPIRE_TIME();
             let todayDate = new Date();
             let user_id = req.context.user_id;
-            let fund_id = utilHelper.createFundRaiseID("USER")
+            let fund_id = utilHelper.createFundRaiseID("USER").toUpperCase()
+
+
+            console.log("User Id : " + user_id);
+            console.log(email);
 
             let fundRaiseData = {
                 validate: {
                     otp: otpNumber,
                     otp_expired: otpExpire
                 },
-                picture,
-                documents,
-                description,
+                // description,
                 created_date: todayDate,
                 created_by: "USER",
                 user_id,
@@ -41,7 +49,8 @@ let userController = {
                 amount,
                 category,
                 sub_category,
-                phone_number
+                phone_number,
+                email_id: email,
             }
 
             fundRaisingHelper.insertInitialData(fundRaiseData).then((data) => {
@@ -63,7 +72,6 @@ let userController = {
                 msg: "Internal Servor Error"
             })
         }
-
     },
 
 
@@ -80,6 +88,8 @@ let userController = {
 
 
     uploadImage: async (req, res) => {
+
+        console.log("D");
 
         try {
 

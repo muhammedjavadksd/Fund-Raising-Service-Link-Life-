@@ -19,13 +19,14 @@ let _fundRaiseSchema = {
     sub_category: {
         type: String,
         required: true,
-        enum: function () {
-            return const_data.fund_raise_category[this.category]
-        }
     },
     phone_number: {
         type: Number,
         required: true,
+    },
+    email_id: {
+        type: String,
+        required: true
     },
     validate: {
         otp: {

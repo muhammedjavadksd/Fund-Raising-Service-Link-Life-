@@ -23,12 +23,13 @@ let utilHelper = {
         return result;
     },
 
-    createFundRaiseID: function (createdBY) {
-        let createdBY = createdBY == "USER" ? "U" : (createdBY == "ADMIN" ? "A" : "O");
+    createFundRaiseID: function (created) {
+        let createdBY = created == "USER" ? "U" : (created == "ADMIN" ? "A" : "O");
 
         let fundId = this.createRandomText(5) + createdBY + new Date().getUTCMilliseconds()
         return fundId;
     }
+
 }
 
 module.exports = utilHelper;

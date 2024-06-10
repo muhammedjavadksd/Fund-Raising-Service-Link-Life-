@@ -14,15 +14,15 @@ const fileUpload = require("express-fileupload");
 
 app.use(fileUpload({ createParentPath: true }))
 const logger = require("morgan");
+
+//Config
+app.use(logger("dev"))
 const fundRaiseDbConnection = require("./util/config/db/connection");
 fundRaiseDbConnection()
 const userRouter = require("./router/userRouter/userRouter");
 const adminRouter = require("./router/adminRouter/adminRouter");
 
 
-
-//Config
-app.use(logger("common"))
 
 app.use("/", userRouter)
 app.use("/admin", adminRouter)
