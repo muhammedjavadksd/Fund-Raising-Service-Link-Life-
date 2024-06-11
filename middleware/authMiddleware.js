@@ -1,3 +1,4 @@
+const InitFundRaisingModel = require("../util/config/db/model/initFundRaiseModel");
 const tokenHelper = require("../util/helper/tokenHelper");
 
 
@@ -40,6 +41,37 @@ let authMiddleware = {
             res.status(401).json({
                 status: false,
                 msg: "Invalid auth attempt"
+            })
+        }
+    },
+
+
+    isFundRaiseRequestValid: async (req, res, next) => {
+
+        let fundRaise = req.params.edit_id;
+        let user_id = req.context.user_id;
+
+        try {
+            if (fundRaise && user_id) {
+                let findFundRaise = await InitFundRaisingModel.findOne({ fund_id: fundRaise, user_id: user_id });
+                if (findFundRaise) {
+                    next();
+                } else {
+                    res.status(401).json({
+                        status: false,
+                        msg: "Un Authorized Access"
+                    })
+                }
+            } else {
+                res.status(401).json({
+                    status: false,
+                    msg: "Un Authorized Access"
+                })
+            }
+        } catch (e) {
+            res.status(500).json({
+                status: false,
+                msg: "Internal Server Error"
             })
         }
     },
