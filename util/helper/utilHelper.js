@@ -26,7 +26,7 @@ let utilHelper = {
     createFundRaiseID: function (created) {
         let createdBY = created == "USER" ? "U" : (created == "ADMIN" ? "A" : "O");
 
-        let fundId = this.createRandomText(5) + createdBY + new Date().getUTCMilliseconds()
+        let fundId = this.createRandomText(5) + "-" + createdBY + "-" + new Date().getUTCMilliseconds()
         return fundId;
     }
 

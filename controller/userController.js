@@ -53,11 +53,17 @@ let userController = {
                 email_id: email,
             }
 
+            console.log(fundRaiseData);
+
             fundRaisingHelper.insertInitialData(fundRaiseData).then((data) => {
-                res.status(data?.statusCode ?? 400).json({
+                console.log(fund_id);
+                let objectToPass = {
                     status: data.status,
-                    msg: data.msg
-                })
+                    msg: data.msg,
+                    fund_id: fund_id
+                }
+                console.log(objectToPass);
+                res.status(data?.statusCode ?? 400).json(objectToPass)
             }).catch((err) => {
                 console.log(err);
                 res.status(500).json({
@@ -80,9 +86,10 @@ let userController = {
         try {
             let edit_id = req.params.edit_id;
 
+            let body = req.body;
 
         } catch (e) {
-            edit_id
+            console.log(e);
         }
     },
 
