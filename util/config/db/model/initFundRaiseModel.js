@@ -81,6 +81,12 @@ let _fundRaiseSchema = {
     documents: {
         type: Array,
     },
+    about: {
+        type: String,
+    },
+    benificiary_relation: {
+        type: String
+    },
     description: {
         type: String,
     },

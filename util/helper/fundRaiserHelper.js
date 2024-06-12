@@ -28,14 +28,17 @@ let fundRaisingHelper = {
 
     saveFundRaiserImage: async (images, fundRaiserID, isDocument) => {
         try {
-            let imageName = image.name;
+            let imageName = images.name;
             let field = isDocument ? "documents" : "picture"
-            let path = isDocument ? `/images/fund_raise_document/${imageName}` : `/images/fund_raiser_image/${imageName}`;
+            let path = isDocument ? `public/images/fund_raise_document/${imageName}` : `public/images/fund_raiser_image/${imageName}`;
+            console.log(fundRaiserID, imageName);
+
+
             await InitFundRaisingModel.updateOne({
-                _id: fundRaiserID
+                fund_id: fundRaiserID
             }, {
                 $push: {
-                    field: imageName
+                    [field]: imageName
                 }
             });
 
@@ -58,8 +61,11 @@ let fundRaisingHelper = {
     },
 
 
+
     fundRaiserUpdate: (data, edit_id) => {
         return new Promise(async (resolve, reject) => {
+
+            console.log(data);
 
             let newImages = [];
             let newDocument = []
@@ -69,15 +75,15 @@ let fundRaisingHelper = {
                 //image type  ['Document','Images'];
 
                 let imageName;
-                let imagesType = data.images?.type;
+                let imagesType = data.images?.d;
                 let allImages = data.images?.data;
 
                 if (imagesType) {
-                    return reject("Images type not found")
+                    return reject({ status: 400, msg: "Please provide valid image type" })
                 }
 
                 if (!allImages) {
-                    return reject("Images not found")
+                    return reject({ status: 400, msg: "Please provide valid images" })
                 }
 
 

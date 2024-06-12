@@ -81,15 +81,36 @@ let userController = {
     },
 
 
-    editFundRaise: (req, res) => {
+    editFundRaise: async (req, res) => {
+
+
+        console.log("For editing middleware has been passed");
 
         try {
             let edit_id = req.params.edit_id;
-
             let body = req.body;
+            console.log("Images is");
+
+
+            if (req.files) {
+                const imageBuffer = req.files['images[data]'];
+                let isDocument = body['images[type]'] == "Documents"
+
+                console.log("The images is");
+                console.log(imageBuffer);
+                console.log("The type is");
+                console.log(isDocument);
+
+                await fundRaisingHelper.saveFundRaiserImage(imageBuffer, edit_id, isDocument)
+            } else {
+                await fundRaisingHelper.fundRaiserUpdate(body, edit_id);
+            }
+
+            res.status(200).json({ status: true, msg: "Updated success" })
 
         } catch (e) {
             console.log(e);
+            res.status(e.status ?? 500).json({ status: false, msg: e.msg ?? "Something went wrong" })
         }
     },
 

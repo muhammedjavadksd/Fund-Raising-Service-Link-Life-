@@ -26,18 +26,23 @@ let authMiddleware = {
                     console.log("Requested phone number is", checkValidity?.email);
                     next()
                 } else {
+                    console.log("This error 1");
                     res.status(401).json({
                         status: false,
                         msg: "Authorization is failed"
                     })
                 }
             } else {
+                console.log("This error 2");
+
                 res.status(401).json({
                     status: false,
                     msg: "Authorization is failed"
                 })
             }
         } else {
+            console.log("This error 3");
+
             res.status(401).json({
                 status: false,
                 msg: "Invalid auth attempt"
@@ -53,16 +58,20 @@ let authMiddleware = {
 
         try {
             if (fundRaise && user_id) {
+                console.log({ fund_id: fundRaise, user_id: user_id });
                 let findFundRaise = await InitFundRaisingModel.findOne({ fund_id: fundRaise, user_id: user_id });
                 if (findFundRaise) {
                     next();
                 } else {
+                    console.log("Un auth one");
                     res.status(401).json({
                         status: false,
                         msg: "Un Authorized Access"
                     })
                 }
             } else {
+                console.log("Un auth two");
+
                 res.status(401).json({
                     status: false,
                     msg: "Un Authorized Access"
