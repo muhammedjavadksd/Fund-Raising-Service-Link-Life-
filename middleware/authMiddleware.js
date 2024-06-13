@@ -41,6 +41,8 @@ let authMiddleware = {
                 })
             }
         } else {
+            console.log("Headers");
+            console.log(req.headers);
             console.log("This error 3");
 
             res.status(401).json({

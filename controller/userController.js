@@ -101,12 +101,14 @@ let userController = {
                 console.log("The type is");
                 console.log(isDocument);
 
-                await fundRaisingHelper.saveFundRaiserImage(imageBuffer, edit_id, isDocument)
+                let pictureUpdates = await fundRaisingHelper.saveFundRaiserImage(imageBuffer, edit_id, isDocument)
+                console.log(pictureUpdates);
+                res.status(200).json({ status: true, msg: "Updated success", pictures: pictureUpdates.picture, documents: pictureUpdates.documents })
             } else {
                 await fundRaisingHelper.fundRaiserUpdate(body, edit_id);
+                res.status(200).json({ status: true, msg: "Updated success" })
             }
 
-            res.status(200).json({ status: true, msg: "Updated success" })
 
         } catch (e) {
             console.log(e);
@@ -138,6 +140,31 @@ let userController = {
                 msg: "Internal Server Error"
             })
         }
+
+    },
+
+    deleteImage: async (req, res) => {
+        // :type/:edit_id/:image_id
+
+        let type = req.params.type;
+        let edit_id = req.params.edit_id;
+        let image_id = req.params.image_id;
+
+        console.log(type, edit_id, image_id);
+
+
+        try {
+            let deleteImage = await fundRaisingHelper.deleteImage(edit_id, type, image_id);
+            if (deleteImage) {
+                res.status(200).json({ status: true, msg: "Image delete success" })
+            } else {
+                res.status(500).json({ status: false, msg: "Something went wrong" })
+            }
+        } catch (e) {
+            console.log(e);
+            res.status(500).json({ status: false, msg: "Something went wrong" })
+        }
+
 
     }
 

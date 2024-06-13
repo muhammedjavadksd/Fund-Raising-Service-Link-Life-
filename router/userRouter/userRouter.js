@@ -18,6 +18,9 @@ userRouter.patch("/edit/:edit_id", authMiddleware.isValidUser, authMiddleware.is
 userRouter.patch("/upload_images/:fund_id", authMiddleware.isValidUser, userController.createFundRaise);
 userRouter.patch("/close", authMiddleware.isValidUser, userController.createFundRaise);
 
+//delete method
+userRouter.delete("/delete_image/:type/:edit_id/:image_id", authMiddleware.isValidUser, authMiddleware.isFundRaiseRequestValid, userController.deleteImage)
+
 
 module.exports = userRouter;
 

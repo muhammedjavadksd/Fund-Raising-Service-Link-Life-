@@ -8,6 +8,8 @@ const dotenv = require("dotenv");
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
+
+app.use(express.static(__dirname + "/public"))
 dotenv.config("./.env");
 
 const fileUpload = require("express-fileupload");

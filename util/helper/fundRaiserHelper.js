@@ -33,30 +33,54 @@ let fundRaisingHelper = {
             let path = isDocument ? `public/images/fund_raise_document/${imageName}` : `public/images/fund_raiser_image/${imageName}`;
             console.log(fundRaiserID, imageName);
 
+            let initFundRaise = await InitFundRaisingModel.findOne({ fund_id: fundRaiserID });
+            initFundRaise[field].push(imageName);
 
-            await InitFundRaisingModel.updateOne({
-                fund_id: fundRaiserID
-            }, {
-                $push: {
-                    [field]: imageName
-                }
-            });
+            let currentPIctures = initFundRaise.picture;
+            let currentDocuments = initFundRaise.documents;
+
+            console.log(currentPIctures);
+            console.log(currentDocuments);
+
+            await initFundRaise.save()
+            // await InitFundRaisingModel.updateOne({
+            //     fund_id: fundRaiserID
+            // }, {
+            //     $push: {
+            //         [field]: imageName
+            //     }
+            // });
 
             let promisify = util.promisify(images.mv);
             await promisify(path)
 
             return {
-                statusCode: 200,
-                status: true,
-                msg: "Image upload success"
+                picture: currentPIctures,
+                documents: currentDocuments
             }
         } catch (e) {
             console.log(e);
-            return {
-                statusCode: 500,
-                status: false,
-                msg: "Internal Server Error"
+            return false
+        }
+    },
+
+
+    deleteImage: async (fund_id, type, image) => {
+        try {
+            let findData = await InitFundRaisingModel.findOne({ fund_id: fund_id });
+            if (findData) {
+                let field = type == "Documents" ? "documents" : "picture";
+                console.log(field);
+                console.log(image);
+                findData[field] = [...findData[field].filter((each) => each != image)]
+                await findData.save()
+                return true
+            } else {
+                return false
             }
+        } catch (e) {
+            console.log(e);
+            return false
         }
     },
 
