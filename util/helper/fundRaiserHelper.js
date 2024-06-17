@@ -2,6 +2,7 @@ const InitFundRaisingModel = require("../config/db/model/initFundRaiseModel")
 const util = require("util")
 const path = require("path");
 const { all } = require("../../router/userRouter/userRouter");
+const FundRaisingModel = require("../config/db/model/fundRaiseModel");
 
 let fundRaisingHelper = {
 
@@ -148,6 +149,18 @@ let fundRaisingHelper = {
             }, data)
             resolve("Fund raise updated success")
         })
+    },
+
+
+    getSingleFundRaise: async (post_id) => {
+        try {
+
+            let post = await FundRaisingModel.findOne({ fund_id: post_id });
+            return post
+        } catch (e) {
+            console.log(e);
+            return null
+        }
     }
 
 }

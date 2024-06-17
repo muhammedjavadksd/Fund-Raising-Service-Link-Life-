@@ -166,6 +166,27 @@ let userController = {
         }
 
 
+    },
+
+
+    getSingleFundRaiser: async (req, res) => {
+
+        let post_id = req.params.id;
+
+        try {
+            let post = await fundRaisingHelper.getSingleFundRaise(post_id);
+            res.status(200).json({
+                status: true,
+                msg: "Data fetched success",
+                data: post
+            })
+        } catch (e) {
+            console.log(e);
+            res.status(500).json({
+                status: false,
+                msg: "Data fetched failed",
+            })
+        }
     }
 
 }
