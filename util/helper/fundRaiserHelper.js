@@ -161,6 +161,28 @@ let fundRaisingHelper = {
             console.log(e);
             return null
         }
+    },
+
+    getAllFundRaisePost: async (featuredOnly = true) => {
+
+        try {
+
+            let filter = featuredOnly ? {
+                otp_validate: true,
+                closed: false,
+                verified: true
+            } : {}
+
+            let allFundRaisePost = await FundRaisingModel.find(filter);
+            if (allFundRaisePost.length) {
+                return allFundRaisePost;
+            } else {
+                return null
+            }
+        } catch (e) {
+            console.log(e);
+            return null
+        }
     }
 
 }

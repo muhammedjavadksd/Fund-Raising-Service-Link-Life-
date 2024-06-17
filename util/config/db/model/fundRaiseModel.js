@@ -112,6 +112,10 @@ let _fundRaiseSchema = {
     user_id: {
         type: mongoose.Types.ObjectId,
         required: true
+    },
+    verified: {
+        type: Boolean,
+        default: false
     }
 }
 

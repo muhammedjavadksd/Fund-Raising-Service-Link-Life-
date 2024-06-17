@@ -187,6 +187,23 @@ let userController = {
                 msg: "Data fetched failed",
             })
         }
+    },
+
+    getAllFundRaisePost: async (req, res) => {
+
+        try {
+            let getAllFundRaise = await fundRaisingHelper.getAllFundRaisePost();
+            res.status(200).json({
+                status: true,
+                data: getAllFundRaise
+            })
+        } catch (e) {
+            console.log(e);
+            res.status(500).json({
+                status: false,
+                msg: "Internal Server Error"
+            })
+        }
     }
 
 }
