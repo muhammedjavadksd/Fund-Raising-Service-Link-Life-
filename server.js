@@ -3,25 +3,28 @@
 const express = require("express");
 const app = express();
 const dotenv = require("dotenv");
-// const bulkConsumer = require("./communication/bulkConsumer");
 
 //middleware
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
+
+app.use(express.static(__dirname + "/public"))
 dotenv.config("./.env");
-// bulkConsumer()
 
+const fileUpload = require("express-fileupload");
 
-// const profileDatabseConnection = require("./config/db/connection");
-// const userRouter = require("./router/userRouter/index")
-// const adminRouter = require("./router/adminRouter/index")
+app.use(fileUpload({ createParentPath: true }))
 const logger = require("morgan");
-// const bcrypt = require("bcrypt")
 
 //Config
-app.use(logger("common"))
-// profileDatabseConnection()
+app.use(logger("dev"))
+const fundRaiseDbConnection = require("./util/config/db/connection");
+fundRaiseDbConnection()
+const userRouter = require("./router/userRouter/userRouter");
+const adminRouter = require("./router/adminRouter/adminRouter");
+
+
 
 app.use("/", userRouter)
 app.use("/admin", adminRouter)

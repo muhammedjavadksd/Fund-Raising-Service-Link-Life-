@@ -3,7 +3,10 @@ const const_data = require("../../../utilFiles/const");
 
 
 let _fundRaiseSchema = {
-
+    fund_id: {
+        type: String,
+        required: true
+    },
     amount: {
         type: Number,
         required: function () {
@@ -39,7 +42,10 @@ let _fundRaiseSchema = {
             type: Number
         }
     },
-    otp_validate: Boolean,
+    otp_validate: {
+        type: Boolean,
+        defualt: false,
+    },
     full_name: {
         type: String,
         required: true
@@ -78,10 +84,13 @@ let _fundRaiseSchema = {
     },
     description: {
         type: String,
-        required: true
+        required: function () {
+            return this.status;
+        },
     },
     closed: {
         type: Boolean,
+        default: false,
     },
     status: {
         type: Boolean,
@@ -103,6 +112,10 @@ let _fundRaiseSchema = {
     user_id: {
         type: mongoose.Types.ObjectId,
         required: true
+    },
+    verified: {
+        type: Boolean,
+        default: false
     }
 }
 
