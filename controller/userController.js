@@ -91,17 +91,13 @@ let userController = {
             let body = req.body;
             console.log("Images is");
 
+            let files = req.files;
+            console.log(files);
+            if (files) {
 
-            if (req.files) {
-                const imageBuffer = req.files['images[data]'];
-                let isDocument = body['images[type]'] == "Documents"
+                let isDocument = body['image_type'] == "Documents"
 
-                console.log("The images is");
-                console.log(imageBuffer);
-                console.log("The type is");
-                console.log(isDocument);
-
-                let pictureUpdates = await fundRaisingHelper.saveFundRaiserImage(imageBuffer, edit_id, isDocument)
+                let pictureUpdates = await fundRaisingHelper.saveFundRaiserImage(files, edit_id, isDocument)
                 console.log(pictureUpdates);
                 res.status(200).json({ status: true, msg: "Updated success", pictures: pictureUpdates.picture, documents: pictureUpdates.documents })
             } else {

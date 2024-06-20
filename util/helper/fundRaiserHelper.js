@@ -29,13 +29,28 @@ let fundRaisingHelper = {
 
     saveFundRaiserImage: async (images, fundRaiserID, isDocument) => {
         try {
-            let imageName = images.name;
+
+            let newImages = [];
             let field = isDocument ? "documents" : "picture"
-            let path = isDocument ? `public/images/fund_raise_document/${imageName}` : `public/images/fund_raiser_image/${imageName}`;
-            console.log(fundRaiserID, imageName);
+            let imageLength = Object.keys(images).length
+
+            console.log("The length : " + imageLength);
+
+            for (let fileIndex = 0; fileIndex < imageLength; fileIndex++) {
+                let imageName = images['images_' + fileIndex].name;
+                let path = isDocument ? `public/images/fund_raise_document/${imageName}` : `public/images/fund_raiser_image/${imageName}`;
+                console.log(fundRaiserID, imageName);
+                newImages.push(imageName)
+
+                let promisify = util.promisify(images['images_' + fileIndex].mv);
+                await promisify(path)
+            }
+
+            console.log("Images");
+            console.log(newImages);
 
             let initFundRaise = await InitFundRaisingModel.findOne({ fund_id: fundRaiserID });
-            initFundRaise[field].push(imageName);
+            initFundRaise[field] = [...initFundRaise[field], ...newImages]
 
             let currentPIctures = initFundRaise.picture;
             let currentDocuments = initFundRaise.documents;
@@ -44,16 +59,6 @@ let fundRaisingHelper = {
             console.log(currentDocuments);
 
             await initFundRaise.save()
-            // await InitFundRaisingModel.updateOne({
-            //     fund_id: fundRaiserID
-            // }, {
-            //     $push: {
-            //         [field]: imageName
-            //     }
-            // });
-
-            let promisify = util.promisify(images.mv);
-            await promisify(path)
 
             return {
                 picture: currentPIctures,
