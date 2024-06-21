@@ -200,6 +200,18 @@ let fundRaisingHelper = {
             console.log(e);
             return null
         }
+    },
+
+    getRestrictedFundRaiseProfile: async (profile_id) => {
+
+        try {
+
+            let profile = await InitFundRaisingModel.findOne({ fund_id: profile_id });
+            return profile
+        } catch (e) {
+            console.log(e);
+            return null;
+        }
     }
 
 }

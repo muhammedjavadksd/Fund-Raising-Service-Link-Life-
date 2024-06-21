@@ -218,8 +218,22 @@ let userController = {
         } catch (e) {
             res.status(500).json({ status: false, msg: "Internal Server Error" })
         }
+    },
 
+    getSingleProfile: async (req, res) => {
 
+        try {
+
+            let profile_id = req.params.profile_id;
+            let profile = await fundRaisingHelper.getRestrictedFundRaiseProfile(profile_id);
+            if (profile) {
+                res.status(200).json({ status: true, data: profile })
+            } else {
+                res.status(204).json({ status: false, msg: "Profile not found" })
+            }
+        } catch (e) {
+            res.status(500).json({ status: false, msg: "Internal Server Error" })
+        }
     }
 }
 

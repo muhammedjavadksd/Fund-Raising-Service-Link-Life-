@@ -6,7 +6,7 @@ const authMiddleware = require("../../middleware/authMiddleware");
 const userRouter = express.Router();
 
 //Get method
-userRouter.get("/view/:id", authMiddleware.isValidUser, userController.createFundRaise);
+userRouter.get("/view/:profile_id", userController.getSingleProfile);
 userRouter.get("/view/:limit/:page", userController.getActiveFundRaise);
 
 
