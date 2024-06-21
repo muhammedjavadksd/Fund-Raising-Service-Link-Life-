@@ -200,8 +200,27 @@ let userController = {
                 msg: "Internal Server Error"
             })
         }
-    }
+    },
 
+
+    getActiveFundRaise: async (req, res) => {
+
+        let limit = req.params.limit;
+        let page = req.params.page;
+
+        try {
+            let getLimitedData = await fundRaisingHelper.getLimitedFundRaisers(limit, page);
+            if (getLimitedData?.length) {
+                res.status(200).json({ status: true, data: getLimitedData })
+            } else {
+                res.status(204).json({ status: false, msg: "No data foundß" })
+            }
+        } catch (e) {
+            res.status(500).json({ status: false, msg: "Internal Server Error" })
+        }
+
+
+    }
 }
 
 module.exports = userController;

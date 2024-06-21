@@ -7,7 +7,8 @@ const userRouter = express.Router();
 
 //Get method
 userRouter.get("/view/:id", authMiddleware.isValidUser, userController.createFundRaise);
-userRouter.get("/view", authMiddleware.isValidUser, userController.createFundRaise);
+userRouter.get("/view/:limit/:page", userController.getActiveFundRaise);
+
 
 // POST method
 userRouter.post("/create", authMiddleware.isValidUser, userController.createFundRaise);
