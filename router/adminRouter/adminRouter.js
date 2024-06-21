@@ -8,7 +8,8 @@ const adminRouter = express.Router();
 
 //Get method
 adminRouter.get("/view/:profile_id", authMiddleware.isValidAdmin, adminController.getSingleProfile);
-adminRouter.get("/view", authMiddleware.isValidAdmin, adminController.createFundRaise);
+adminRouter.get("/view/:limit/:page", authMiddleware.isValidAdmin, adminController.getAllProfile);
+
 
 
 module.exports = adminRouter;

@@ -190,6 +190,16 @@ let fundRaisingHelper = {
         }
     },
 
+    getAllFundRaisers: async (limit, page) => {
+        try {
+            let skip = (page - 1) * limit;
+            let limitedData = await InitFundRaisingModel.find({}).skip(skip).limit(limit);
+            return limitedData;
+        } catch (e) {
+            console.log(e);
+            return null
+        }
+    },
 
     getLimitedFundRaisers: async (limit, page) => {
         try {

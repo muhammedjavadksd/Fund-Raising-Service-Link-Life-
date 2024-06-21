@@ -16,6 +16,24 @@ let adminController = {
             console.log(e);
             res.status(500).json({ status: false, msg: "Internal server error" })
         }
+    },
+
+    getAllProfile: async (req, res) => {
+
+        try {
+            let limit = req.params.limit
+            let page = req.params.page;
+
+            let allFundRaisers = await fundRaisingHelper.getAllFundRaisers(limit, page);
+            if (allFundRaisers?.length) {
+                res.status(200).json({ status: true, data: allFundRaisers })
+            } else {
+                res.status(204).json({ status: false, msg: "No profile found" })
+            }
+        } catch (e) {
+            console.log(e);
+            res.status(500).json({ status: false, msg: "Internal server error" })
+        }
     }
 }
 
