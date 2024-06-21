@@ -9,7 +9,6 @@ const userRouter = express.Router();
 userRouter.get("/view/:profile_id", userController.getSingleProfile);
 userRouter.get("/view/:limit/:page", userController.getActiveFundRaise);
 
-
 // POST method
 userRouter.post("/create", authMiddleware.isValidUser, userController.createFundRaise);
 userRouter.post("/upload_images", authMiddleware.isValidUser, userController.uploadImage);
