@@ -97,8 +97,11 @@ let authMiddleware = {
                 req.context = {}
             }
             let token = req.headers.authorization.split(' ')[1]
+            console.log(token);
             req.context.auth_token = token;
             let checkValidity = await tokenHelper.checkTokenValidity(token)
+            console.log(checkValidity);
+            console.log(token);
             if (checkValidity) {
                 console.log('Decode jwt is : ');
                 console.log(checkValidity);
