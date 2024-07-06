@@ -11,6 +11,10 @@ let _fundRaiseSchema = {
         type: Number,
         required: true,
     },
+    collected: {
+        type: Number,
+        default: 0
+    },
     category: {
         type: String,
         required: true,

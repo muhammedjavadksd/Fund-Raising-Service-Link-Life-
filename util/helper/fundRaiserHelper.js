@@ -160,7 +160,7 @@ let fundRaisingHelper = {
     getSingleFundRaise: async (post_id) => {
         try {
 
-            let post = await FundRaisingModel.findOne({ fund_id: post_id });
+            let post = await InitFundRaisingModel.findOne({ fund_id: post_id });
             return post
         } catch (e) {
             console.log(e);
@@ -194,6 +194,8 @@ let fundRaisingHelper = {
         try {
             let skip = (page - 1) * limit;
             let limitedData = await InitFundRaisingModel.find({}).skip(skip).limit(limit);
+            // let limitedData = await InitFundRaisingModel.aggregate([{}])
+
             return limitedData;
         } catch (e) {
             console.log(e);

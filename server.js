@@ -4,10 +4,17 @@ const express = require("express");
 const app = express();
 const dotenv = require("dotenv");
 
+// let lifeLinkModules = require("life-link-");
+
+// lifeLinkModules.
+
 //middleware
 app.use(express.json({ limit: "4mb" }))
 app.use(express.urlencoded({ extended: true, limit: "4mb" }))
 
+
+
+// let data = new Int
 
 app.use(express.static(__dirname + "/public"))
 dotenv.config("./.env");
@@ -23,8 +30,6 @@ const fundRaiseDbConnection = require("./util/config/db/connection");
 fundRaiseDbConnection()
 const userRouter = require("./router/userRouter/userRouter");
 const adminRouter = require("./router/adminRouter/adminRouter");
-
-
 
 app.use("/", userRouter)
 app.use("/admin", adminRouter)

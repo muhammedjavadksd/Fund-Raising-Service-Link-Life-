@@ -10,6 +10,9 @@ const adminRouter = express.Router();
 adminRouter.get("/view/:profile_id", authMiddleware.isValidAdmin, adminController.getSingleProfile);
 adminRouter.get("/view/:limit/:page", authMiddleware.isValidAdmin, adminController.getAllProfile);
 
+//Post Method
+adminRouter.post("/create", authMiddleware.isValidAdmin, adminController.addFundRaiser)
+
 
 
 module.exports = adminRouter;
