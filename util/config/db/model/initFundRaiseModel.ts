@@ -1,5 +1,10 @@
-const { default: mongoose } = require("mongoose");
-const const_data = require("../../../utilFiles/const");
+import mongoose from "mongoose";
+import { iFundRaiseModel } from "../../../../types/Interface/IDBmodel";
+import const_data from "../../../utilFiles/const";
+import { FundRaiserCreatedBy } from "../../../../types/Enums/DbEnum";
+
+// const { default: mongoose } = require("mongoose");
+// const const_data = require("../../../utilFiles/const");
 
 
 let _fundRaiseSchema = {
@@ -49,13 +54,13 @@ let _fundRaiseSchema = {
         required: false
     },
     created_date: {
-        type: String,
+        type: Date,
         required: true
     },
     created_by: {
         type: String,
         required: true,
-        enum: const_data.USER_TYPE
+        enum: FundRaiserCreatedBy
     },
     user_id: {
         type: mongoose.Types.ObjectId,
@@ -103,11 +108,12 @@ let _fundRaiseSchema = {
         default: false,
     },
     deadline: {
-        type: String,
+        type: Date,
         required: false
     },
 }
 
-let schemeFundRaise = new mongoose.Schema(_fundRaiseSchema);
-let InitFundRaisingModel = mongoose.model("init_fund_raising", schemeFundRaise, "init_fund_raising");
-module.exports = InitFundRaisingModel;
+const schemeFundRaise = new mongoose.Schema(_fundRaiseSchema);
+const InitFundRaisingModel = mongoose.model<iFundRaiseModel>("init_fund_raising", schemeFundRaise, "init_fund_raising");
+
+export default InitFundRaisingModel

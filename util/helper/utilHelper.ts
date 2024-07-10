@@ -3,14 +3,14 @@
 
 let utilHelper = {
 
-    generateAnOTP: (length) => {
+    generateAnOTP: (length: number) => {
         const min = Math.pow(10, length - 1);
         const max = Math.pow(10, length) - 1;
         const randomNumber = Math.floor(Math.random() * (max - min + 1)) + min;
         return randomNumber;
     },
 
-    createRandomText: (length) => {
+    createRandomText: (length: number) => {
         const characters = 'abcdefghijklmnopqrstuvwxyz';
 
         let result = '';
@@ -23,7 +23,7 @@ let utilHelper = {
         return result;
     },
 
-    createFundRaiseID: function (created) {
+    createFundRaiseID: function (created: string) {
         let createdBY = created == "USER" ? "U" : (created == "ADMIN" ? "A" : "O");
 
         let fundId = this.createRandomText(5) + "-" + createdBY + "-" + new Date().getUTCMilliseconds()
@@ -32,4 +32,6 @@ let utilHelper = {
 
 }
 
-module.exports = utilHelper;
+export default utilHelper
+
+// module.exports = utilHelper;

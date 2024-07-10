@@ -1,6 +1,15 @@
 
+interface IConstData {
+    fund_raise_category: {
+        [key: string]: string[]
+    },
+    USER_TYPE: string[],
+    OTP_LENGTH: number,
+    OTP_EXPIRE_TIME: () => number
+}
 
-const const_data = {
+
+const const_data: IConstData = {
     fund_raise_category: {
         "Education": [
             "School Supplies",
@@ -220,4 +229,5 @@ const const_data = {
     },
 };
 
-module.exports = const_data;
+// module.exports = const_data;
+export default const_data
