@@ -2,13 +2,11 @@ import FundRaiserRepo from "../repositorys/FundRaiserRepo";
 import { FundRaiserCreatedBy, FundRaiserStatus } from "../types/Enums/DbEnum";
 import { FundRaiserFileType } from "../types/Enums/UtilEnum";
 import { IEditableFundRaiser, IFundRaise, IFundRaiseInitialData, iFundRaiseModel } from "../types/Interface/IDBmodel";
+import { IFundRaiserService } from "../types/Interface/IService";
 import { HelperFuncationResponse } from "../types/Interface/Util";
 import fs from 'fs'
 
-interface IFundRaiserService {
-    updateStatus(fund_id: string, newStatus: FundRaiserStatus): Promise<HelperFuncationResponse>
 
-}
 
 class FundRaiserService implements IFundRaiserService {
 
@@ -18,7 +16,7 @@ class FundRaiserService implements IFundRaiserService {
         this.FundRaiserRepo = new FundRaiserRepo();
     }
 
-    async deleteImage(fund_id: string, type: FundRaiserFileType, image: string) {
+    async deleteImage(fund_id: string, type: FundRaiserFileType, image: string): Promise<boolean> {
         try {
             let findData = await this.FundRaiserRepo.findFundPostByFundId(fund_id) // await InitFundRaisingModel.findOne({ fund_id: fund_id });
             if (findData) {
@@ -35,8 +33,6 @@ class FundRaiserService implements IFundRaiserService {
             return false
         }
     }
-
-
 
     async createFundRaisePost(data: IFundRaiseInitialData): Promise<HelperFuncationResponse> {
         try {
@@ -245,15 +241,6 @@ class FundRaiserService implements IFundRaiserService {
                 status: false,
                 statusCode: 500,
             }
-        }
-    }
-
-
-    async getRestrictedFundRaiserPost(post_id: string) {
-        try {
-            const fundRaiserPost = await this.FundRaiserRepo
-        } catch (e) {
-
         }
     }
 }
