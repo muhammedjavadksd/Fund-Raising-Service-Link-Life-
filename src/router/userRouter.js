@@ -10,9 +10,9 @@ const userRouter = express_1.default.Router();
 const UserControllers = new userController_1.default();
 const authMiddleware = new authMiddleware_1.default();
 //Get method
+userRouter.get("/view/self", authMiddleware.isValidUser, UserControllers.getUserFundRaisePost); //test completed
 userRouter.get("/view/:profile_id", UserControllers.getSingleProfile);
 userRouter.get("/view/:limit/:page", UserControllers.getActiveFundRaise);
-userRouter.get("/view/self", authMiddleware.isValidUser, UserControllers.getUserFundRaisePost);
 // POST method
 userRouter.post("/create", authMiddleware.isValidUser, UserControllers.createFundRaise); //test completed
 //Patch method

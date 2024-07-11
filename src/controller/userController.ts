@@ -32,10 +32,14 @@ class UserController implements IUserController {
     }
 
     async getUserFundRaisePost(req: CustomRequest, res: Response): Promise<void> {
+        console.log("recivied");
+
 
         try {
 
             const user_id: string = req.context?.user_id;
+            console.log(user_id);
+
             if (user_id) {
                 const getMyFundRaisePost: HelperFuncationResponse = await this.fundRaiserService.getOwnerFundRaise(user_id, FundRaiserCreatedBy.USER);
                 if (getMyFundRaisePost.status) {

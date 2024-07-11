@@ -105,7 +105,8 @@ let _fundRaiseSchema = {
         default: false,
     },
     status: {
-        type: Boolean,
+        type: String,
+        enum: DbEnum_1.FundRaiserStatus,
         default: false,
     },
     deadline: {

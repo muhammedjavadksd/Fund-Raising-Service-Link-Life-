@@ -6,6 +6,7 @@ import { HelperFuncationResponse } from "../types/Interface/Util";
 import FundRaiserService from "../services/FundRaiserService";
 import UtilHelper from "../util/helper/utilHelper";
 import { IAdminController } from "../types/Interface/IController";
+import { FundRaiserCategory } from "../types/Enums/UtilEnum";
 
 class AdminController implements IAdminController {
 
@@ -13,6 +14,13 @@ class AdminController implements IAdminController {
     private readonly fundRaiserService;
 
     constructor() {
+        this.getAllFundRaise = this.getAllFundRaise.bind(this)
+        this.getSingleProfile = this.getSingleProfile.bind(this)
+        this.editFundRaiser = this.editFundRaiser.bind(this)
+        this.addFundRaiser = this.addFundRaiser.bind(this)
+        this.updateStatus = this.updateStatus.bind(this)
+        this.closeFundRaiser = this.closeFundRaiser.bind(this)
+
         this.fundRaiserRepo = new FundRaiserRepo();
         this.fundRaiserService = new FundRaiserService();
     }
@@ -56,8 +64,10 @@ class AdminController implements IAdminController {
     async editFundRaiser(req: Request, res: Response): Promise<void> {
         try {
 
-            const fund_id: string = req.body.fund_id;
+            const fund_id: string = req.params.edit_id;
+
             const edit_data: IEditableFundRaiser = req.body.edit_data;
+
 
             const updateFundRaiser: HelperFuncationResponse = await this.fundRaiserService.editFundRaiser(fund_id, edit_data);
             res.status(updateFundRaiser.statusCode).json({
@@ -65,6 +75,8 @@ class AdminController implements IAdminController {
                 msg: updateFundRaiser.msg
             })
         } catch (e) {
+            console.log(e);
+
             res.status(500).json({
                 status: false,
                 msg: "Something went wrong"
@@ -76,7 +88,7 @@ class AdminController implements IAdminController {
         try {
 
             const amount: number = req.body.amount;
-            const category: string = req.body.category;
+            const category: FundRaiserCategory = req.body.category;
             const sub_category: string = req.body.sub_category;
             const phone_number: number = req.body.phone_number;
             const email_id: string = req.body.email_id;
@@ -92,7 +104,7 @@ class AdminController implements IAdminController {
 
             const utilHelper = new UtilHelper();
 
-            const fundID: string = utilHelper.createFundRaiseID(FundRaiserCreatedBy.ADMIN)
+            const fundID: string = utilHelper.createFundRaiseID(FundRaiserCreatedBy.ADMIN).toUpperCase()
             const createdDate: Date = new Date()
             const fundRaiserData: IFundRaise = {
                 "fund_id": fundID,
@@ -103,7 +115,7 @@ class AdminController implements IAdminController {
                 "email_id": email_id,
                 "created_date": createdDate,
                 "created_by": FundRaiserCreatedBy.ADMIN,
-                "user_id": "admin",
+                "user_id": "667868f8e5922a99a6e87d95",
                 "closed": false,
                 "status": FundRaiserStatus.APPROVED,
                 "about": about,
@@ -117,6 +129,7 @@ class AdminController implements IAdminController {
                 "state": state
             }
 
+            // console.log(this);
 
             this.fundRaiserRepo.createFundRaiserPost(fundRaiserData).then((data: HelperFuncationResponse) => {
                 res.status(data.statusCode).json({ status: true, msg: data.msg, data: data.data })
@@ -133,8 +146,8 @@ class AdminController implements IAdminController {
 
         try {
 
-            const fund_id: string = req.body.fund_id;
-            const newStatus: FundRaiserStatus = req.body.newStatus;
+            const fund_id: string = req.params.edit_id;
+            const newStatus: FundRaiserStatus = req.body.status;
 
             const updateStatus: HelperFuncationResponse = await this.fundRaiserService.updateStatus(fund_id, newStatus);
             res.status(updateStatus.statusCode).json({ status: updateStatus.status, msg: updateStatus.msg })

@@ -11,11 +11,11 @@ adminRouter.get("/view/:profile_id", authMiddleware.isValidAdmin, AdminControlle
 adminRouter.get("/view/:limit/:page", authMiddleware.isValidAdmin, AdminControllers.getAllFundRaise);
 
 //Post Method
-adminRouter.post("/create", authMiddleware.isValidAdmin, AdminControllers.addFundRaiser)
+adminRouter.post("/create", authMiddleware.isValidAdmin, AdminControllers.addFundRaiser) // test completed
 
 //patch method
-adminRouter.patch("/edit", authMiddleware.isValidAdmin, AdminControllers.editFundRaiser)
-adminRouter.patch("/update_status", authMiddleware.isValidAdmin, AdminControllers.updateStatus)
+adminRouter.patch("/edit/:edit_id", authMiddleware.isValidAdmin, AdminControllers.editFundRaiser) //test completed
+adminRouter.patch("/update_status/:edit_id", authMiddleware.isValidAdmin, AdminControllers.updateStatus) //test completed
 adminRouter.patch("/close", authMiddleware.isValidAdmin, AdminControllers.closeFundRaiser)
 
 

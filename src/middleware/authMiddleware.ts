@@ -108,6 +108,7 @@ class AuthMiddleware implements IAuthMiddleware {
 
             const token: string = auth.split(' ')[1]
             const checkValidity: string | false | JwtPayload = await tokenHelper.checkTokenValidity(token)
+            console.log(token);
 
             if (!req.context) {
                 req.context = {}
@@ -130,6 +131,7 @@ class AuthMiddleware implements IAuthMiddleware {
                 }
             } else {
                 console.log("This error 2");
+                console.log(checkValidity);
 
                 res.status(401).json({
                     status: false,

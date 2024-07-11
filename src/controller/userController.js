@@ -33,8 +33,10 @@ class UserController {
     getUserFundRaisePost(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             var _a;
+            console.log("recivied");
             try {
                 const user_id = (_a = req.context) === null || _a === void 0 ? void 0 : _a.user_id;
+                console.log(user_id);
                 if (user_id) {
                     const getMyFundRaisePost = yield this.fundRaiserService.getOwnerFundRaise(user_id, DbEnum_1.FundRaiserCreatedBy.USER);
                     if (getMyFundRaisePost.status) {

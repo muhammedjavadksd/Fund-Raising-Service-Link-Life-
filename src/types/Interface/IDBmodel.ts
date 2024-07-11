@@ -1,5 +1,6 @@
 import mongoose, { Document } from "mongoose";
 import { FundRaiserCreatedBy, FundRaiserStatus } from "../Enums/DbEnum";
+import { FundRaiserCategory } from "../Enums/UtilEnum";
 
 
 interface iFundRaiseModel extends Document, IFundRaise {
@@ -52,7 +53,7 @@ interface IEditableFundRaiser {
 interface IFundRaise {
     "fund_id": string,
     "amount": number,
-    "category": string,
+    "category": FundRaiserCategory,
     "sub_category": string,
     "phone_number": number,
     "email_id": string,

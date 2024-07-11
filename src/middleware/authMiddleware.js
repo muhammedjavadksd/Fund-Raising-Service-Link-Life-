@@ -108,6 +108,7 @@ class AuthMiddleware {
                 const tokenHelper = new tokenHelper_1.default();
                 const token = auth.split(' ')[1];
                 const checkValidity = yield tokenHelper.checkTokenValidity(token);
+                console.log(token);
                 if (!req.context) {
                     req.context = {};
                 }
@@ -130,6 +131,7 @@ class AuthMiddleware {
                 }
                 else {
                     console.log("This error 2");
+                    console.log(checkValidity);
                     res.status(401).json({
                         status: false,
                         msg: "Authorization is failed"

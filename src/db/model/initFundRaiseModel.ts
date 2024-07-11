@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import { iFundRaiseModel } from "../../types/Interface/IDBmodel";
 import { const_data } from "../../types/Enums/ConstData";
-import { FundRaiserCreatedBy } from "../../types/Enums/DbEnum";
+import { FundRaiserCreatedBy, FundRaiserStatus } from "../../types/Enums/DbEnum";
 import { FundRaiserCategory } from "../../types/Enums/UtilEnum";
 // FundRaiserCategory
 
@@ -103,7 +103,8 @@ let _fundRaiseSchema = {
         default: false,
     },
     status: {
-        type: Boolean,
+        type: String,
+        enum: FundRaiserStatus,
         default: false,
     },
     deadline: {

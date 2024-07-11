@@ -19,6 +19,12 @@ const FundRaiserService_1 = __importDefault(require("../services/FundRaiserServi
 const utilHelper_1 = __importDefault(require("../util/helper/utilHelper"));
 class AdminController {
     constructor() {
+        this.getAllFundRaise = this.getAllFundRaise.bind(this);
+        this.getSingleProfile = this.getSingleProfile.bind(this);
+        this.editFundRaiser = this.editFundRaiser.bind(this);
+        this.addFundRaiser = this.addFundRaiser.bind(this);
+        this.updateStatus = this.updateStatus.bind(this);
+        this.closeFundRaiser = this.closeFundRaiser.bind(this);
         this.fundRaiserRepo = new FundRaiserRepo_1.default();
         this.fundRaiserService = new FundRaiserService_1.default();
     }
@@ -60,7 +66,7 @@ class AdminController {
     editFundRaiser(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const fund_id = req.body.fund_id;
+                const fund_id = req.params.edit_id;
                 const edit_data = req.body.edit_data;
                 const updateFundRaiser = yield this.fundRaiserService.editFundRaiser(fund_id, edit_data);
                 res.status(updateFundRaiser.statusCode).json({
@@ -69,6 +75,7 @@ class AdminController {
                 });
             }
             catch (e) {
+                console.log(e);
                 res.status(500).json({
                     status: false,
                     msg: "Something went wrong"
@@ -93,7 +100,7 @@ class AdminController {
             const pincode = req.body.pin_code;
             const state = req.body.state;
             const utilHelper = new utilHelper_1.default();
-            const fundID = utilHelper.createFundRaiseID(DbEnum_1.FundRaiserCreatedBy.ADMIN);
+            const fundID = utilHelper.createFundRaiseID(DbEnum_1.FundRaiserCreatedBy.ADMIN).toUpperCase();
             const createdDate = new Date();
             const fundRaiserData = {
                 "fund_id": fundID,
@@ -104,7 +111,7 @@ class AdminController {
                 "email_id": email_id,
                 "created_date": createdDate,
                 "created_by": DbEnum_1.FundRaiserCreatedBy.ADMIN,
-                "user_id": "admin",
+                "user_id": "667868f8e5922a99a6e87d95",
                 "closed": false,
                 "status": DbEnum_1.FundRaiserStatus.APPROVED,
                 "about": about,
@@ -117,6 +124,7 @@ class AdminController {
                 "pincode": pincode,
                 "state": state
             };
+            // console.log(this);
             this.fundRaiserRepo.createFundRaiserPost(fundRaiserData).then((data) => {
                 res.status(data.statusCode).json({ status: true, msg: data.msg, data: data.data });
             }).catch((err) => {
@@ -131,8 +139,8 @@ class AdminController {
     updateStatus(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const fund_id = req.body.fund_id;
-                const newStatus = req.body.newStatus;
+                const fund_id = req.params.edit_id;
+                const newStatus = req.body.status;
                 const updateStatus = yield this.fundRaiserService.updateStatus(fund_id, newStatus);
                 res.status(updateStatus.statusCode).json({ status: updateStatus.status, msg: updateStatus.msg });
             }
