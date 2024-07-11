@@ -152,7 +152,7 @@ class AdminController {
     closeFundRaiser(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const fund_id = req.body.fund_id;
+                const fund_id = req.params.edit_id;
                 const closeFundRaiser = yield this.fundRaiserService.closeFundRaiser(fund_id);
                 res.status(closeFundRaiser.statusCode).json({ status: closeFundRaiser.status, msg: closeFundRaiser.msg });
             }

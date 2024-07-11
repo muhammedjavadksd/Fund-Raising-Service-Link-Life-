@@ -234,6 +234,7 @@ class UserController implements IUserController {
         try {
 
             const profile_id: string = req.params.profile_id;
+
             const profile: iFundRaiseModel | null = await this.fundRaiserRepo.getRestrictedFundRaisePost(profile_id);
             if (profile) {
                 res.status(200).json({ status: true, data: profile })

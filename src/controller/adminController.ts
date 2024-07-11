@@ -159,7 +159,7 @@ class AdminController implements IAdminController {
     async closeFundRaiser(req: Request, res: Response): Promise<void> {
 
         try {
-            const fund_id: string = req.body.fund_id;
+            const fund_id: string = req.params.edit_id;
             const closeFundRaiser: HelperFuncationResponse = await this.fundRaiserService.closeFundRaiser(fund_id);
             res.status(closeFundRaiser.statusCode).json({ status: closeFundRaiser.status, msg: closeFundRaiser.msg })
         } catch (e) {

@@ -10,7 +10,7 @@ const authMiddleware = new AuthMiddleware()
 
 //Get method
 userRouter.get("/view/self", authMiddleware.isValidUser, UserControllers.getUserFundRaisePost); //test completed
-userRouter.get("/view/:profile_id", UserControllers.getSingleProfile);
+userRouter.get("/view/:profile_id", UserControllers.getSingleProfile); //test completed
 userRouter.get("/view/:limit/:page", UserControllers.getActiveFundRaise);
 
 // POST method

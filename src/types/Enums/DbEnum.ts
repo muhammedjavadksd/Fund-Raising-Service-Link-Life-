@@ -1,17 +1,17 @@
 
 
 enum FundRaiserCreatedBy {
-    ADMIN,
-    ORGANIZATION,
-    USER
+    ADMIN = "ADMIN",
+    ORGANIZATION = "ORGANIZATION",
+    USER = "USER"
 }
 
 enum FundRaiserStatus {
-    INITIATED,
-    APPROVED,
-    HOLD,
-    REJECTED,
-    CLOSED
+    INITIATED = "INITIATED",
+    APPROVED = "APPROVED",
+    HOLD = "HOLD",
+    REJECTED = "REJECTED",
+    CLOSED = "CLOSED"
 }
 
 export { FundRaiserCreatedBy, FundRaiserStatus }

@@ -10,12 +10,12 @@ const adminRouter = express_1.default.Router();
 const AdminControllers = new adminController_1.AdminController();
 const authMiddleware = new authMiddleware_1.default();
 //Get method
-adminRouter.get("/view/:profile_id", authMiddleware.isValidAdmin, AdminControllers.getSingleProfile);
-adminRouter.get("/view/:limit/:page", authMiddleware.isValidAdmin, AdminControllers.getAllFundRaise);
+adminRouter.get("/view/:profile_id", authMiddleware.isValidAdmin, AdminControllers.getSingleProfile); //test completed
+adminRouter.get("/view/:limit/:page", authMiddleware.isValidAdmin, AdminControllers.getAllFundRaise); //test completed
 //Post Method
 adminRouter.post("/create", authMiddleware.isValidAdmin, AdminControllers.addFundRaiser); // test completed
 //patch method
 adminRouter.patch("/edit/:edit_id", authMiddleware.isValidAdmin, AdminControllers.editFundRaiser); //test completed
 adminRouter.patch("/update_status/:edit_id", authMiddleware.isValidAdmin, AdminControllers.updateStatus); //test completed
-adminRouter.patch("/close", authMiddleware.isValidAdmin, AdminControllers.closeFundRaiser);
+adminRouter.patch("/close/:edit_id", authMiddleware.isValidAdmin, AdminControllers.closeFundRaiser); //test completed
 exports.default = adminRouter;
