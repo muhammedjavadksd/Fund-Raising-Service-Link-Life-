@@ -12,5 +12,14 @@ interface IUserController {
     getSingleProfile(req: Request, res: Response): Promise<void>
 }
 
+interface IAdminController {
+    getAllFundRaise(req: Request, res: Response): Promise<void>
+    getSingleProfile(req: Request, res: Response): Promise<void>
+    editFundRaiser(req: Request, res: Response): Promise<void>
+    addFundRaiser(req: Request, res: Response): void
+    updateStatus(req: Request, res: Response): Promise<void>
+    closeFundRaiser(req: Request, res: Response): Promise<void>
+}
 
-export { IUserController }
+
+export { IUserController, IAdminController }

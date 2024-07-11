@@ -5,11 +5,9 @@ import FundRaiserRepo from "../repositorys/FundRaiserRepo";
 import { HelperFuncationResponse } from "../types/Interface/Util";
 import FundRaiserService from "../services/FundRaiserService";
 import UtilHelper from "../util/helper/utilHelper";
+import { IAdminController } from "../types/Controller/IController";
 
 
-interface IAdminController {
-    addFundRaiser(req: Request, res: Response): void;
-}
 
 class AdminController implements IAdminController {
 
