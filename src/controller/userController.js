@@ -77,7 +77,7 @@ class UserController {
     closeFundRaise(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const fund_id = req.params.fund_id;
+                const fund_id = req.params.edit_id;
                 const closePost = yield this.fundRaiserService.closeFundRaiser(fund_id);
                 res.status(closePost.statusCode).json({ status: closePost.status, msg: closePost.msg });
             }

@@ -74,7 +74,7 @@ class UserController implements IUserController {
     async closeFundRaise(req: CustomRequest, res: Response): Promise<void> {
 
         try {
-            const fund_id: string = req.params.fund_id;
+            const fund_id: string = req.params.edit_id;
 
             const closePost: HelperFuncationResponse = await this.fundRaiserService.closeFundRaiser(fund_id);
             res.status(closePost.statusCode).json({ status: closePost.status, msg: closePost.msg })
