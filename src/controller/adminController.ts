@@ -92,7 +92,7 @@ class AdminController implements IAdminController {
 
             const utilHelper = new UtilHelper();
 
-            const fundID: string = utilHelper.createFundRaiseID("ADMIN")
+            const fundID: string = utilHelper.createFundRaiseID(FundRaiserCreatedBy.ADMIN)
             const createdDate: Date = new Date()
             const fundRaiserData: IFundRaise = {
                 "fund_id": fundID,

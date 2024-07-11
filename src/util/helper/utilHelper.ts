@@ -1,6 +1,8 @@
+import { FundRaiserCreatedBy } from "../../types/Enums/DbEnum";
+import { IUtilHelper } from "../../types/Interface/IHelper";
 
 
-class UtilHelper {
+class UtilHelper implements IUtilHelper {
 
 
     constractor() {
@@ -9,10 +11,10 @@ class UtilHelper {
         this.generateAnOTP = this.generateAnOTP.bind(this)
     }
 
-    createFundRaiseID(created_by: string): string {
-        let createdBY: string = created_by == "USER" ? "U" : (created_by == "ADMIN" ? "A" : "O");
+    createFundRaiseID(created_by: FundRaiserCreatedBy): string {
+        let createdBY: string = created_by == FundRaiserCreatedBy.USER ? "U" : (created_by == FundRaiserCreatedBy.ADMIN ? "A" : "O");
 
-        let fundId: string = this.createRandomText(5) + "-" + created_by + "-" + new Date().getUTCMilliseconds()
+        let fundId: string = this.createRandomText(5) + "-" + createdBY + "-" + new Date().getUTCMilliseconds()
         return fundId;
     }
 
@@ -40,5 +42,3 @@ class UtilHelper {
 
 
 export default UtilHelper
-
-// module.exports = utilHelper;

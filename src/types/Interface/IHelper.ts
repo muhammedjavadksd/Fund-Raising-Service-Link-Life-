@@ -1,4 +1,5 @@
 import jwt from "jsonwebtoken"
+import { FundRaiserCreatedBy } from "../Enums/DbEnum"
 
 
 interface ITokenHelper {
@@ -7,4 +8,10 @@ interface ITokenHelper {
     checkTokenValidity(token: string): Promise<jwt.JwtPayload | false | string>
 }
 
-export { ITokenHelper }
+interface IUtilHelper {
+    createFundRaiseID(created_by: FundRaiserCreatedBy): string
+    generateAnOTP(length: number): number
+    createRandomText(length: number): string
+}
+
+export { ITokenHelper, IUtilHelper }

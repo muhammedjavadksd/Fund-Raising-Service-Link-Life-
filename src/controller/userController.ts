@@ -146,7 +146,7 @@ class UserController implements IUserController {
             const otpExpire: number = const_data.OTP_EXPIRE_TIME;
             const todayDate: Date = new Date();
             const user_id: string | undefined = req.context?.user_id;
-            const fund_id: string = utilHelper.createFundRaiseID("USER").toUpperCase()
+            const fund_id: string = utilHelper.createFundRaiseID(FundRaiserCreatedBy.USER).toUpperCase()
 
             if (user_id && fund_id) {
 
