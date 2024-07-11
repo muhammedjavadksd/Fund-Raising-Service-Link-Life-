@@ -12,7 +12,7 @@ const authMiddleware = new authMiddleware_1.default();
 //Get method
 userRouter.get("/view/self", authMiddleware.isValidUser, UserControllers.getUserFundRaisePost); //test completed
 userRouter.get("/view/:profile_id", UserControllers.getSingleProfile); //test completed
-userRouter.get("/view/:limit/:page", UserControllers.getActiveFundRaise);
+userRouter.get("/view/:limit/:page", UserControllers.getActiveFundRaise); //test completed
 // POST method
 userRouter.post("/create", authMiddleware.isValidUser, UserControllers.createFundRaise); //test completed
 //Patch method
