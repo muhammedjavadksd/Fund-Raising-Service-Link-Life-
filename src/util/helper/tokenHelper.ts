@@ -1,8 +1,9 @@
 
 import jwt from 'jsonwebtoken'
+import { ITokenHelper } from '../../types/Interface/IHelper';
 
 
-class TokenHelper {
+class TokenHelper implements ITokenHelper {
     async createJWTToken(payload = {}, timer: number): Promise<string | null> {
         try {
             let jwtToken = await jwt.sign(payload, process.env.JWT_SECRET as string, { algorithm: "HS256", expiresIn: timer });
