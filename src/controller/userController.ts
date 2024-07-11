@@ -8,8 +8,9 @@ import { FundRaiserFileType } from "../types/Enums/UtilEnum";
 import FundRaiserRepo from "../repositorys/FundRaiserRepo";
 import UtilHelper from "../util/helper/utilHelper";
 import { const_data } from "../types/Enums/ConstData";
+import { IUserController } from "../types/Controller/IController";
 
-class UserController {
+class UserController implements IUserController {
 
     private readonly fundRaiserService;
     private readonly fundRaiserRepo;
