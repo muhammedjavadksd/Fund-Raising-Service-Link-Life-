@@ -12,6 +12,8 @@ fundRaiseDbConnection()
 const app: Express = express();
 const PORT = process.env.PORT || 7005
 
+app.use(express.json({}))
+app.use(express.urlencoded({ extended: true }))
 app.use(express.static(__dirname + "/public"))
 app.use(fileUpload({ createParentPath: true }))
 app.use(morgan("dev"))

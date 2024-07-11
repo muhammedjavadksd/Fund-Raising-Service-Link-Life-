@@ -16,6 +16,16 @@ class UserController implements IUserController {
     private readonly fundRaiserRepo;
 
     constructor() {
+
+        this.getUserFundRaisePost = this.getUserFundRaisePost.bind(this);
+        this.deleteImage = this.deleteImage.bind(this);
+        this.closeFundRaise = this.closeFundRaise.bind(this);
+        this.uploadImage = this.uploadImage.bind(this);
+        this.editFundRaise = this.editFundRaise.bind(this);
+        this.createFundRaise = this.createFundRaise.bind(this);
+        this.getActiveFundRaise = this.getActiveFundRaise.bind(this);
+        this.getSingleProfile = this.getSingleProfile.bind(this);
+
         this.fundRaiserService = new FundRaiserService();
         this.fundRaiserRepo = new FundRaiserRepo();
     }
@@ -136,6 +146,9 @@ class UserController implements IUserController {
             const bodyData = req.body;
             const utilHelper = new UtilHelper();
 
+            console.log(bodyData);
+
+
             const amount: number = bodyData.amount;
             const category: string = bodyData.category;
             const sub_category: string = bodyData.sub_category;
@@ -147,6 +160,11 @@ class UserController implements IUserController {
             const todayDate: Date = new Date();
             const user_id: string | undefined = req.context?.user_id;
             const fund_id: string = utilHelper.createFundRaiseID(FundRaiserCreatedBy.USER).toUpperCase()
+
+
+            console.log(fund_id);
+            console.log(req.context);
+
 
             if (user_id && fund_id) {
 

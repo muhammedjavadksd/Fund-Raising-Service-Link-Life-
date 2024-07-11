@@ -11,6 +11,17 @@ class FundRaiserRepo implements IFundRaiserRepo {
     private readonly FundRaiserModel;
 
     constructor() {
+        this.getActiveFundRaiserPost = this.getActiveFundRaiserPost.bind(this)
+        this.getAllFundRaiserPost = this.getAllFundRaiserPost.bind(this)
+        this.getRestrictedFundRaisePost = this.getRestrictedFundRaisePost.bind(this)
+        this.getUserPosts = this.getUserPosts.bind(this)
+        this.getOrganizationPosts = this.getOrganizationPosts.bind(this)
+        this.createFundRaiserPost = this.createFundRaiserPost.bind(this)
+        this.updateFundRaiser = this.updateFundRaiser.bind(this)
+        this.updateFundRaiserByModel = this.updateFundRaiserByModel.bind(this)
+        this.findFundPostByFundId = this.findFundPostByFundId.bind(this)
+        this.getSingleFundRaiseOfUser = this.getSingleFundRaiseOfUser.bind(this)
+
         this.FundRaiserModel = InitFundRaisingModel
     }
 
@@ -66,7 +77,7 @@ class FundRaiserRepo implements IFundRaiserRepo {
         }
     }
 
-    async createFundRaiserPost(initialData: IFundRaise): Promise<HelperFuncationResponse> {
+    async createFundRaiserPost(initialData: IFundRaise | IFundRaiseInitialData): Promise<HelperFuncationResponse> {
 
         try {
             const newFundRaiser = new this.FundRaiserModel(initialData);

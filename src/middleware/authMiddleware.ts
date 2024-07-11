@@ -25,10 +25,14 @@ class AuthMiddleware implements IAuthMiddleware {
             const checkValidity: JwtPayload | string | false = await tokenHelper.checkTokenValidity(token)
             if (checkValidity && typeof checkValidity == "object") {
 
+                console.log(checkValidity);
+
+
                 if (checkValidity && checkValidity.email) {
                     req.context.email_id = checkValidity?.email;
                     req.context.token = token;
-                    req.context.user_id = checkValidity.id;
+                    req.context.user_id = checkValidity.user_id;
+                    req.context.profile_id = checkValidity.profile_id;
                     next()
                 } else {
                     res.status(401).json({

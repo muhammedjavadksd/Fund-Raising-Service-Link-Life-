@@ -14,7 +14,7 @@ userRouter.get("/view/:limit/:page", UserControllers.getActiveFundRaise);
 userRouter.get("/view/self", authMiddleware.isValidUser, UserControllers.getUserFundRaisePost);
 
 // POST method
-userRouter.post("/create", authMiddleware.isValidUser, UserControllers.createFundRaise);
+userRouter.post("/create", authMiddleware.isValidUser, UserControllers.createFundRaise); //test completed
 
 //Patch method
 userRouter.patch("/edit/:edit_id", authMiddleware.isValidUser, authMiddleware.isFundRaiseRequestValid, UserControllers.editFundRaise);

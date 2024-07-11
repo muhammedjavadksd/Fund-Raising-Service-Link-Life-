@@ -1,7 +1,7 @@
 import FundRaiserRepo from "../repositorys/FundRaiserRepo";
 import { FundRaiserCreatedBy, FundRaiserStatus } from "../types/Enums/DbEnum";
 import { FundRaiserFileType } from "../types/Enums/UtilEnum";
-import { IEditableFundRaiser, IFundRaise, IFundRaiseInitialData, iFundRaiseModel } from "../types/Interface/IDBmodel";
+import { IEditableFundRaiser, IFundRaiseInitialData, iFundRaiseModel } from "../types/Interface/IDBmodel";
 import { IFundRaiserService } from "../types/Interface/IService";
 import { HelperFuncationResponse } from "../types/Interface/Util";
 import fs from 'fs'
@@ -13,6 +13,14 @@ class FundRaiserService implements IFundRaiserService {
     private readonly FundRaiserRepo;
 
     constructor() {
+        this.deleteImage = this.deleteImage.bind(this)
+        this.createFundRaisePost = this.createFundRaisePost.bind(this)
+        this.getOwnerFundRaise = this.getOwnerFundRaise.bind(this)
+        this.closeFundRaiser = this.closeFundRaiser.bind(this)
+        this.updateStatus = this.updateStatus.bind(this)
+        this.editFundRaiser = this.editFundRaiser.bind(this)
+        this.uploadImage = this.uploadImage.bind(this)
+
         this.FundRaiserRepo = new FundRaiserRepo();
     }
 
@@ -36,7 +44,7 @@ class FundRaiserService implements IFundRaiserService {
 
     async createFundRaisePost(data: IFundRaiseInitialData): Promise<HelperFuncationResponse> {
         try {
-            const createFundRaise = await this.createFundRaisePost(data);
+            const createFundRaise = await this.FundRaiserRepo.createFundRaiserPost(data) //this.createFundRaisePost(data);
             return {
                 status: createFundRaise.status,
                 msg: createFundRaise.msg,
