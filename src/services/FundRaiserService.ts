@@ -5,6 +5,7 @@ import { IEditableFundRaiser, IFundRaiseInitialData, iFundRaiseModel } from "../
 import { IFundRaiserService } from "../types/Interface/IService";
 import { HelperFuncationResponse } from "../types/Interface/Util";
 import fs from 'fs'
+import { UploadedFile } from 'express-fileupload'
 
 
 
@@ -201,7 +202,7 @@ class FundRaiserService implements IFundRaiserService {
     }
 
 
-    async uploadImage(images: Express.Multer.File[], fundRaiserID: string, document_type: FundRaiserFileType): Promise<HelperFuncationResponse> {
+    async uploadImage(images: UploadedFile[], fundRaiserID: string, document_type: FundRaiserFileType): Promise<HelperFuncationResponse> {
         try {
 
             let newImages = [];
@@ -209,18 +210,32 @@ class FundRaiserService implements IFundRaiserService {
             let field: 'picture' | 'documents' = document_type == FundRaiserFileType.Document ? "documents" : "picture"
             let imageLength = images.length
 
+            console.log(imageLength);
+
+
 
             for (let fileIndex = 0; fileIndex < imageLength; fileIndex++) {
-                let imageName = images[fileIndex].filename;
+
+                let imageName = images[fileIndex].name;
+
                 let path = isDocument ? `public/images/fund_raise_document/${imageName}` : `public/images/fund_raiser_image/${imageName}`;
                 newImages.push(imageName)
 
-                const imageBuffer = images[fileIndex].buffer;
-                await fs.promises.writeFile(path, imageBuffer);
+                const imageBuffer: UploadedFile = images[fileIndex];
+                console.log(imageBuffer);
+
+                let bufferImage = imageBuffer.data
+                console.log(bufferImage);
+
+                if (bufferImage) {
+                    await fs.promises.writeFile(path, Buffer.from(bufferImage));
+                }
             }
 
 
             let initFundRaise: iFundRaiseModel | null = await this.FundRaiserRepo.findFundPostByFundId(fundRaiserID);;
+            console.log(initFundRaise);
+
             if (initFundRaise) {
                 const replaceImage: string[] = initFundRaise[field] //initFundRaise[field] as string[]
                 initFundRaise[field] = [...replaceImage, ...newImages]

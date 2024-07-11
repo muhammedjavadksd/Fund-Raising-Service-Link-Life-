@@ -65,6 +65,8 @@ class AuthMiddleware implements IAuthMiddleware {
         const user_id: string = req.context?.user_id;
 
         try {
+            // console.log(fund_id, user_id);
+
             if (fund_id && user_id) {
                 const fundRaiseRepo = new FundRaiserRepo()
                 let findFundRaise = await fundRaiseRepo.getSingleFundRaiseOfUser(user_id, fund_id)  //InitFundRaisingModel.findOne({ fund_id: fundRaise, user_id: user_id });

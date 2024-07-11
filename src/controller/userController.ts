@@ -9,6 +9,7 @@ import FundRaiserRepo from "../repositorys/FundRaiserRepo";
 import UtilHelper from "../util/helper/utilHelper";
 import { const_data } from "../types/Enums/ConstData";
 import { IUserController } from "../types/Interface/IController";
+import { UploadedFile } from "express-fileupload";
 
 class UserController implements IUserController {
 
@@ -87,23 +88,22 @@ class UserController implements IUserController {
         try {
 
 
-            let file: Express.Multer.File[] | undefined;
-            if (Array.isArray(req.files)) {
-                file = req.files;
-            } else if (req.files && typeof req.files == "object") {
-                file = Object.values(req.files).flat() as unknown as Express.Multer.File[]
-            } else {
-                file = undefined;
-            }
+            let file = req.files?.files as UploadedFile[];
+            console.log(file);
+
 
             if (file) {
-                const fundRaiserID: string = req.params.fund_id;
+                const fundRaiserID: string = req.params.edit_id;
                 const edit_type: FundRaiserFileType = req.body.edit_type;
 
                 const saveFundRaise: HelperFuncationResponse = await this.fundRaiserService.uploadImage(file, fundRaiserID, edit_type)
                 res.status(saveFundRaise.statusCode).json({
                     status: saveFundRaise.status,
-                    msg: saveFundRaise.msg
+                    msg: saveFundRaise.msg,
+                    data: {
+                        picture: saveFundRaise.data?.picture,
+                        documents: saveFundRaise.data?.documents
+                    }
                 })
             } else {
                 res.status(400).json({

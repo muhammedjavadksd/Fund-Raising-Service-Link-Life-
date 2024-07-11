@@ -230,15 +230,22 @@ class FundRaiserService {
                 const isDocument = document_type == UtilEnum_1.FundRaiserFileType.Document;
                 let field = document_type == UtilEnum_1.FundRaiserFileType.Document ? "documents" : "picture";
                 let imageLength = images.length;
+                console.log(imageLength);
                 for (let fileIndex = 0; fileIndex < imageLength; fileIndex++) {
-                    let imageName = images[fileIndex].filename;
+                    let imageName = images[fileIndex].name;
                     let path = isDocument ? `public/images/fund_raise_document/${imageName}` : `public/images/fund_raiser_image/${imageName}`;
                     newImages.push(imageName);
-                    const imageBuffer = images[fileIndex].buffer;
-                    yield fs_1.default.promises.writeFile(path, imageBuffer);
+                    const imageBuffer = images[fileIndex];
+                    console.log(imageBuffer);
+                    let bufferImage = imageBuffer.data;
+                    console.log(bufferImage);
+                    if (bufferImage) {
+                        yield fs_1.default.promises.writeFile(path, Buffer.from(bufferImage));
+                    }
                 }
                 let initFundRaise = yield this.FundRaiserRepo.findFundPostByFundId(fundRaiserID);
                 ;
+                console.log(initFundRaise);
                 if (initFundRaise) {
                     const replaceImage = initFundRaise[field]; //initFundRaise[field] as string[]
                     initFundRaise[field] = [...replaceImage, ...newImages];

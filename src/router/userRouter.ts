@@ -18,7 +18,7 @@ userRouter.post("/create", authMiddleware.isValidUser, UserControllers.createFun
 
 //Patch method
 userRouter.patch("/edit/:edit_id", authMiddleware.isValidUser, authMiddleware.isFundRaiseRequestValid, UserControllers.editFundRaise); //test completed
-userRouter.patch("/upload_images/:fund_id", authMiddleware.isValidUser, authMiddleware.isFundRaiseRequestValid, UserControllers.uploadImage);
+userRouter.patch("/upload_images/:edit_id", authMiddleware.isValidUser, authMiddleware.isFundRaiseRequestValid, UserControllers.uploadImage);
 userRouter.patch("/close", authMiddleware.isValidUser, authMiddleware.isFundRaiseRequestValid, UserControllers.closeFundRaise);
 
 //delete method

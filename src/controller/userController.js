@@ -88,24 +88,21 @@ class UserController {
     }
     uploadImage(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
+            var _a, _b, _c;
             try {
-                let file;
-                if (Array.isArray(req.files)) {
-                    file = req.files;
-                }
-                else if (req.files && typeof req.files == "object") {
-                    file = Object.values(req.files).flat();
-                }
-                else {
-                    file = undefined;
-                }
+                let file = (_a = req.files) === null || _a === void 0 ? void 0 : _a.files;
+                console.log(file);
                 if (file) {
-                    const fundRaiserID = req.params.fund_id;
+                    const fundRaiserID = req.params.edit_id;
                     const edit_type = req.body.edit_type;
                     const saveFundRaise = yield this.fundRaiserService.uploadImage(file, fundRaiserID, edit_type);
                     res.status(saveFundRaise.statusCode).json({
                         status: saveFundRaise.status,
-                        msg: saveFundRaise.msg
+                        msg: saveFundRaise.msg,
+                        data: {
+                            picture: (_b = saveFundRaise.data) === null || _b === void 0 ? void 0 : _b.picture,
+                            documents: (_c = saveFundRaise.data) === null || _c === void 0 ? void 0 : _c.documents
+                        }
                     });
                 }
                 else {

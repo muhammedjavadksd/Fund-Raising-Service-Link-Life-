@@ -68,6 +68,7 @@ class AuthMiddleware {
             const fund_id = req.params.edit_id;
             const user_id = (_a = req.context) === null || _a === void 0 ? void 0 : _a.user_id;
             try {
+                // console.log(fund_id, user_id);
                 if (fund_id && user_id) {
                     const fundRaiseRepo = new FundRaiserRepo_1.default();
                     let findFundRaise = yield fundRaiseRepo.getSingleFundRaiseOfUser(user_id, fund_id); //InitFundRaisingModel.findOne({ fund_id: fundRaise, user_id: user_id });
