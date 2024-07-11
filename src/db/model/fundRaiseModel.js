@@ -1,5 +1,5 @@
 const { default: mongoose } = require("mongoose");
-const const_data = require("../../../utilFiles/const");
+const const_data = require("../../../util/utilFiles/const");
 
 
 let _fundRaiseSchema = {

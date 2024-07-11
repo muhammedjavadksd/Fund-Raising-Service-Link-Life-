@@ -2,9 +2,9 @@ import express, { Express } from 'express';
 import dotenv from 'dotenv'
 import fileUpload from 'express-fileupload'
 import morgan from 'morgan'
-import fundRaiseDbConnection from './src/util/config/db/connection';
-import userRouter from './src/router/userRouter/userRouter';
-import adminRouter from './src/router/adminRouter/adminRouter';
+import fundRaiseDbConnection from './src/config/mongo_connection';
+import userRouter from './src/router/userRouter';
+import adminRouter from './src/router/adminRouter';
 
 dotenv.config({ path: "./.env" });
 fundRaiseDbConnection()

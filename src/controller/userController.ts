@@ -3,12 +3,11 @@ import FundRaiserService from "../services/FundRaiserService";
 import { CustomRequest } from "../types/DataType/Objects";
 import { FundRaiserCreatedBy } from "../types/Enums/DbEnum";
 import { HelperFuncationResponse } from "../types/Interface/Util";
-// import utilHelper from "../util/helper/utilHelper";
-import const_data from "../util/utilFiles/const";
 import { IEditableFundRaiser, IFundRaiseInitialData, iFundRaiseModel } from "../types/Interface/IDBmodel";
 import { FundRaiserFileType } from "../types/Enums/UtilEnum";
 import FundRaiserRepo from "../repositorys/FundRaiserRepo";
 import UtilHelper from "../util/helper/utilHelper";
+import { const_data } from "../types/Enums/ConstData";
 
 class UserController {
 
@@ -132,7 +131,6 @@ class UserController {
     async createFundRaise(req: CustomRequest, res: Response): Promise<void> {
 
         try {
-            // let { amount, category, sub_category, phone_number, email } = req.body;
 
             const bodyData = req.body;
             const utilHelper = new UtilHelper();
@@ -144,7 +142,7 @@ class UserController {
             const email: string = bodyData.email;
 
             const otpNumber: number = utilHelper.generateAnOTP(const_data.OTP_LENGTH);
-            const otpExpire: number = const_data.OTP_EXPIRE_TIME();
+            const otpExpire: number = const_data.OTP_EXPIRE_TIME;
             const todayDate: Date = new Date();
             const user_id: string | undefined = req.context?.user_id;
             const fund_id: string = utilHelper.createFundRaiseID("USER").toUpperCase()
@@ -201,7 +199,7 @@ class UserController {
             if (getLimitedData?.length) {
                 res.status(200).json({ status: true, data: getLimitedData })
             } else {
-                res.status(204).json({ status: false, msg: "No data found" })
+                res.status(400).json({ status: false, msg: "No data found" })
             }
         } catch (e) {
             res.status(500).json({ status: false, msg: "Internal Server Error" })
@@ -217,7 +215,7 @@ class UserController {
             if (profile) {
                 res.status(200).json({ status: true, data: profile })
             } else {
-                res.status(204).json({ status: false, msg: "Profile not found" })
+                res.status(400).json({ status: false, msg: "Profile not found" })
             }
         } catch (e) {
             res.status(500).json({ status: false, msg: "Internal Server Error" })

@@ -6,7 +6,6 @@ enum FundRaiserCreatedBy {
     USER
 }
 
-
 enum FundRaiserStatus {
     INITIATED,
     APPROVED,

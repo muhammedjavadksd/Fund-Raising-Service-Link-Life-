@@ -1,7 +1,7 @@
+import InitFundRaisingModel from "../db/model/initFundRaiseModel";
 import { FundRaiserCreatedBy, FundRaiserStatus } from "../types/Enums/DbEnum";
 import { IEditableFundRaiser, IFundRaise, IFundRaiseInitialData, iFundRaiseModel } from "../types/Interface/IDBmodel";
 import { HelperFuncationResponse } from "../types/Interface/Util";
-import InitFundRaisingModel from "../util/config/db/model/initFundRaiseModel";
 
 interface IFundRaiserRepo {
 

@@ -1,9 +1,9 @@
-import UserController from "../../controller/userController";
-import express from 'express'
-import AuthMiddleware from "../../middleware/authMiddleware";
+import UserController from "../controller/userController";
+import express, { Router } from 'express'
+import AuthMiddleware from "../middleware/authMiddleware";
 
 
-const userRouter = express.Router();
+const userRouter: Router = express.Router();
 
 const UserControllers = new UserController();
 const authMiddleware = new AuthMiddleware()

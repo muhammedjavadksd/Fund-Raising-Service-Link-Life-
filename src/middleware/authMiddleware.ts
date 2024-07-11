@@ -16,7 +16,7 @@ class AuthMiddleware {
                 req.context = {}
             }
 
-            const token = auth.split(' ')[1]
+            const token: string = auth.split(' ')[1]
             req.context.auth_token = token;
 
             const tokenHelper = new TokenHelper();
@@ -89,6 +89,7 @@ class AuthMiddleware {
     }
 
     async isValidAdmin(req: CustomRequest, res: Response, next: NextFunction): Promise<void> {
+
         const headers: CustomRequest['headers'] = req.headers;
         const auth: string | undefined = headers['authorization'];
 
@@ -105,7 +106,7 @@ class AuthMiddleware {
             req.context.auth_token = token;
 
             if (checkValidity && typeof checkValidity == "object") {
-                if (checkValidity?.email) {
+                if (checkValidity?.email && checkValidity.role == "admin") {
                     req.context.email_id = checkValidity?.email;
                     req.context.token = token;
                     req.context.user_id = checkValidity.id;

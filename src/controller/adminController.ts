@@ -1,10 +1,10 @@
 import { Request, Response } from "express";
-import utilHelper from "../util/helper/utilHelper";
 import { IEditableFundRaiser, IFundRaise, iFundRaiseModel } from "../types/Interface/IDBmodel";
 import { FundRaiserCreatedBy, FundRaiserStatus } from "../types/Enums/DbEnum";
 import FundRaiserRepo from "../repositorys/FundRaiserRepo";
 import { HelperFuncationResponse } from "../types/Interface/Util";
 import FundRaiserService from "../services/FundRaiserService";
+import UtilHelper from "../util/helper/utilHelper";
 
 
 interface IAdminController {
@@ -45,6 +45,7 @@ class AdminController implements IAdminController {
 
             const profile_id: string = req.params.profile_id;
             const profile: iFundRaiseModel | null = await this.fundRaiserRepo.findFundPostByFundId(profile_id);
+
             if (profile) {
                 res.status(200).json({ status: true, data: profile })
             } else {
@@ -92,6 +93,8 @@ class AdminController implements IAdminController {
             const full_address: string = req.body.full_address;
             const pincode: number = req.body.pin_code;
             const state: string = req.body.state
+
+            const utilHelper = new UtilHelper();
 
             const fundID: string = utilHelper.createFundRaiseID("ADMIN")
             const createdDate: Date = new Date()

@@ -1,11 +1,9 @@
 import mongoose from "mongoose";
-import { iFundRaiseModel } from "../../../../types/Interface/IDBmodel";
-import const_data from "../../../utilFiles/const";
-import { FundRaiserCreatedBy } from "../../../../types/Enums/DbEnum";
-
-// const { default: mongoose } = require("mongoose");
-// const const_data = require("../../../utilFiles/const");
-
+import { iFundRaiseModel } from "../../types/Interface/IDBmodel";
+import { const_data } from "../../types/Enums/ConstData";
+import { FundRaiserCreatedBy } from "../../types/Enums/DbEnum";
+import { FundRaiserCategory } from "../../types/Enums/UtilEnum";
+// FundRaiserCategory
 
 let _fundRaiseSchema = {
     fund_id: {
@@ -24,7 +22,7 @@ let _fundRaiseSchema = {
     category: {
         type: String,
         required: true,
-        enum: [...Object.keys(const_data.fund_raise_category)]
+        enum: FundRaiserCategory //[...Object.keys(const_data.fund_raise_category)]
     },
     sub_category: {
         type: String,
