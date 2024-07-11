@@ -1,13 +1,10 @@
 import InitFundRaisingModel from "../db/model/initFundRaiseModel";
 import { FundRaiserCreatedBy, FundRaiserStatus } from "../types/Enums/DbEnum";
 import { IEditableFundRaiser, IFundRaise, IFundRaiseInitialData, iFundRaiseModel } from "../types/Interface/IDBmodel";
+import { IFundRaiserRepo } from "../types/Interface/IRepo";
 import { HelperFuncationResponse } from "../types/Interface/Util";
 
-interface IFundRaiserRepo {
 
-    createFundRaiserPost(initialData: IFundRaise): Promise<HelperFuncationResponse>
-
-}
 
 class FundRaiserRepo implements IFundRaiserRepo {
 
@@ -59,13 +56,13 @@ class FundRaiserRepo implements IFundRaiserRepo {
         }
     }
 
-    async getOrganizationPosts(organization_id: string) {
+    async getOrganizationPosts(organization_id: string): Promise<iFundRaiseModel[]> {
         try {
             const fundRaisePost: iFundRaiseModel[] = await this.FundRaiserModel.find({ created_by: FundRaiserCreatedBy.ORGANIZATION, user_id: organization_id });
             return fundRaisePost
         } catch (e) {
             console.log(e);
-            return null
+            return []
         }
     }
 
@@ -122,7 +119,7 @@ class FundRaiserRepo implements IFundRaiserRepo {
     }
 
 
-    async getSingleFundRaiseOfUser(user_id: string, fund_id: string) {
+    async getSingleFundRaiseOfUser(user_id: string, fund_id: string): Promise<iFundRaiseModel | null> {
         try {
 
             const findFundRaise: iFundRaiseModel | null = await this.FundRaiserModel.findOne({ user_id, fund_id });

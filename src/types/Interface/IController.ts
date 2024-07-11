@@ -1,5 +1,6 @@
-import { CustomRequest } from "../DataType/Objects";
+
 import { Request, Response } from "express";
+import { CustomRequest } from "../DataType/Objects";
 
 interface IUserController {
     getUserFundRaisePost(req: CustomRequest, res: Response): Promise<void>

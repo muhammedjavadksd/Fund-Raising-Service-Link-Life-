@@ -3,9 +3,10 @@ import { CustomRequest } from "../types/DataType/Objects";
 import TokenHelper from "../util/helper/tokenHelper";
 import { JwtPayload } from "jsonwebtoken";
 import FundRaiserRepo from "../repositorys/FundRaiserRepo";
+import { IAuthMiddleware } from "../types/Interface/IMiddleware";
 
 
-class AuthMiddleware {
+class AuthMiddleware implements IAuthMiddleware {
 
     async isValidUser(req: CustomRequest, res: Response, next: NextFunction): Promise<void> {
         const headers: Request['headers'] = req.headers;
