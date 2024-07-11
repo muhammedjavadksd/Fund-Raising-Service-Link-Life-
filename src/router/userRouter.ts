@@ -17,9 +17,9 @@ userRouter.get("/view/self", authMiddleware.isValidUser, UserControllers.getUser
 userRouter.post("/create", authMiddleware.isValidUser, UserControllers.createFundRaise); //test completed
 
 //Patch method
-userRouter.patch("/edit/:edit_id", authMiddleware.isValidUser, authMiddleware.isFundRaiseRequestValid, UserControllers.editFundRaise);
-userRouter.patch("/upload_images/:fund_id", authMiddleware.isValidUser, UserControllers.uploadImage);
-userRouter.patch("/close", authMiddleware.isValidUser, UserControllers.closeFundRaise);
+userRouter.patch("/edit/:edit_id", authMiddleware.isValidUser, authMiddleware.isFundRaiseRequestValid, UserControllers.editFundRaise); //test completed
+userRouter.patch("/upload_images/:fund_id", authMiddleware.isValidUser, authMiddleware.isFundRaiseRequestValid, UserControllers.uploadImage);
+userRouter.patch("/close", authMiddleware.isValidUser, authMiddleware.isFundRaiseRequestValid, UserControllers.closeFundRaise);
 
 //delete method
 userRouter.delete("/delete_image/:type/:edit_id/:image_id", authMiddleware.isValidUser, authMiddleware.isFundRaiseRequestValid, UserControllers.deleteImage)

@@ -71,6 +71,7 @@ class AuthMiddleware {
                 if (fund_id && user_id) {
                     const fundRaiseRepo = new FundRaiserRepo_1.default();
                     let findFundRaise = yield fundRaiseRepo.getSingleFundRaiseOfUser(user_id, fund_id); //InitFundRaisingModel.findOne({ fund_id: fundRaise, user_id: user_id });
+                    console.log(user_id, fund_id);
                     if (findFundRaise) {
                         next();
                     }
