@@ -25,8 +25,11 @@ class AuthMiddleware {
                 }
                 const token = auth.split(' ')[1];
                 req.context.auth_token = token;
+                console.log("TOken");
+                console.log(token);
                 const tokenHelper = new tokenHelper_1.default();
                 const checkValidity = yield tokenHelper.checkTokenValidity(token);
+                console.log(checkValidity);
                 if (checkValidity && typeof checkValidity == "object") {
                     console.log(checkValidity);
                     if (checkValidity && checkValidity.email) {
@@ -34,6 +37,7 @@ class AuthMiddleware {
                         req.context.token = token;
                         req.context.user_id = checkValidity.user_id;
                         req.context.profile_id = checkValidity.profile_id;
+                        console.log("Test");
                         next();
                     }
                     else {
@@ -68,12 +72,14 @@ class AuthMiddleware {
             const fund_id = req.params.edit_id;
             const user_id = (_a = req.context) === null || _a === void 0 ? void 0 : _a.user_id;
             try {
-                // console.log(fund_id, user_id);
+                console.log("D");
+                console.log(fund_id, user_id);
                 if (fund_id && user_id) {
                     const fundRaiseRepo = new FundRaiserRepo_1.default();
                     let findFundRaise = yield fundRaiseRepo.getSingleFundRaiseOfUser(user_id, fund_id); //InitFundRaisingModel.findOne({ fund_id: fundRaise, user_id: user_id });
                     console.log(user_id, fund_id);
                     if (findFundRaise) {
+                        console.log("Test passed");
                         next();
                     }
                     else {

@@ -44,13 +44,18 @@ class FundRaiserService implements IFundRaiserService {
     }
 
     async createFundRaisePost(data: IFundRaiseInitialData): Promise<HelperFuncationResponse> {
+        console.log("Da");
+
+        console.log(data);
+
         try {
             const createFundRaise = await this.FundRaiserRepo.createFundRaiserPost(data) //this.createFundRaisePost(data);
             return {
                 status: createFundRaise.status,
                 msg: createFundRaise.msg,
                 data: {
-                    id: createFundRaise.data?.id
+                    id: createFundRaise.data?.id,
+                    fund_id: createFundRaise.data?.fund_id
                 },
                 statusCode: createFundRaise.statusCode
             }

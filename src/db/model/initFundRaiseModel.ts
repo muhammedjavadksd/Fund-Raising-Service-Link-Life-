@@ -5,6 +5,7 @@ import { FundRaiserCreatedBy, FundRaiserStatus } from "../../types/Enums/DbEnum"
 import { FundRaiserCategory } from "../../types/Enums/UtilEnum";
 // FundRaiserCategory
 
+
 let _fundRaiseSchema = {
     fund_id: {
         type: String,

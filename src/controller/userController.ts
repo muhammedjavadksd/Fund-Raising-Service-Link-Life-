@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import FundRaiserService from "../services/FundRaiserService";
 import { CustomRequest } from "../types/DataType/Objects";
-import { FundRaiserCreatedBy } from "../types/Enums/DbEnum";
+import { FundRaiserCreatedBy, FundRaiserStatus } from "../types/Enums/DbEnum";
 import { HelperFuncationResponse } from "../types/Interface/Util";
 import { IEditableFundRaiser, IFundRaiseInitialData, iFundRaiseModel } from "../types/Interface/IDBmodel";
 import { FundRaiserFileType } from "../types/Enums/UtilEnum";
@@ -92,28 +92,43 @@ class UserController implements IUserController {
         try {
 
 
-            let file = req.files?.files as UploadedFile[];
-            console.log(file);
-
-
-            if (file) {
-                const fundRaiserID: string = req.params.edit_id;
-                const edit_type: FundRaiserFileType = req.body.edit_type;
-
-                const saveFundRaise: HelperFuncationResponse = await this.fundRaiserService.uploadImage(file, fundRaiserID, edit_type)
-                res.status(saveFundRaise.statusCode).json({
-                    status: saveFundRaise.status,
-                    msg: saveFundRaise.msg,
-                    data: {
-                        picture: saveFundRaise.data?.picture,
-                        documents: saveFundRaise.data?.documents
+            let body_file = req.files;
+            const files: UploadedFile[] = [];
+            if (typeof body_file == 'object' && body_file) {
+                Object.keys(body_file).forEach((each) => {
+                    const file = body_file[each];
+                    if (Array.isArray(file)) {
+                        files.push(...file);
+                    } else {
+                        files.push(file);
                     }
                 })
-            } else {
-                res.status(400).json({
-                    status: false,
-                    msg: "Please provide valid files"
-                })
+
+
+                console.log(req.files);
+                console.log(req.body);
+
+
+
+                if (files) {
+                    const fundRaiserID: string = req.params.edit_id;
+                    const edit_type: FundRaiserFileType = req.body.image_type;
+
+                    const saveFundRaise: HelperFuncationResponse = await this.fundRaiserService.uploadImage(files, fundRaiserID, edit_type)
+                    res.status(saveFundRaise.statusCode).json({
+                        status: saveFundRaise.status,
+                        msg: saveFundRaise.msg,
+                        data: {
+                            picture: saveFundRaise.data?.picture,
+                            documents: saveFundRaise.data?.documents
+                        }
+                    })
+                } else {
+                    res.status(400).json({
+                        status: false,
+                        msg: "Please provide valid files"
+                    })
+                }
             }
 
         } catch (e) {
@@ -186,13 +201,14 @@ class UserController implements IUserController {
                     sub_category,
                     phone_number,
                     email_id: email,
+                    status: FundRaiserStatus.INITIATED
                 }
 
                 console.log(fundRaiseData);
 
                 const createFundRaise: HelperFuncationResponse = await this.fundRaiserService.createFundRaisePost(fundRaiseData);
                 if (createFundRaise.status) {
-                    res.status(createFundRaise.statusCode).json({ status: true, msg: createFundRaise.msg, data: { id: createFundRaise.data?.id } })
+                    res.status(createFundRaise.statusCode).json({ status: true, msg: createFundRaise.msg, data: { id: createFundRaise.data?.id, fund_id: createFundRaise.data.fund_id } })
                 } else {
                     res.status(createFundRaise.statusCode).json({ status: false, msg: createFundRaise.msg })
                 }

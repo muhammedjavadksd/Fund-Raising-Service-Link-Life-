@@ -50,14 +50,17 @@ class FundRaiserService {
     }
     createFundRaisePost(data) {
         return __awaiter(this, void 0, void 0, function* () {
-            var _a;
+            var _a, _b;
+            console.log("Da");
+            console.log(data);
             try {
                 const createFundRaise = yield this.FundRaiserRepo.createFundRaiserPost(data); //this.createFundRaisePost(data);
                 return {
                     status: createFundRaise.status,
                     msg: createFundRaise.msg,
                     data: {
-                        id: (_a = createFundRaise.data) === null || _a === void 0 ? void 0 : _a.id
+                        id: (_a = createFundRaise.data) === null || _a === void 0 ? void 0 : _a.id,
+                        fund_id: (_b = createFundRaise.data) === null || _b === void 0 ? void 0 : _b.fund_id
                     },
                     statusCode: createFundRaise.statusCode
                 };

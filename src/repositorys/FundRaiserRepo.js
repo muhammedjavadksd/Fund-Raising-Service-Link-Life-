@@ -98,7 +98,8 @@ class FundRaiserRepo {
                     status: true,
                     statusCode: 201,
                     data: {
-                        id: newFundRaiser.id
+                        id: newFundRaiser.id,
+                        fund_id: newFundRaiser.fund_id
                     }
                 };
             }
@@ -114,6 +115,7 @@ class FundRaiserRepo {
     }
     updateFundRaiser(fund_id, edit_data) {
         return __awaiter(this, void 0, void 0, function* () {
+            console.log(edit_data);
             try {
                 yield this.FundRaiserModel.updateOne({ fund_id }, { $set: edit_data });
                 return true;

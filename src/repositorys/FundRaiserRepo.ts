@@ -87,7 +87,8 @@ class FundRaiserRepo implements IFundRaiserRepo {
                 status: true,
                 statusCode: 201,
                 data: {
-                    id: newFundRaiser.id
+                    id: newFundRaiser.id,
+                    fund_id: newFundRaiser.fund_id
                 }
             }
         } catch (e) {
@@ -101,6 +102,8 @@ class FundRaiserRepo implements IFundRaiserRepo {
     }
 
     async updateFundRaiser(fund_id: string, edit_data: IEditableFundRaiser): Promise<boolean> {
+        console.log(edit_data);
+
         try {
             await this.FundRaiserModel.updateOne({ fund_id }, { $set: edit_data });
             return true

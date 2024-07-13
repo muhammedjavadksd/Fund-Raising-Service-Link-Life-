@@ -29,7 +29,8 @@ interface IFundRaiseInitialData {
     category: string
     sub_category: string
     phone_number: number
-    email_id: string
+    email_id: string,
+    status: FundRaiserStatus
 }
 
 

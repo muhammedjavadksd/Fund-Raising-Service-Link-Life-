@@ -90,28 +90,41 @@ class UserController {
     }
     uploadImage(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            var _a, _b, _c;
+            var _a, _b;
             try {
-                let file = (_a = req.files) === null || _a === void 0 ? void 0 : _a.files;
-                console.log(file);
-                if (file) {
-                    const fundRaiserID = req.params.edit_id;
-                    const edit_type = req.body.edit_type;
-                    const saveFundRaise = yield this.fundRaiserService.uploadImage(file, fundRaiserID, edit_type);
-                    res.status(saveFundRaise.statusCode).json({
-                        status: saveFundRaise.status,
-                        msg: saveFundRaise.msg,
-                        data: {
-                            picture: (_b = saveFundRaise.data) === null || _b === void 0 ? void 0 : _b.picture,
-                            documents: (_c = saveFundRaise.data) === null || _c === void 0 ? void 0 : _c.documents
+                let body_file = req.files;
+                const files = [];
+                if (typeof body_file == 'object' && body_file) {
+                    Object.keys(body_file).forEach((each) => {
+                        const file = body_file[each];
+                        if (Array.isArray(file)) {
+                            files.push(...file);
+                        }
+                        else {
+                            files.push(file);
                         }
                     });
-                }
-                else {
-                    res.status(400).json({
-                        status: false,
-                        msg: "Please provide valid files"
-                    });
+                    console.log(req.files);
+                    console.log(req.body);
+                    if (files) {
+                        const fundRaiserID = req.params.edit_id;
+                        const edit_type = req.body.image_type;
+                        const saveFundRaise = yield this.fundRaiserService.uploadImage(files, fundRaiserID, edit_type);
+                        res.status(saveFundRaise.statusCode).json({
+                            status: saveFundRaise.status,
+                            msg: saveFundRaise.msg,
+                            data: {
+                                picture: (_a = saveFundRaise.data) === null || _a === void 0 ? void 0 : _a.picture,
+                                documents: (_b = saveFundRaise.data) === null || _b === void 0 ? void 0 : _b.documents
+                            }
+                        });
+                    }
+                    else {
+                        res.status(400).json({
+                            status: false,
+                            msg: "Please provide valid files"
+                        });
+                    }
                 }
             }
             catch (e) {
@@ -175,11 +188,12 @@ class UserController {
                         sub_category,
                         phone_number,
                         email_id: email,
+                        status: DbEnum_1.FundRaiserStatus.INITIATED
                     };
                     console.log(fundRaiseData);
                     const createFundRaise = yield this.fundRaiserService.createFundRaisePost(fundRaiseData);
                     if (createFundRaise.status) {
-                        res.status(createFundRaise.statusCode).json({ status: true, msg: createFundRaise.msg, data: { id: (_b = createFundRaise.data) === null || _b === void 0 ? void 0 : _b.id } });
+                        res.status(createFundRaise.statusCode).json({ status: true, msg: createFundRaise.msg, data: { id: (_b = createFundRaise.data) === null || _b === void 0 ? void 0 : _b.id, fund_id: createFundRaise.data.fund_id } });
                     }
                     else {
                         res.status(createFundRaise.statusCode).json({ status: false, msg: createFundRaise.msg });

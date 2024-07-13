@@ -20,9 +20,16 @@ class AuthMiddleware implements IAuthMiddleware {
             const token: string = auth.split(' ')[1]
             req.context.auth_token = token;
 
+            console.log("TOken");
+            console.log(token);
+
+
+
             const tokenHelper = new TokenHelper();
 
             const checkValidity: JwtPayload | string | false = await tokenHelper.checkTokenValidity(token)
+            console.log(checkValidity);
+
             if (checkValidity && typeof checkValidity == "object") {
 
                 console.log(checkValidity);
@@ -33,6 +40,8 @@ class AuthMiddleware implements IAuthMiddleware {
                     req.context.token = token;
                     req.context.user_id = checkValidity.user_id;
                     req.context.profile_id = checkValidity.profile_id;
+                    console.log("Test");
+
                     next()
                 } else {
                     res.status(401).json({
@@ -65,7 +74,9 @@ class AuthMiddleware implements IAuthMiddleware {
         const user_id: string = req.context?.user_id;
 
         try {
-            // console.log(fund_id, user_id);
+            console.log("D");
+
+            console.log(fund_id, user_id);
 
             if (fund_id && user_id) {
                 const fundRaiseRepo = new FundRaiserRepo()
@@ -73,6 +84,8 @@ class AuthMiddleware implements IAuthMiddleware {
                 console.log(user_id, fund_id);
 
                 if (findFundRaise) {
+                    console.log("Test passed");
+
                     next();
                 } else {
                     console.log("Un auth one");
