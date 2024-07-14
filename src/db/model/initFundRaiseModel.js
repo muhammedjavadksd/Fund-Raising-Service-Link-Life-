@@ -7,7 +7,7 @@ const mongoose_1 = __importDefault(require("mongoose"));
 const DbEnum_1 = require("../../types/Enums/DbEnum");
 const UtilEnum_1 = require("../../types/Enums/UtilEnum");
 // FundRaiserCategory
-let _fundRaiseSchema = {
+const _fundRaiseSchema = {
     fund_id: {
         type: String,
         required: true,

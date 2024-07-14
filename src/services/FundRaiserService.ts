@@ -27,9 +27,9 @@ class FundRaiserService implements IFundRaiserService {
 
     async deleteImage(fund_id: string, type: FundRaiserFileType, image: string): Promise<boolean> {
         try {
-            let findData = await this.FundRaiserRepo.findFundPostByFundId(fund_id) // await InitFundRaisingModel.findOne({ fund_id: fund_id });
+            const findData = await this.FundRaiserRepo.findFundPostByFundId(fund_id) // await InitFundRaisingModel.findOne({ fund_id: fund_id });
             if (findData) {
-                let field: "documents" | "picture" = (type == FundRaiserFileType.Document) ? "documents" : "picture";
+                const field: "documents" | "picture" = (type == FundRaiserFileType.Document) ? "documents" : "picture";
                 const filterImage = findData[field].filter((each) => each != image)
                 findData[field] = [...filterImage]
                 await this.FundRaiserRepo.updateFundRaiserByModel(findData);
@@ -210,26 +210,22 @@ class FundRaiserService implements IFundRaiserService {
     async uploadImage(images: UploadedFile[], fundRaiserID: string, document_type: FundRaiserFileType): Promise<HelperFuncationResponse> {
         try {
 
-            let newImages = [];
+            const newImages = [];
             const isDocument = document_type == FundRaiserFileType.Document
-            let field: 'picture' | 'documents' = document_type == FundRaiserFileType.Document ? "documents" : "picture"
-            let imageLength = images.length
-
-            console.log(imageLength);
-
-
+            const field: 'picture' | 'documents' = document_type == FundRaiserFileType.Document ? "documents" : "picture"
+            const imageLength = images.length
 
             for (let fileIndex = 0; fileIndex < imageLength; fileIndex++) {
 
-                let imageName = images[fileIndex].name;
+                const imageName = images[fileIndex].name;
+                const path = isDocument ? `public/images/fund_raise_document/${imageName}` : `public/images/fund_raiser_image/${imageName}`;
 
-                let path = isDocument ? `public/images/fund_raise_document/${imageName}` : `public/images/fund_raiser_image/${imageName}`;
                 newImages.push(imageName)
 
                 const imageBuffer: UploadedFile = images[fileIndex];
                 console.log(imageBuffer);
 
-                let bufferImage = imageBuffer.data
+                const bufferImage = imageBuffer.data
                 console.log(bufferImage);
 
                 if (bufferImage) {
@@ -238,7 +234,7 @@ class FundRaiserService implements IFundRaiserService {
             }
 
 
-            let initFundRaise: iFundRaiseModel | null = await this.FundRaiserRepo.findFundPostByFundId(fundRaiserID);;
+            const initFundRaise: iFundRaiseModel | null = await this.FundRaiserRepo.findFundPostByFundId(fundRaiserID);;
             console.log(initFundRaise);
 
             if (initFundRaise) {

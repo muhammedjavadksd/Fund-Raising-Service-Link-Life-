@@ -8,8 +8,8 @@ class UtilHelper {
         this.generateAnOTP = this.generateAnOTP.bind(this);
     }
     createFundRaiseID(created_by) {
-        let createdBY = created_by == DbEnum_1.FundRaiserCreatedBy.USER ? "U" : (created_by == DbEnum_1.FundRaiserCreatedBy.ADMIN ? "A" : "O");
-        let fundId = this.createRandomText(5) + "-" + createdBY + "-" + new Date().getUTCMilliseconds();
+        const createdBY = created_by == DbEnum_1.FundRaiserCreatedBy.USER ? "U" : (created_by == DbEnum_1.FundRaiserCreatedBy.ADMIN ? "A" : "O");
+        const fundId = this.createRandomText(5) + "-" + createdBY + "-" + new Date().getUTCMilliseconds();
         return fundId;
     }
     generateAnOTP(length) {

@@ -31,8 +31,8 @@ class FundRaiserRepo {
     getActiveFundRaiserPost(page, limit) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                let skip = (page - 1) * limit;
-                let limitedData = yield this.FundRaiserModel.find({ status: DbEnum_1.FundRaiserStatus.APPROVED, closed: false }).skip(skip).limit(limit);
+                const skip = (page - 1) * limit;
+                const limitedData = yield this.FundRaiserModel.find({ status: DbEnum_1.FundRaiserStatus.APPROVED, closed: false }).skip(skip).limit(limit);
                 return limitedData;
             }
             catch (e) {
@@ -43,8 +43,8 @@ class FundRaiserRepo {
     getAllFundRaiserPost(page, limit) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                let skip = (page - 1) * limit;
-                let limitedData = yield this.FundRaiserModel.find({}).skip(skip).limit(limit);
+                const skip = (page - 1) * limit;
+                const limitedData = yield this.FundRaiserModel.find({}).skip(skip).limit(limit);
                 return limitedData;
             }
             catch (e) {

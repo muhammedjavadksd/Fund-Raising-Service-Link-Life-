@@ -92,7 +92,7 @@ class UserController {
         return __awaiter(this, void 0, void 0, function* () {
             var _a, _b;
             try {
-                let body_file = req.files;
+                const body_file = req.files;
                 const files = [];
                 if (typeof body_file == 'object' && body_file) {
                     Object.keys(body_file).forEach((each) => {

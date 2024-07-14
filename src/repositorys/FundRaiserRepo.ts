@@ -29,8 +29,8 @@ class FundRaiserRepo implements IFundRaiserRepo {
 
     async getActiveFundRaiserPost(page: number, limit: number): Promise<iFundRaiseModel[]> {
         try {
-            let skip = (page - 1) * limit;
-            let limitedData: iFundRaiseModel[] = await this.FundRaiserModel.find({ status: FundRaiserStatus.APPROVED, closed: false }).skip(skip).limit(limit);
+            const skip = (page - 1) * limit;
+            const limitedData: iFundRaiseModel[] = await this.FundRaiserModel.find({ status: FundRaiserStatus.APPROVED, closed: false }).skip(skip).limit(limit);
             return limitedData;
         } catch (e) {
             return []
@@ -39,8 +39,8 @@ class FundRaiserRepo implements IFundRaiserRepo {
 
     async getAllFundRaiserPost(page: number, limit: number): Promise<iFundRaiseModel[]> {
         try {
-            let skip = (page - 1) * limit;
-            let limitedData = await this.FundRaiserModel.find({}).skip(skip).limit(limit);
+            const skip = (page - 1) * limit;
+            const limitedData = await this.FundRaiserModel.find({}).skip(skip).limit(limit);
             return limitedData;
         } catch (e) {
             return []

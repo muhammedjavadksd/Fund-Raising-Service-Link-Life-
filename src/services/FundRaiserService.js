@@ -30,9 +30,9 @@ class FundRaiserService {
     deleteImage(fund_id, type, image) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                let findData = yield this.FundRaiserRepo.findFundPostByFundId(fund_id); // await InitFundRaisingModel.findOne({ fund_id: fund_id });
+                const findData = yield this.FundRaiserRepo.findFundPostByFundId(fund_id); // await InitFundRaisingModel.findOne({ fund_id: fund_id });
                 if (findData) {
-                    let field = (type == UtilEnum_1.FundRaiserFileType.Document) ? "documents" : "picture";
+                    const field = (type == UtilEnum_1.FundRaiserFileType.Document) ? "documents" : "picture";
                     const filterImage = findData[field].filter((each) => each != image);
                     findData[field] = [...filterImage];
                     yield this.FundRaiserRepo.updateFundRaiserByModel(findData);
@@ -229,24 +229,23 @@ class FundRaiserService {
     uploadImage(images, fundRaiserID, document_type) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                let newImages = [];
+                const newImages = [];
                 const isDocument = document_type == UtilEnum_1.FundRaiserFileType.Document;
-                let field = document_type == UtilEnum_1.FundRaiserFileType.Document ? "documents" : "picture";
-                let imageLength = images.length;
-                console.log(imageLength);
+                const field = document_type == UtilEnum_1.FundRaiserFileType.Document ? "documents" : "picture";
+                const imageLength = images.length;
                 for (let fileIndex = 0; fileIndex < imageLength; fileIndex++) {
-                    let imageName = images[fileIndex].name;
-                    let path = isDocument ? `public/images/fund_raise_document/${imageName}` : `public/images/fund_raiser_image/${imageName}`;
+                    const imageName = images[fileIndex].name;
+                    const path = isDocument ? `public/images/fund_raise_document/${imageName}` : `public/images/fund_raiser_image/${imageName}`;
                     newImages.push(imageName);
                     const imageBuffer = images[fileIndex];
                     console.log(imageBuffer);
-                    let bufferImage = imageBuffer.data;
+                    const bufferImage = imageBuffer.data;
                     console.log(bufferImage);
                     if (bufferImage) {
                         yield fs_1.default.promises.writeFile(path, Buffer.from(bufferImage));
                     }
                 }
-                let initFundRaise = yield this.FundRaiserRepo.findFundPostByFundId(fundRaiserID);
+                const initFundRaise = yield this.FundRaiserRepo.findFundPostByFundId(fundRaiserID);
                 ;
                 console.log(initFundRaise);
                 if (initFundRaise) {

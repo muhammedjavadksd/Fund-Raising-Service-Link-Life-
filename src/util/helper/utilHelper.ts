@@ -12,9 +12,9 @@ class UtilHelper implements IUtilHelper {
     }
 
     createFundRaiseID(created_by: FundRaiserCreatedBy): string {
-        let createdBY: string = created_by == FundRaiserCreatedBy.USER ? "U" : (created_by == FundRaiserCreatedBy.ADMIN ? "A" : "O");
+        const createdBY: string = created_by == FundRaiserCreatedBy.USER ? "U" : (created_by == FundRaiserCreatedBy.ADMIN ? "A" : "O");
 
-        let fundId: string = this.createRandomText(5) + "-" + createdBY + "-" + new Date().getUTCMilliseconds()
+        const fundId: string = this.createRandomText(5) + "-" + createdBY + "-" + new Date().getUTCMilliseconds()
         return fundId;
     }
 

@@ -17,7 +17,7 @@ class TokenHelper {
     createJWTToken() {
         return __awaiter(this, arguments, void 0, function* (payload = {}, timer) {
             try {
-                let jwtToken = yield jsonwebtoken_1.default.sign(payload, process.env.JWT_SECRET, { algorithm: "HS256", expiresIn: timer });
+                const jwtToken = yield jsonwebtoken_1.default.sign(payload, process.env.JWT_SECRET, { algorithm: "HS256", expiresIn: timer });
                 return jwtToken;
             }
             catch (e) {
@@ -29,7 +29,7 @@ class TokenHelper {
     decodeJWTToken(jwtToken) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                let decode = yield jsonwebtoken_1.default.decode(jwtToken, { complete: true });
+                const decode = yield jsonwebtoken_1.default.decode(jwtToken, { complete: true });
                 return decode;
             }
             catch (e) {
@@ -40,7 +40,7 @@ class TokenHelper {
     checkTokenValidity(token) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                let checkValidity = yield jsonwebtoken_1.default.verify(token, process.env.JWT_SECRET);
+                const checkValidity = yield jsonwebtoken_1.default.verify(token, process.env.JWT_SECRET);
                 return checkValidity;
             }
             catch (e) {

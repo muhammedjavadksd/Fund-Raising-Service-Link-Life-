@@ -92,7 +92,7 @@ class UserController implements IUserController {
         try {
 
 
-            let body_file = req.files;
+            const body_file = req.files;
             const files: UploadedFile[] = [];
             if (typeof body_file == 'object' && body_file) {
                 Object.keys(body_file).forEach((each) => {
