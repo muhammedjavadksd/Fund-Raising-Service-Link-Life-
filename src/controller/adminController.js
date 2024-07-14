@@ -113,7 +113,7 @@ class AdminController {
                 "created_by": DbEnum_1.FundRaiserCreatedBy.ADMIN,
                 "user_id": "667868f8e5922a99a6e87d95",
                 "closed": false,
-                "status": DbEnum_1.FundRaiserStatus.APPROVED,
+                "status": DbEnum_1.FundRaiserStatus.INITIATED,
                 "about": about,
                 "age": age,
                 "benificiary_relation": benificiary_relation,

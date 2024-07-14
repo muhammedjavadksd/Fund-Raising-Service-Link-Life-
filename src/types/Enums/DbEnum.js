@@ -9,6 +9,7 @@ var FundRaiserCreatedBy;
 })(FundRaiserCreatedBy || (exports.FundRaiserCreatedBy = FundRaiserCreatedBy = {}));
 var FundRaiserStatus;
 (function (FundRaiserStatus) {
+    FundRaiserStatus["CREATED"] = "CREATED";
     FundRaiserStatus["INITIATED"] = "INITIATED";
     FundRaiserStatus["APPROVED"] = "APPROVED";
     FundRaiserStatus["HOLD"] = "HOLD";

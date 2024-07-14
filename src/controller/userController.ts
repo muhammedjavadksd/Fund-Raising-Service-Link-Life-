@@ -115,6 +115,10 @@ class UserController implements IUserController {
                     const edit_type: FundRaiserFileType = req.body.image_type;
 
                     const saveFundRaise: HelperFuncationResponse = await this.fundRaiserService.uploadImage(files, fundRaiserID, edit_type)
+
+                    
+                    
+                    
                     res.status(saveFundRaise.statusCode).json({
                         status: saveFundRaise.status,
                         msg: saveFundRaise.msg,
@@ -201,7 +205,7 @@ class UserController implements IUserController {
                     sub_category,
                     phone_number,
                     email_id: email,
-                    status: FundRaiserStatus.INITIATED
+                    status: FundRaiserStatus.CREATED
                 }
 
                 console.log(fundRaiseData);

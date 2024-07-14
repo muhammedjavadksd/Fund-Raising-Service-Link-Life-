@@ -7,6 +7,7 @@ enum FundRaiserCreatedBy {
 }
 
 enum FundRaiserStatus {
+    CREATED = "CREATED",
     INITIATED = "INITIATED",
     APPROVED = "APPROVED",
     HOLD = "HOLD",

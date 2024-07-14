@@ -117,7 +117,7 @@ class AdminController implements IAdminController {
                 "created_by": FundRaiserCreatedBy.ADMIN,
                 "user_id": "667868f8e5922a99a6e87d95",
                 "closed": false,
-                "status": FundRaiserStatus.APPROVED,
+                "status": FundRaiserStatus.INITIATED,
                 "about": about,
                 "age": age,
                 "benificiary_relation": benificiary_relation,

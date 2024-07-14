@@ -188,7 +188,7 @@ class UserController {
                         sub_category,
                         phone_number,
                         email_id: email,
-                        status: DbEnum_1.FundRaiserStatus.INITIATED
+                        status: DbEnum_1.FundRaiserStatus.CREATED
                     };
                     console.log(fundRaiseData);
                     const createFundRaise = yield this.fundRaiserService.createFundRaisePost(fundRaiseData);
