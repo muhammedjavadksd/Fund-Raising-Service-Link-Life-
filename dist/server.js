@@ -7,7 +7,7 @@ const express_1 = __importDefault(require("express"));
 const dotenv_1 = __importDefault(require("dotenv"));
 const express_fileupload_1 = __importDefault(require("express-fileupload"));
 const morgan_1 = __importDefault(require("morgan"));
-const mongo_connection_1 = __importDefault(require("./src/config/mongo_connection"));
+const mongo_connection_1 = __importDefault(require("./src/db/mongo_connection"));
 const userRouter_1 = __importDefault(require("./src/router/userRouter"));
 const adminRouter_1 = __importDefault(require("./src/router/adminRouter"));
 dotenv_1.default.config({ path: "./.env" });

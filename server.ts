@@ -2,7 +2,7 @@ import express, { Express } from 'express';
 import dotenv from 'dotenv'
 import fileUpload from 'express-fileupload'
 import morgan from 'morgan'
-import fundRaiseDbConnection from './src/config/mongo_connection';
+import fundRaiseDbConnection from './src/db/mongo_connection';
 import userRouter from './src/router/userRouter';
 import adminRouter from './src/router/adminRouter';
 
