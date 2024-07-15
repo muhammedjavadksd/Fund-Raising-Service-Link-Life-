@@ -110,7 +110,7 @@ class UserController implements IUserController {
 
 
 
-                if (files) {
+                if (files.length) {
                     const fundRaiserID: string = req.params.edit_id;
                     const edit_type: FundRaiserFileType = req.body.image_type;
 

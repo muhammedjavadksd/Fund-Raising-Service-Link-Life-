@@ -4,6 +4,7 @@ import TokenHelper from "../util/helper/tokenHelper";
 import { JwtPayload } from "jsonwebtoken";
 import FundRaiserRepo from "../repositorys/FundRaiserRepo";
 import { IAuthMiddleware } from "../types/Interface/IMiddleware";
+import { StatusCode } from "../types/Enums/UtilEnum";
 
 
 class AuthMiddleware implements IAuthMiddleware {
@@ -44,7 +45,7 @@ class AuthMiddleware implements IAuthMiddleware {
 
                     next()
                 } else {
-                    res.status(401).json({
+                    res.status(StatusCode.UNAUTHORIZED).json({
                         status: false,
                         msg: "Authorization is failed"
                     })
@@ -52,17 +53,13 @@ class AuthMiddleware implements IAuthMiddleware {
             } else {
                 console.log("This error 2");
 
-                res.status(401).json({
+                res.status(StatusCode.UNAUTHORIZED).json({
                     status: false,
                     msg: "Authorization is failed"
                 })
             }
         } else {
-            console.log("Headers");
-            console.log(req.headers);
-            console.log("This error 3");
-
-            res.status(401).json({
+            res.status(StatusCode.UNAUTHORIZED).json({
                 status: false,
                 msg: "Invalid auth attempt"
             })
@@ -74,9 +71,7 @@ class AuthMiddleware implements IAuthMiddleware {
         const user_id: string = req.context?.user_id;
 
         try {
-            console.log("D");
 
-            console.log(fund_id, user_id);
 
             if (fund_id && user_id) {
                 const fundRaiseRepo = new FundRaiserRepo()
@@ -84,12 +79,10 @@ class AuthMiddleware implements IAuthMiddleware {
                 console.log(user_id, fund_id);
 
                 if (findFundRaise) {
-                    console.log("Test passed");
 
                     next();
                 } else {
-                    console.log("Un auth one");
-                    res.status(401).json({
+                    res.status(StatusCode.UNAUTHORIZED).json({
                         status: false,
                         msg: "Un Authorized Access"
                     })
@@ -97,13 +90,13 @@ class AuthMiddleware implements IAuthMiddleware {
             } else {
                 console.log("Un auth two");
 
-                res.status(401).json({
+                res.status(StatusCode.BAD_REQUESR).json({
                     status: false,
                     msg: "Un Authorized Access"
                 })
             }
         } catch (e) {
-            res.status(500).json({
+            res.status(StatusCode.SERVER_ERROR).json({
                 status: false,
                 msg: "Internal Server Error"
             })
@@ -137,7 +130,7 @@ class AuthMiddleware implements IAuthMiddleware {
                     next()
                 } else {
                     console.log("This error 1");
-                    res.status(401).json({
+                    res.status(StatusCode.UNAUTHORIZED).json({
                         status: false,
                         msg: "Authorization is failed"
                     })
@@ -146,7 +139,7 @@ class AuthMiddleware implements IAuthMiddleware {
                 console.log("This error 2");
                 console.log(checkValidity);
 
-                res.status(401).json({
+                res.status(StatusCode.UNAUTHORIZED).json({
                     status: false,
                     msg: "Authorization is failed"
                 })
@@ -156,7 +149,7 @@ class AuthMiddleware implements IAuthMiddleware {
             console.log(req.headers);
             console.log("This error 3");
 
-            res.status(401).json({
+            res.status(StatusCode.UNAUTHORIZED).json({
                 status: false,
                 msg: "Invalid auth attempt"
             })

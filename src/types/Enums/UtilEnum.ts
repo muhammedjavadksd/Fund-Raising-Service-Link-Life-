@@ -38,4 +38,14 @@ enum FundRaiserCategory {
     InternationalAid = "International Aid"
 }
 
-export { FundRaiserFileType, FundRaiserCategory }
+enum StatusCode {
+    OK = 200,
+    CREATED = 201,
+    UNAUTHORIZED = 401,
+    BAD_REQUESR = 400,
+    NOT_FOUND = 404,
+    SERVER_ERROR = 500,
+    FORBIDDEN = 403,
+    CONFLICT = 409,
+}
+export { FundRaiserFileType, FundRaiserCategory,StatusCode }

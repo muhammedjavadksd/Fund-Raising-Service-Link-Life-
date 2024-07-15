@@ -1,6 +1,6 @@
 import FundRaiserRepo from "../repositorys/FundRaiserRepo";
 import { FundRaiserCreatedBy, FundRaiserStatus } from "../types/Enums/DbEnum";
-import { FundRaiserFileType } from "../types/Enums/UtilEnum";
+import { FundRaiserFileType, StatusCode } from "../types/Enums/UtilEnum";
 import { IEditableFundRaiser, IFundRaiseInitialData, iFundRaiseModel } from "../types/Interface/IDBmodel";
 import { IFundRaiserService } from "../types/Interface/IService";
 import { HelperFuncationResponse } from "../types/Interface/Util";
@@ -63,7 +63,7 @@ class FundRaiserService implements IFundRaiserService {
             return {
                 status: false,
                 msg: "Internal server error",
-                statusCode: 500
+                statusCode: StatusCode.SERVER_ERROR
             }
         }
     }
@@ -82,21 +82,21 @@ class FundRaiserService implements IFundRaiserService {
                     return {
                         msg: "Data fetched success",
                         status: true,
-                        statusCode: 200,
+                        statusCode: StatusCode.OK,
                         data: fundraiser_data
                     }
                 } else {
                     return {
                         msg: "No data found",
                         status: false,
-                        statusCode: 400
+                        statusCode: StatusCode.NOT_FOUND
                     }
                 }
             } else {
                 return {
                     msg: "Please provide valid user id",
                     status: false,
-                    statusCode: 401
+                    statusCode: StatusCode.UNAUTHORIZED
                 }
             }
         } catch (e) {
@@ -104,7 +104,7 @@ class FundRaiserService implements IFundRaiserService {
             return {
                 msg: "Internal server error",
                 status: false,
-                statusCode: 500
+                statusCode: StatusCode.SERVER_ERROR
             }
         }
     }
@@ -117,7 +117,7 @@ class FundRaiserService implements IFundRaiserService {
                     return {
                         status: false,
                         msg: "This fund raiser is already closed",
-                        statusCode: 400,
+                        statusCode: StatusCode.BAD_REQUESR,
                     }
                 } else {
                     currentFund.closed = true;
@@ -125,21 +125,21 @@ class FundRaiserService implements IFundRaiserService {
                     return {
                         msg: "Fund raiser closed success",
                         status: true,
-                        statusCode: 200
+                        statusCode: StatusCode.OK
                     }
                 }
             } else {
                 return {
                     msg: "Fund raiser is not available",
                     status: false,
-                    statusCode: 400
+                    statusCode: StatusCode.BAD_REQUESR
                 }
             }
         } catch (e) {
             return {
                 msg: "Internal server error",
                 status: false,
-                statusCode: 500
+                statusCode: StatusCode.SERVER_ERROR
             }
 
         }
@@ -154,7 +154,7 @@ class FundRaiserService implements IFundRaiserService {
                     return {
                         msg: "Current status is already that you have requested",
                         status: false,
-                        statusCode: 401
+                        statusCode: StatusCode.UNAUTHORIZED
                     }
                 } else {
                     currentFund.status = newStatus;
@@ -162,21 +162,21 @@ class FundRaiserService implements IFundRaiserService {
                     return {
                         status: true,
                         msg: "Status has been updated",
-                        statusCode: 200
+                        statusCode: StatusCode.OK
                     }
                 }
             } else {
                 return {
                     status: false,
                     msg: "Fund raiser is not available",
-                    statusCode: 400
+                    statusCode: StatusCode.BAD_REQUESR
                 }
             }
         } catch (e) {
             return {
                 status: false,
                 msg: "Interanl server error",
-                statusCode: 500
+                statusCode: StatusCode.SERVER_ERROR
             }
         }
     }
@@ -188,20 +188,20 @@ class FundRaiserService implements IFundRaiserService {
                 return {
                     msg: "Fund raiser updated success",
                     status: true,
-                    statusCode: 200,
+                    statusCode: StatusCode.OK,
                 }
             } else {
                 return {
                     msg: "Fund raiser updation failed",
                     status: false,
-                    statusCode: 400,
+                    statusCode: StatusCode.BAD_REQUESR,
                 }
             }
         } catch (e) {
             return {
                 msg: "Internal server error",
                 status: false,
-                statusCode: 500,
+                statusCode: StatusCode.SERVER_ERROR,
             }
         }
     }
@@ -245,7 +245,7 @@ class FundRaiserService implements IFundRaiserService {
                 return {
                     msg: "Image uploaded success",
                     status: true,
-                    statusCode: 201,
+                    statusCode: StatusCode.CREATED,
                     data: {
                         picture: initFundRaise.picture,
                         documents: initFundRaise.documents
@@ -255,7 +255,7 @@ class FundRaiserService implements IFundRaiserService {
                 return {
                     msg: "Fund id couldn't found",
                     status: false,
-                    statusCode: 400,
+                    statusCode: StatusCode.BAD_REQUESR,
                 }
             }
         } catch (e) {
@@ -263,7 +263,7 @@ class FundRaiserService implements IFundRaiserService {
             return {
                 msg: "Internal server error",
                 status: false,
-                statusCode: 500,
+                statusCode: StatusCode.SERVER_ERROR,
             }
         }
     }

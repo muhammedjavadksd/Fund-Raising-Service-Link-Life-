@@ -1,5 +1,6 @@
 import InitFundRaisingModel from "../db/model/initFundRaiseModel";
 import { FundRaiserCreatedBy, FundRaiserStatus } from "../types/Enums/DbEnum";
+import { StatusCode } from "../types/Enums/UtilEnum";
 import { IEditableFundRaiser, IFundRaise, IFundRaiseInitialData, iFundRaiseModel } from "../types/Interface/IDBmodel";
 import { IFundRaiserRepo } from "../types/Interface/IRepo";
 import { HelperFuncationResponse } from "../types/Interface/Util";
@@ -85,7 +86,7 @@ class FundRaiserRepo implements IFundRaiserRepo {
             return {
                 msg: "Fund raise created success",
                 status: true,
-                statusCode: 201,
+                statusCode: StatusCode.CREATED,
                 data: {
                     id: newFundRaiser.id,
                     fund_id: newFundRaiser.fund_id
@@ -96,7 +97,7 @@ class FundRaiserRepo implements IFundRaiserRepo {
             return {
                 msg: "Interanl server error",
                 status: false,
-                statusCode: 500,
+                statusCode: StatusCode.SERVER_ERROR,
             }
         }
     }
