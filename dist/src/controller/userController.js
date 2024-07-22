@@ -106,7 +106,7 @@ class UserController {
                     });
                     console.log(req.files);
                     console.log(req.body);
-                    if (files) {
+                    if (files.length) {
                         const fundRaiserID = req.params.edit_id;
                         const edit_type = req.body.image_type;
                         const saveFundRaise = yield this.fundRaiserService.uploadImage(files, fundRaiserID, edit_type);
@@ -200,9 +200,9 @@ class UserController {
                     }
                 }
                 else {
-                    res.status(500).json({
+                    res.status(401).json({
                         status: false,
-                        msg: "Internal Servor Error"
+                        msg: "Unauthorized access"
                     });
                 }
             }
@@ -225,6 +225,7 @@ class UserController {
                     res.status(200).json({ status: true, data: getLimitedData });
                 }
                 else {
+                    console.log("This works");
                     res.status(400).json({ status: false, msg: "No data found" });
                 }
             }

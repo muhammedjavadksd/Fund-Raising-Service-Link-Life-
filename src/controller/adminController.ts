@@ -32,9 +32,18 @@ class AdminController implements IAdminController {
             const limit: number = Number(req.params.limit);
             const page: number = Number(req.params.page);
             const fundRaisersPost: iFundRaiseModel[] = await this.fundRaiserRepo.getAllFundRaiserPost(page, limit)
+            const countDocuments: number = await this.fundRaiserRepo.countRecords()
 
             if (fundRaisersPost?.length) {
-                res.status(200).json({ status: true, data: fundRaisersPost })
+                res.status(200).json({
+                    status: true,
+                    data: {
+                        profiles: fundRaisersPost,
+                        total_records: countDocuments,
+                        current_page: page,
+                        total_pages: Math.ceil(countDocuments / limit)
+                    }
+                })
             } else {
                 res.status(204).json({ status: false, msg: "No data found" })
             }

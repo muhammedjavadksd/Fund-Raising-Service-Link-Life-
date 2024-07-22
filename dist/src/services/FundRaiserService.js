@@ -69,7 +69,7 @@ class FundRaiserService {
                 return {
                     status: false,
                     msg: "Internal server error",
-                    statusCode: 500
+                    statusCode: UtilEnum_1.StatusCode.SERVER_ERROR
                 };
             }
         });
@@ -89,7 +89,7 @@ class FundRaiserService {
                         return {
                             msg: "Data fetched success",
                             status: true,
-                            statusCode: 200,
+                            statusCode: UtilEnum_1.StatusCode.OK,
                             data: fundraiser_data
                         };
                     }
@@ -97,7 +97,7 @@ class FundRaiserService {
                         return {
                             msg: "No data found",
                             status: false,
-                            statusCode: 400
+                            statusCode: UtilEnum_1.StatusCode.NOT_FOUND
                         };
                     }
                 }
@@ -105,7 +105,7 @@ class FundRaiserService {
                     return {
                         msg: "Please provide valid user id",
                         status: false,
-                        statusCode: 401
+                        statusCode: UtilEnum_1.StatusCode.UNAUTHORIZED
                     };
                 }
             }
@@ -114,7 +114,7 @@ class FundRaiserService {
                 return {
                     msg: "Internal server error",
                     status: false,
-                    statusCode: 500
+                    statusCode: UtilEnum_1.StatusCode.SERVER_ERROR
                 };
             }
         });
@@ -128,7 +128,7 @@ class FundRaiserService {
                         return {
                             status: false,
                             msg: "This fund raiser is already closed",
-                            statusCode: 400,
+                            statusCode: UtilEnum_1.StatusCode.BAD_REQUESR,
                         };
                     }
                     else {
@@ -137,7 +137,7 @@ class FundRaiserService {
                         return {
                             msg: "Fund raiser closed success",
                             status: true,
-                            statusCode: 200
+                            statusCode: UtilEnum_1.StatusCode.OK
                         };
                     }
                 }
@@ -145,7 +145,7 @@ class FundRaiserService {
                     return {
                         msg: "Fund raiser is not available",
                         status: false,
-                        statusCode: 400
+                        statusCode: UtilEnum_1.StatusCode.BAD_REQUESR
                     };
                 }
             }
@@ -153,7 +153,7 @@ class FundRaiserService {
                 return {
                     msg: "Internal server error",
                     status: false,
-                    statusCode: 500
+                    statusCode: UtilEnum_1.StatusCode.SERVER_ERROR
                 };
             }
         });
@@ -168,7 +168,7 @@ class FundRaiserService {
                         return {
                             msg: "Current status is already that you have requested",
                             status: false,
-                            statusCode: 401
+                            statusCode: UtilEnum_1.StatusCode.UNAUTHORIZED
                         };
                     }
                     else {
@@ -177,7 +177,7 @@ class FundRaiserService {
                         return {
                             status: true,
                             msg: "Status has been updated",
-                            statusCode: 200
+                            statusCode: UtilEnum_1.StatusCode.OK
                         };
                     }
                 }
@@ -185,7 +185,7 @@ class FundRaiserService {
                     return {
                         status: false,
                         msg: "Fund raiser is not available",
-                        statusCode: 400
+                        statusCode: UtilEnum_1.StatusCode.BAD_REQUESR
                     };
                 }
             }
@@ -193,7 +193,7 @@ class FundRaiserService {
                 return {
                     status: false,
                     msg: "Interanl server error",
-                    statusCode: 500
+                    statusCode: UtilEnum_1.StatusCode.SERVER_ERROR
                 };
             }
         });
@@ -206,14 +206,14 @@ class FundRaiserService {
                     return {
                         msg: "Fund raiser updated success",
                         status: true,
-                        statusCode: 200,
+                        statusCode: UtilEnum_1.StatusCode.OK,
                     };
                 }
                 else {
                     return {
                         msg: "Fund raiser updation failed",
                         status: false,
-                        statusCode: 400,
+                        statusCode: UtilEnum_1.StatusCode.BAD_REQUESR,
                     };
                 }
             }
@@ -221,7 +221,7 @@ class FundRaiserService {
                 return {
                     msg: "Internal server error",
                     status: false,
-                    statusCode: 500,
+                    statusCode: UtilEnum_1.StatusCode.SERVER_ERROR,
                 };
             }
         });
@@ -255,7 +255,7 @@ class FundRaiserService {
                     return {
                         msg: "Image uploaded success",
                         status: true,
-                        statusCode: 201,
+                        statusCode: UtilEnum_1.StatusCode.CREATED,
                         data: {
                             picture: initFundRaise.picture,
                             documents: initFundRaise.documents
@@ -266,7 +266,7 @@ class FundRaiserService {
                     return {
                         msg: "Fund id couldn't found",
                         status: false,
-                        statusCode: 400,
+                        statusCode: UtilEnum_1.StatusCode.BAD_REQUESR,
                     };
                 }
             }
@@ -275,7 +275,7 @@ class FundRaiserService {
                 return {
                     msg: "Internal server error",
                     status: false,
-                    statusCode: 500,
+                    statusCode: UtilEnum_1.StatusCode.SERVER_ERROR,
                 };
             }
         });

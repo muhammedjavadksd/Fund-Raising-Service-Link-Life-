@@ -13,6 +13,12 @@ class AuthMiddleware implements IAuthMiddleware {
         const headers: Request['headers'] = req.headers;
         const auth: string = headers['authorization'] as string;
 
+        console.log("Hello world");
+        console.log(auth);
+        console.log(headers);
+
+
+
         if (auth && auth.split(' ')[0] === 'Bearer') {
             if (!req.context) {
                 req.context = {}

@@ -116,9 +116,9 @@ class UserController implements IUserController {
 
                     const saveFundRaise: HelperFuncationResponse = await this.fundRaiserService.uploadImage(files, fundRaiserID, edit_type)
 
-                    
-                    
-                    
+
+
+
                     res.status(saveFundRaise.statusCode).json({
                         status: saveFundRaise.status,
                         msg: saveFundRaise.msg,
@@ -217,9 +217,9 @@ class UserController implements IUserController {
                     res.status(createFundRaise.statusCode).json({ status: false, msg: createFundRaise.msg })
                 }
             } else {
-                res.status(500).json({
+                res.status(401).json({
                     status: false,
-                    msg: "Internal Servor Error"
+                    msg: "Unauthorized access"
                 })
             }
         } catch (e) {
@@ -233,6 +233,7 @@ class UserController implements IUserController {
 
     async getActiveFundRaise(req: Request, res: Response): Promise<void> {
 
+
         try {
 
             const limit: number = Number(req.params.limit);
@@ -242,6 +243,7 @@ class UserController implements IUserController {
             if (getLimitedData?.length) {
                 res.status(200).json({ status: true, data: getLimitedData })
             } else {
+                console.log("This works");
                 res.status(400).json({ status: false, msg: "No data found" })
             }
         } catch (e) {

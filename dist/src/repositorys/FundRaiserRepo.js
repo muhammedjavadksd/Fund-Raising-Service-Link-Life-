@@ -14,6 +14,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const initFundRaiseModel_1 = __importDefault(require("../db/model/initFundRaiseModel"));
 const DbEnum_1 = require("../types/Enums/DbEnum");
+const UtilEnum_1 = require("../types/Enums/UtilEnum");
 class FundRaiserRepo {
     constructor() {
         this.getActiveFundRaiserPost = this.getActiveFundRaiserPost.bind(this);
@@ -27,6 +28,17 @@ class FundRaiserRepo {
         this.findFundPostByFundId = this.findFundPostByFundId.bind(this);
         this.getSingleFundRaiseOfUser = this.getSingleFundRaiseOfUser.bind(this);
         this.FundRaiserModel = initFundRaiseModel_1.default;
+    }
+    countRecords() {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const countFundRaise = yield this.FundRaiserModel.countDocuments({});
+                return countFundRaise;
+            }
+            catch (e) {
+                return 0;
+            }
+        });
     }
     getActiveFundRaiserPost(page, limit) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -96,7 +108,7 @@ class FundRaiserRepo {
                 return {
                     msg: "Fund raise created success",
                     status: true,
-                    statusCode: 201,
+                    statusCode: UtilEnum_1.StatusCode.CREATED,
                     data: {
                         id: newFundRaiser.id,
                         fund_id: newFundRaiser.fund_id
@@ -108,7 +120,7 @@ class FundRaiserRepo {
                 return {
                     msg: "Interanl server error",
                     status: false,
-                    statusCode: 500,
+                    statusCode: UtilEnum_1.StatusCode.SERVER_ERROR,
                 };
             }
         });

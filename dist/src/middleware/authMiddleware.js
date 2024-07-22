@@ -14,11 +14,15 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const tokenHelper_1 = __importDefault(require("../util/helper/tokenHelper"));
 const FundRaiserRepo_1 = __importDefault(require("../repositorys/FundRaiserRepo"));
+const UtilEnum_1 = require("../types/Enums/UtilEnum");
 class AuthMiddleware {
     isValidUser(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
             const headers = req.headers;
             const auth = headers['authorization'];
+            console.log("Hello world");
+            console.log(auth);
+            console.log(headers);
             if (auth && auth.split(' ')[0] === 'Bearer') {
                 if (!req.context) {
                     req.context = {};
@@ -41,7 +45,7 @@ class AuthMiddleware {
                         next();
                     }
                     else {
-                        res.status(401).json({
+                        res.status(UtilEnum_1.StatusCode.UNAUTHORIZED).json({
                             status: false,
                             msg: "Authorization is failed"
                         });
@@ -49,17 +53,14 @@ class AuthMiddleware {
                 }
                 else {
                     console.log("This error 2");
-                    res.status(401).json({
+                    res.status(UtilEnum_1.StatusCode.UNAUTHORIZED).json({
                         status: false,
                         msg: "Authorization is failed"
                     });
                 }
             }
             else {
-                console.log("Headers");
-                console.log(req.headers);
-                console.log("This error 3");
-                res.status(401).json({
+                res.status(UtilEnum_1.StatusCode.UNAUTHORIZED).json({
                     status: false,
                     msg: "Invalid auth attempt"
                 });
@@ -72,19 +73,15 @@ class AuthMiddleware {
             const fund_id = req.params.edit_id;
             const user_id = (_a = req.context) === null || _a === void 0 ? void 0 : _a.user_id;
             try {
-                console.log("D");
-                console.log(fund_id, user_id);
                 if (fund_id && user_id) {
                     const fundRaiseRepo = new FundRaiserRepo_1.default();
                     const findFundRaise = yield fundRaiseRepo.getSingleFundRaiseOfUser(user_id, fund_id); //InitFundRaisingModel.findOne({ fund_id: fundRaise, user_id: user_id });
                     console.log(user_id, fund_id);
                     if (findFundRaise) {
-                        console.log("Test passed");
                         next();
                     }
                     else {
-                        console.log("Un auth one");
-                        res.status(401).json({
+                        res.status(UtilEnum_1.StatusCode.UNAUTHORIZED).json({
                             status: false,
                             msg: "Un Authorized Access"
                         });
@@ -92,14 +89,14 @@ class AuthMiddleware {
                 }
                 else {
                     console.log("Un auth two");
-                    res.status(401).json({
+                    res.status(UtilEnum_1.StatusCode.BAD_REQUESR).json({
                         status: false,
                         msg: "Un Authorized Access"
                     });
                 }
             }
             catch (e) {
-                res.status(500).json({
+                res.status(UtilEnum_1.StatusCode.SERVER_ERROR).json({
                     status: false,
                     msg: "Internal Server Error"
                 });
@@ -129,7 +126,7 @@ class AuthMiddleware {
                     }
                     else {
                         console.log("This error 1");
-                        res.status(401).json({
+                        res.status(UtilEnum_1.StatusCode.UNAUTHORIZED).json({
                             status: false,
                             msg: "Authorization is failed"
                         });
@@ -138,7 +135,7 @@ class AuthMiddleware {
                 else {
                     console.log("This error 2");
                     console.log(checkValidity);
-                    res.status(401).json({
+                    res.status(UtilEnum_1.StatusCode.UNAUTHORIZED).json({
                         status: false,
                         msg: "Authorization is failed"
                     });
@@ -148,7 +145,7 @@ class AuthMiddleware {
                 console.log("Headers");
                 console.log(req.headers);
                 console.log("This error 3");
-                res.status(401).json({
+                res.status(UtilEnum_1.StatusCode.UNAUTHORIZED).json({
                     status: false,
                     msg: "Invalid auth attempt"
                 });

@@ -26,6 +26,15 @@ class FundRaiserRepo implements IFundRaiserRepo {
         this.FundRaiserModel = InitFundRaisingModel
     }
 
+    async countRecords(): Promise<number> {
+        try {
+            const countFundRaise: number = await this.FundRaiserModel.countDocuments({})
+            return countFundRaise
+        } catch (e) {
+            return 0
+        }
+    }
+
 
 
     async getActiveFundRaiserPost(page: number, limit: number): Promise<iFundRaiseModel[]> {

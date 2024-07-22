@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.FundRaiserCategory = exports.FundRaiserFileType = void 0;
+exports.StatusCode = exports.FundRaiserCategory = exports.FundRaiserFileType = void 0;
 var FundRaiserFileType;
 (function (FundRaiserFileType) {
     FundRaiserFileType["Document"] = "Document";
@@ -39,3 +39,14 @@ var FundRaiserCategory;
     FundRaiserCategory["LegalDefense"] = "Legal Defense";
     FundRaiserCategory["InternationalAid"] = "International Aid";
 })(FundRaiserCategory || (exports.FundRaiserCategory = FundRaiserCategory = {}));
+var StatusCode;
+(function (StatusCode) {
+    StatusCode[StatusCode["OK"] = 200] = "OK";
+    StatusCode[StatusCode["CREATED"] = 201] = "CREATED";
+    StatusCode[StatusCode["UNAUTHORIZED"] = 401] = "UNAUTHORIZED";
+    StatusCode[StatusCode["BAD_REQUESR"] = 400] = "BAD_REQUESR";
+    StatusCode[StatusCode["NOT_FOUND"] = 404] = "NOT_FOUND";
+    StatusCode[StatusCode["SERVER_ERROR"] = 500] = "SERVER_ERROR";
+    StatusCode[StatusCode["FORBIDDEN"] = 403] = "FORBIDDEN";
+    StatusCode[StatusCode["CONFLICT"] = 409] = "CONFLICT";
+})(StatusCode || (exports.StatusCode = StatusCode = {}));

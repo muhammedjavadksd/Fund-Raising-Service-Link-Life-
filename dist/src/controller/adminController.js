@@ -34,8 +34,17 @@ class AdminController {
                 const limit = Number(req.params.limit);
                 const page = Number(req.params.page);
                 const fundRaisersPost = yield this.fundRaiserRepo.getAllFundRaiserPost(page, limit);
+                const countDocuments = yield this.fundRaiserRepo.countRecords();
                 if (fundRaisersPost === null || fundRaisersPost === void 0 ? void 0 : fundRaisersPost.length) {
-                    res.status(200).json({ status: true, data: fundRaisersPost });
+                    res.status(200).json({
+                        status: true,
+                        data: {
+                            profiles: fundRaisersPost,
+                            total_records: countDocuments,
+                            current_page: page,
+                            total_pages: Math.ceil(countDocuments / limit)
+                        }
+                    });
                 }
                 else {
                     res.status(204).json({ status: false, msg: "No data found" });
