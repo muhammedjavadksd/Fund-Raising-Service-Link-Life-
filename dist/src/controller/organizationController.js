@@ -38,7 +38,12 @@ class OrganizationController {
         });
     }
     editFundRaiser(req, res) {
-        throw new Error("Method not implemented.");
+        return __awaiter(this, void 0, void 0, function* () {
+            const edit_id = req.params.edit_id;
+            const edit_data = req.body.edit_data;
+            const editFundRaiser = yield this.fundRaiserService.editFundRaiser(edit_id, edit_data);
+            res.status(editFundRaiser.statusCode).json({ status: editFundRaiser.status, msg: editFundRaiser.msg });
+        });
     }
     addFundRaiser(req, res) {
         throw new Error("Method not implemented.");

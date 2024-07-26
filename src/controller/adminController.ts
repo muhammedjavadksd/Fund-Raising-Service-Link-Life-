@@ -76,7 +76,6 @@ class AdminController implements IAdminController {
         try {
 
             const fund_id: string = req.params.edit_id;
-
             const edit_data: IEditableFundRaiser = req.body.edit_data;
 
 

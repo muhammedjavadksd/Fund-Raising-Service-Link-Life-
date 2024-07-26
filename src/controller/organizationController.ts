@@ -1,11 +1,9 @@
 import { Request, Response } from "express"
-import FundRaiserRepo from "../repositorys/FundRaiserRepo"
 import { CustomRequest } from "../types/DataType/Objects"
-import { StatusCode } from "../types/Enums/UtilEnum"
-import { iFundRaiseModel } from "../types/Interface/IDBmodel"
 import FundRaiserService from "../services/FundRaiserService"
 import { FundRaiserCreatedBy } from "../types/Enums/DbEnum"
 import { HelperFuncationResponse } from "../types/Interface/Util"
+import { IEditableFundRaiser } from "../types/Interface/IDBmodel"
 
 
 interface IOrganizationController {
@@ -41,9 +39,14 @@ class OrganizationController implements IOrganizationController {
     }
 
 
-    editFundRaiser(req: Request, res: Response): Promise<void> {
-        throw new Error("Method not implemented.")
+    async editFundRaiser(req: Request, res: Response): Promise<void> {
+        const edit_id: string = req.params.edit_id;
+        const edit_data: IEditableFundRaiser = req.body.edit_data;
+
+        const editFundRaiser: HelperFuncationResponse = await this.fundRaiserService.editFundRaiser(edit_id, edit_data);
+        res.status(editFundRaiser.statusCode).json({ status: editFundRaiser.status, msg: editFundRaiser.msg })
     }
+
     addFundRaiser(req: Request, res: Response): void {
         throw new Error("Method not implemented.")
     }

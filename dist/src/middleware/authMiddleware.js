@@ -157,5 +157,10 @@ class AuthMiddleware {
             next();
         });
     }
+    isOrganizationAuthraized(req, res, next) {
+        return __awaiter(this, void 0, void 0, function* () {
+            next();
+        });
+    }
 }
 exports.default = AuthMiddleware;

@@ -166,6 +166,10 @@ class AuthMiddleware implements IAuthMiddleware {
         next()
     }
 
+    async isOrganizationAuthraized(req: Request, res: Response, next: NextFunction): Promise<void> {
+        next()
+    }
+
 }
 
 export default AuthMiddleware

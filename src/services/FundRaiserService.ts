@@ -24,7 +24,7 @@ class FundRaiserService implements IFundRaiserService {
 
         this.FundRaiserRepo = new FundRaiserRepo();
     }
-    
+
 
 
     async getOwnerSingleProfile(profile_id: string, user_type: FundRaiserCreatedBy, owner_id: string): Promise<HelperFuncationResponse> {
@@ -222,6 +222,7 @@ class FundRaiserService implements IFundRaiserService {
 
     async editFundRaiser(fund_id: string, edit_data: IEditableFundRaiser): Promise<HelperFuncationResponse> {
         try {
+
             const updateFundRaiserData = await this.FundRaiserRepo.updateFundRaiser(fund_id, edit_data);
             if (updateFundRaiserData) {
                 return {
