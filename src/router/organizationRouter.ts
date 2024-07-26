@@ -14,9 +14,9 @@ organizationRouter.get("/view/:limit/:skip", authMiddleware.isValidOrganization,
 organizationRouter.post("/create", authMiddleware.isValidOrganization, organizationController.addFundRaiser)
 
 //patch method
-organizationRouter.patch("/edit/:edit_id", authMiddleware.isOrganizationAuthraized, organizationController.editFundRaiser)
-organizationRouter.patch("/update_status/:edit_id", authMiddleware.isValidOrganization, organizationController.updateStatus)
-organizationRouter.patch("/close/:edit_id", authMiddleware.isValidOrganization, organizationController.closeFundRaiser)
+organizationRouter.patch("/edit/:edit_id", authMiddleware.isValidOrganization, authMiddleware.isOrganizationAuthraized, organizationController.editFundRaiser)
+organizationRouter.patch("/update_status/:edit_id", authMiddleware.isValidOrganization, authMiddleware.isOrganizationAuthraized, organizationController.updateStatus)
+organizationRouter.patch("/close/:edit_id", authMiddleware.isValidOrganization, authMiddleware.isValidOrganization, organizationController.closeFundRaiser)
 
 export default organizationRouter
 
