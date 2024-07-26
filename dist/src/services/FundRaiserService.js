@@ -51,8 +51,6 @@ class FundRaiserService {
     createFundRaisePost(data) {
         return __awaiter(this, void 0, void 0, function* () {
             var _a, _b;
-            console.log("Da");
-            console.log(data);
             try {
                 const createFundRaise = yield this.FundRaiserRepo.createFundRaiserPost(data); //this.createFundRaisePost(data);
                 return {
@@ -74,13 +72,13 @@ class FundRaiserService {
             }
         });
     }
-    getOwnerFundRaise(owner_id, owner_type) {
+    getOwnerFundRaise(owner_id, owner_type, limit, skip) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 if (owner_id) {
                     let fundraiser_data;
                     if (owner_type == DbEnum_1.FundRaiserCreatedBy.ORGANIZATION) {
-                        fundraiser_data = yield this.FundRaiserRepo.getOrganizationPosts(owner_id);
+                        fundraiser_data = yield this.FundRaiserRepo.getOrganizationPosts(owner_id, skip, limit);
                     }
                     else if (owner_type == DbEnum_1.FundRaiserCreatedBy.USER) {
                         fundraiser_data = yield this.FundRaiserRepo.getUserPosts(owner_id);

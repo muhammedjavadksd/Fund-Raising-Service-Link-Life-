@@ -25,6 +25,10 @@ class FundRaiserService implements IFundRaiserService {
         this.FundRaiserRepo = new FundRaiserRepo();
     }
 
+
+
+
+
     async deleteImage(fund_id: string, type: FundRaiserFileType, image: string): Promise<boolean> {
         try {
             const findData = await this.FundRaiserRepo.findFundPostByFundId(fund_id) // await InitFundRaisingModel.findOne({ fund_id: fund_id });
@@ -44,9 +48,7 @@ class FundRaiserService implements IFundRaiserService {
     }
 
     async createFundRaisePost(data: IFundRaiseInitialData): Promise<HelperFuncationResponse> {
-        console.log("Da");
 
-        console.log(data);
 
         try {
             const createFundRaise = await this.FundRaiserRepo.createFundRaiserPost(data) //this.createFundRaisePost(data);
@@ -68,12 +70,12 @@ class FundRaiserService implements IFundRaiserService {
         }
     }
 
-    async getOwnerFundRaise(owner_id: string, owner_type: FundRaiserCreatedBy): Promise<HelperFuncationResponse> {
+    async getOwnerFundRaise(owner_id: string, owner_type: FundRaiserCreatedBy, limit: number, skip: number): Promise<HelperFuncationResponse> {
         try {
             if (owner_id) {
                 let fundraiser_data;
                 if (owner_type == FundRaiserCreatedBy.ORGANIZATION) {
-                    fundraiser_data = await this.FundRaiserRepo.getOrganizationPosts(owner_id);
+                    fundraiser_data = await this.FundRaiserRepo.getOrganizationPosts(owner_id, skip, limit);
                 } else if (owner_type == FundRaiserCreatedBy.USER) {
                     fundraiser_data = await this.FundRaiserRepo.getUserPosts(owner_id);
                 }

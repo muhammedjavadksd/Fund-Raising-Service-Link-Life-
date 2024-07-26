@@ -40,9 +40,11 @@ class AdminController {
                         status: true,
                         data: {
                             profiles: fundRaisersPost,
-                            total_records: countDocuments,
-                            current_page: page,
-                            total_pages: Math.ceil(countDocuments / limit)
+                            pagination: {
+                                total_records: countDocuments,
+                                current_page: page,
+                                total_pages: Math.ceil(countDocuments / limit)
+                            }
                         }
                     });
                 }

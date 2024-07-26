@@ -88,10 +88,10 @@ class FundRaiserRepo {
             }
         });
     }
-    getOrganizationPosts(organization_id) {
+    getOrganizationPosts(organization_id, skip, limit) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const fundRaisePost = yield this.FundRaiserModel.find({ created_by: DbEnum_1.FundRaiserCreatedBy.ORGANIZATION, user_id: organization_id });
+                const fundRaisePost = yield this.FundRaiserModel.find({ created_by: DbEnum_1.FundRaiserCreatedBy.ORGANIZATION, user_id: organization_id }).skip(skip).limit(limit);
                 return fundRaisePost;
             }
             catch (e) {

@@ -162,6 +162,10 @@ class AuthMiddleware implements IAuthMiddleware {
         }
     }
 
+    async isValidOrganization(req: Request, res: Response, next: NextFunction): Promise<void> {
+        next()
+    }
+
 }
 
 export default AuthMiddleware

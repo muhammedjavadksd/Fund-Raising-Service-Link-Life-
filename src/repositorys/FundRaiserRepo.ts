@@ -1,3 +1,4 @@
+import { skip } from "node:test";
 import InitFundRaisingModel from "../db/model/initFundRaiseModel";
 import { FundRaiserCreatedBy, FundRaiserStatus } from "../types/Enums/DbEnum";
 import { StatusCode } from "../types/Enums/UtilEnum";
@@ -77,9 +78,9 @@ class FundRaiserRepo implements IFundRaiserRepo {
         }
     }
 
-    async getOrganizationPosts(organization_id: string): Promise<iFundRaiseModel[]> {
+    async getOrganizationPosts(organization_id: string, skip: number, limit: number): Promise<iFundRaiseModel[]> {
         try {
-            const fundRaisePost: iFundRaiseModel[] = await this.FundRaiserModel.find({ created_by: FundRaiserCreatedBy.ORGANIZATION, user_id: organization_id });
+            const fundRaisePost: iFundRaiseModel[] = await this.FundRaiserModel.find({ created_by: FundRaiserCreatedBy.ORGANIZATION, user_id: organization_id }).skip(skip).limit(limit);
             return fundRaisePost
         } catch (e) {
             console.log(e);
