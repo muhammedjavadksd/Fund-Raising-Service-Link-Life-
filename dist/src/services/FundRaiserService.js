@@ -27,6 +27,41 @@ class FundRaiserService {
         this.uploadImage = this.uploadImage.bind(this);
         this.FundRaiserRepo = new FundRaiserRepo_1.default();
     }
+    getOwnerSingleProfile(profile_id, user_type, owner_id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            let fundraiser_data = yield this.FundRaiserRepo.findFundPostByFundId(profile_id);
+            if (!fundraiser_data) {
+                return {
+                    msg: "No profile found",
+                    status: false,
+                    statusCode: UtilEnum_1.StatusCode.NOT_FOUND,
+                };
+            }
+            if (user_type == DbEnum_1.FundRaiserCreatedBy.ADMIN) {
+                return {
+                    msg: "Data fetched success",
+                    status: true,
+                    statusCode: UtilEnum_1.StatusCode.OK,
+                    data: fundraiser_data
+                };
+            }
+            if (fundraiser_data.user_id == owner_id) {
+                return {
+                    msg: "Data fetched success",
+                    status: true,
+                    statusCode: UtilEnum_1.StatusCode.OK,
+                    data: fundraiser_data
+                };
+            }
+            else {
+                return {
+                    msg: "Unauthorized access",
+                    status: false,
+                    statusCode: UtilEnum_1.StatusCode.UNAUTHORIZED,
+                };
+            }
+        });
+    }
     deleteImage(fund_id, type, image) {
         return __awaiter(this, void 0, void 0, function* () {
             try {

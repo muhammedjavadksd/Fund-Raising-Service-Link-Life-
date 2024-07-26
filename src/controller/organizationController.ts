@@ -33,9 +33,14 @@ class OrganizationController implements IOrganizationController {
         res.status(findAllPost.statusCode).json({ status: findAllPost.status, msg: findAllPost.msg, data: findAllPost.data })
     }
 
-    getSingleProfile(req: Request, res: Response): Promise<void> {
-        throw new Error("Method not implemented.")
+    async getSingleProfile(req: CustomRequest, res: Response): Promise<void> {
+        const profile_id: string = req.params.profile_id;
+        const organization_id = req.context?.organization_id;
+        const findProfile: HelperFuncationResponse = await this.fundRaiserService.getOwnerSingleProfile(profile_id, FundRaiserCreatedBy.ORGANIZATION, organization_id);
+        res.status(findProfile.statusCode).json({ status: findProfile.status, msg: findProfile.msg, data: findProfile.data })
     }
+
+
     editFundRaiser(req: Request, res: Response): Promise<void> {
         throw new Error("Method not implemented.")
     }

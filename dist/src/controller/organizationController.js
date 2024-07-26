@@ -29,7 +29,13 @@ class OrganizationController {
         });
     }
     getSingleProfile(req, res) {
-        throw new Error("Method not implemented.");
+        return __awaiter(this, void 0, void 0, function* () {
+            var _a;
+            const profile_id = req.params.profile_id;
+            const organization_id = (_a = req.context) === null || _a === void 0 ? void 0 : _a.organization_id;
+            const findProfile = yield this.fundRaiserService.getOwnerSingleProfile(profile_id, DbEnum_1.FundRaiserCreatedBy.ORGANIZATION, organization_id);
+            res.status(findProfile.statusCode).json({ status: findProfile.status, msg: findProfile.msg, data: findProfile.data });
+        });
     }
     editFundRaiser(req, res) {
         throw new Error("Method not implemented.");

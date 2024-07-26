@@ -24,6 +24,43 @@ class FundRaiserService implements IFundRaiserService {
 
         this.FundRaiserRepo = new FundRaiserRepo();
     }
+    
+
+
+    async getOwnerSingleProfile(profile_id: string, user_type: FundRaiserCreatedBy, owner_id: string): Promise<HelperFuncationResponse> {
+        let fundraiser_data: iFundRaiseModel | null = await this.FundRaiserRepo.findFundPostByFundId(profile_id);
+        if (!fundraiser_data) {
+            return {
+                msg: "No profile found",
+                status: false,
+                statusCode: StatusCode.NOT_FOUND,
+            }
+        }
+        if (user_type == FundRaiserCreatedBy.ADMIN) {
+            return {
+                msg: "Data fetched success",
+                status: true,
+                statusCode: StatusCode.OK,
+                data: fundraiser_data
+            }
+        }
+
+        if (fundraiser_data.user_id == owner_id) {
+            return {
+                msg: "Data fetched success",
+                status: true,
+                statusCode: StatusCode.OK,
+                data: fundraiser_data
+            }
+        } else {
+            return {
+                msg: "Unauthorized access",
+                status: false,
+                statusCode: StatusCode.UNAUTHORIZED,
+            }
+        }
+
+    }
 
 
 

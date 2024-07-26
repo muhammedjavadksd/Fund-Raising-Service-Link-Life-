@@ -146,7 +146,6 @@ class FundRaiserRepo implements IFundRaiserRepo {
 
     async getSingleFundRaiseOfUser(user_id: string, fund_id: string): Promise<iFundRaiseModel | null> {
         try {
-
             const findFundRaise: iFundRaiseModel | null = await this.FundRaiserModel.findOne({ user_id, fund_id });
             return findFundRaise
         } catch (e) {
