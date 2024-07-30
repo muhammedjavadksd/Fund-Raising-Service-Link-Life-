@@ -266,9 +266,10 @@ class FundRaiserService {
                 const isDocument = document_type == UtilEnum_1.FundRaiserFileType.Document;
                 const field = document_type == UtilEnum_1.FundRaiserFileType.Document ? "documents" : "picture";
                 const imageLength = images.length;
+                console.log(__dirname);
                 for (let fileIndex = 0; fileIndex < imageLength; fileIndex++) {
                     const imageName = images[fileIndex].name;
-                    const path = isDocument ? `public/images/fund_raise_document/${imageName}` : `public/images/fund_raiser_image/${imageName}`;
+                    const path = isDocument ? `../public/images/fund_raise_document/${imageName}` : `../public/images/fund_raiser_image/${imageName}`;
                     newImages.push(imageName);
                     const imageBuffer = images[fileIndex];
                     console.log(imageBuffer);

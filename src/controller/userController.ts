@@ -41,7 +41,7 @@ class UserController implements IUserController {
             console.log(user_id);
 
             if (user_id) {
-                const getMyFundRaisePost: HelperFuncationResponse = await this.fundRaiserService.getOwnerFundRaise(user_id, FundRaiserCreatedBy.USER);
+                const getMyFundRaisePost: HelperFuncationResponse = await this.fundRaiserService.getOwnerFundRaise(user_id, FundRaiserCreatedBy.USER, 1, 2);
                 if (getMyFundRaisePost.status) {
                     const data: iFundRaiseModel = getMyFundRaisePost.data;
                     res.status(getMyFundRaisePost.statusCode).json({ status: true, data })

@@ -38,7 +38,7 @@ class UserController {
                 const user_id = (_a = req.context) === null || _a === void 0 ? void 0 : _a.user_id;
                 console.log(user_id);
                 if (user_id) {
-                    const getMyFundRaisePost = yield this.fundRaiserService.getOwnerFundRaise(user_id, DbEnum_1.FundRaiserCreatedBy.USER);
+                    const getMyFundRaisePost = yield this.fundRaiserService.getOwnerFundRaise(user_id, DbEnum_1.FundRaiserCreatedBy.USER, 1, 2);
                     if (getMyFundRaisePost.status) {
                         const data = getMyFundRaisePost.data;
                         res.status(getMyFundRaisePost.statusCode).json({ status: true, data });

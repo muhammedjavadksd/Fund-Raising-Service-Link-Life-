@@ -114,6 +114,12 @@ class AuthMiddleware implements IAuthMiddleware {
         const headers: CustomRequest['headers'] = req.headers;
         const auth: string | undefined = headers['authorization'];
 
+        console.log("token", auth);
+
+
+        console.log("Token recivied");
+
+
         if (auth && auth.split(' ')[0] === 'Bearer') {
 
             const tokenHelper = new TokenHelper();

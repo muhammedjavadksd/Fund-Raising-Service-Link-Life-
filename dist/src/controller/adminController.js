@@ -17,6 +17,7 @@ const DbEnum_1 = require("../types/Enums/DbEnum");
 const FundRaiserRepo_1 = __importDefault(require("../repositorys/FundRaiserRepo"));
 const FundRaiserService_1 = __importDefault(require("../services/FundRaiserService"));
 const utilHelper_1 = __importDefault(require("../util/helper/utilHelper"));
+const UtilEnum_1 = require("../types/Enums/UtilEnum");
 class AdminController {
     constructor() {
         this.getAllFundRaise = this.getAllFundRaise.bind(this);
@@ -30,6 +31,7 @@ class AdminController {
     }
     getAllFundRaise(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
+            console.log("Reached here");
             try {
                 const limit = Number(req.params.limit);
                 const page = Number(req.params.page);
@@ -59,18 +61,21 @@ class AdminController {
     }
     getSingleProfile(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
+            console.log("REACHED HERE");
             try {
                 const profile_id = req.params.profile_id;
                 const profile = yield this.fundRaiserRepo.findFundPostByFundId(profile_id);
+                console.log("Profile");
+                console.log(profile);
                 if (profile) {
-                    res.status(200).json({ status: true, data: profile });
+                    res.status(UtilEnum_1.StatusCode.OK).json({ status: true, data: profile });
                 }
                 else {
-                    res.status(204).json({ status: false, msg: "Profile not found" });
+                    res.status(UtilEnum_1.StatusCode.NOT_FOUND).json({ status: false, msg: "Profile not found" });
                 }
             }
             catch (e) {
-                res.status(500).json({ status: false, msg: "Internal Server Error" });
+                res.status(UtilEnum_1.StatusCode.SERVER_ERROR).json({ status: false, msg: "Internal Server Error" });
             }
         });
     }

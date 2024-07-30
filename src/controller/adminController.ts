@@ -6,7 +6,7 @@ import { HelperFuncationResponse } from "../types/Interface/Util";
 import FundRaiserService from "../services/FundRaiserService";
 import UtilHelper from "../util/helper/utilHelper";
 import { IAdminController } from "../types/Interface/IController";
-import { FundRaiserCategory } from "../types/Enums/UtilEnum";
+import { FundRaiserCategory, StatusCode } from "../types/Enums/UtilEnum";
 
 class AdminController implements IAdminController {
 
@@ -26,6 +26,8 @@ class AdminController implements IAdminController {
     }
 
     async getAllFundRaise(req: Request, res: Response): Promise<void> {
+        console.log("Reached here");
+
 
         try {
 
@@ -56,18 +58,25 @@ class AdminController implements IAdminController {
 
     async getSingleProfile(req: Request, res: Response): Promise<void> {
 
+        console.log("REACHED HERE");
+
+
         try {
 
             const profile_id: string = req.params.profile_id;
             const profile: iFundRaiseModel | null = await this.fundRaiserRepo.findFundPostByFundId(profile_id);
+            console.log("Profile");
+
+            console.log(profile);
+
 
             if (profile) {
-                res.status(200).json({ status: true, data: profile })
+                res.status(StatusCode.OK).json({ status: true, data: profile })
             } else {
-                res.status(204).json({ status: false, msg: "Profile not found" })
+                res.status(StatusCode.NOT_FOUND).json({ status: false, msg: "Profile not found" })
             }
         } catch (e) {
-            res.status(500).json({ status: false, msg: "Internal Server Error" })
+            res.status(StatusCode.SERVER_ERROR).json({ status: false, msg: "Internal Server Error" })
         }
     }
 

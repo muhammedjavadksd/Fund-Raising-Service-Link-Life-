@@ -107,6 +107,8 @@ class AuthMiddleware {
         return __awaiter(this, void 0, void 0, function* () {
             const headers = req.headers;
             const auth = headers['authorization'];
+            console.log("token", auth);
+            console.log("Token recivied");
             if (auth && auth.split(' ')[0] === 'Bearer') {
                 const tokenHelper = new tokenHelper_1.default();
                 const token = auth.split(' ')[1];
