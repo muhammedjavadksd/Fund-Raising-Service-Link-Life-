@@ -17,6 +17,7 @@ const DbEnum_1 = require("../types/Enums/DbEnum");
 const FundRaiserRepo_1 = __importDefault(require("../repositorys/FundRaiserRepo"));
 const utilHelper_1 = __importDefault(require("../util/helper/utilHelper"));
 const ConstData_1 = require("../types/Enums/ConstData");
+const s3Bucket_1 = __importDefault(require("../util/helper/s3Bucket"));
 class UserController {
     constructor() {
         this.getUserFundRaisePost = this.getUserFundRaisePost.bind(this);
@@ -29,6 +30,16 @@ class UserController {
         this.getSingleProfile = this.getSingleProfile.bind(this);
         this.fundRaiserService = new FundRaiserService_1.default();
         this.fundRaiserRepo = new FundRaiserRepo_1.default();
+    }
+    getPresignedUrl(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const util = new utilHelper_1.default();
+            const key = util.createRandomText(10) + ".jpeg";
+            const s3Helper = new s3Bucket_1.default("file-bucket");
+            const url = yield s3Helper.generatePresignedUrl(key);
+            console.log("The url is : ", url);
+            res.status(200).json({ status: true, msg: "Signed url createed", data: { url } });
+        });
     }
     getUserFundRaisePost(req, res) {
         return __awaiter(this, void 0, void 0, function* () {

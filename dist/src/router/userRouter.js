@@ -9,6 +9,7 @@ const authMiddleware_1 = __importDefault(require("../middleware/authMiddleware")
 const userRouter = express_1.default.Router();
 const UserControllers = new userController_1.default();
 const authMiddleware = new authMiddleware_1.default();
+userRouter.get("/generate_presigned_url", UserControllers.getPresignedUrl); //test completed
 //Get method
 userRouter.get("/view/self", authMiddleware.isValidUser, UserControllers.getUserFundRaisePost); //test completed
 userRouter.get("/view/:profile_id", UserControllers.getSingleProfile); //test completed

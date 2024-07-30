@@ -8,7 +8,7 @@ const userRouter: Router = express.Router();
 const UserControllers = new UserController();
 const authMiddleware = new AuthMiddleware()
 
-// userRouter.get("/view/:limit/:page", UserControllers.getActiveFundRaise); //test completed
+userRouter.get("/generate_presigned_url", UserControllers.getPresignedUrl); //test completed
 
 
 //Get method

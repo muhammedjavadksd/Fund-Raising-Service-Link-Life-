@@ -10,11 +10,16 @@ import UtilHelper from "../util/helper/utilHelper";
 import { const_data } from "../types/Enums/ConstData";
 import { IUserController } from "../types/Interface/IController";
 import { UploadedFile } from "express-fileupload";
+import S3BucketHelper from "../util/helper/s3Bucket";
 
 class UserController implements IUserController {
 
     private readonly fundRaiserService;
     private readonly fundRaiserRepo;
+
+
+
+
 
     constructor() {
 
@@ -29,6 +34,18 @@ class UserController implements IUserController {
 
         this.fundRaiserService = new FundRaiserService();
         this.fundRaiserRepo = new FundRaiserRepo();
+    }
+
+
+
+    async getPresignedUrl(req: Request, res: Response) {
+        const util = new UtilHelper();
+        const key = util.createRandomText(10) + ".jpeg"
+        const s3Helper = new S3BucketHelper("file-bucket");
+        const url = await s3Helper.generatePresignedUrl(key);
+        console.log("The url is : ", url);
+
+        res.status(200).json({ status: true, msg: "Signed url createed", data: { url } })
     }
 
     async getUserFundRaisePost(req: CustomRequest, res: Response): Promise<void> {
