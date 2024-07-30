@@ -39,3 +39,5 @@ class S3BucketHelper {
     }
 
 }
+
+export default S3BucketHelper

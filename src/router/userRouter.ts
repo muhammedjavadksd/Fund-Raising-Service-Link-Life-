@@ -8,6 +8,9 @@ const userRouter: Router = express.Router();
 const UserControllers = new UserController();
 const authMiddleware = new AuthMiddleware()
 
+// userRouter.get("/view/:limit/:page", UserControllers.getActiveFundRaise); //test completed
+
+
 //Get method
 userRouter.get("/view/self", authMiddleware.isValidUser, UserControllers.getUserFundRaisePost); //test completed
 userRouter.get("/view/:profile_id", UserControllers.getSingleProfile); //test completed
