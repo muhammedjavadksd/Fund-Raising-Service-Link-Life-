@@ -2,9 +2,11 @@ import { GetObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { fromEnv } from "@aws-sdk/credential-provider-env";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import AWS from 'aws-sdk'
+import axios from 'axios'
 
 interface IS3BucketHelper {
     generatePresignedUrl(key: string): Promise<string>
+    uploadFile(file: Buffer, presigned_url: string): Promise<boolean>
 }
 
 class S3BucketHelper {
@@ -26,4 +28,14 @@ class S3BucketHelper {
         const url = await getSignedUrl(this.s3Config, new GetObjectCommand({ Bucket: this.bucketName, Key: key }), { expiresIn: 3600 })
         return url;
     }
+
+    async uploadFile(file: Buffer, presigned_url: string, fileType: string): Promise<boolean> {
+        try {
+            await axios.put(presigned_url, file, { headers: { "Content-Type": fileType, } })
+            return true
+        } catch (e) {
+            return false
+        }
+    }
+
 }
