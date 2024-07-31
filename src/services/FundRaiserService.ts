@@ -108,15 +108,16 @@ class FundRaiserService implements IFundRaiserService {
                 DocumentsPreisgnedUrl.push(docsPresignedUrl)
             }
 
-
-
-
             return {
                 status: createFundRaise.status,
                 msg: createFundRaise.msg,
                 data: {
                     id: createFundRaise.data?.id,
-                    fund_id: createFundRaise.data?.fund_id
+                    fund_id: createFundRaise.data?.fund_id,
+                    upload_images: {
+                        pictures: picturesPreisgnedUrl,
+                        documents: DocumentsPreisgnedUrl
+                    }
                 },
                 statusCode: createFundRaise.statusCode
             }
@@ -269,39 +270,22 @@ class FundRaiserService implements IFundRaiserService {
     }
 
 
-    async uploadImage(images: UploadedFile[], fundRaiserID: string, document_type: FundRaiserFileType): Promise<HelperFuncationResponse> {
+    async uploadImage(images: string[], fundRaiserID: string, document_type: FundRaiserFileType): Promise<HelperFuncationResponse> {
         try {
 
-            const newImages = [];
-            const isDocument = document_type == FundRaiserFileType.Document
+            const newImages: string[] = [];
             const field: 'picture' | 'documents' = document_type == FundRaiserFileType.Document ? "documents" : "picture"
             const imageLength = images.length
 
-
-            console.log(__dirname);
-
+            const utilHelper = new UtilHelper();
             for (let fileIndex = 0; fileIndex < imageLength; fileIndex++) {
-
-                const imageName = images[fileIndex].name;
-
-                const path = isDocument ? `../public/images/fund_raise_document/${imageName}` : `../public/images/fund_raiser_image/${imageName}`;
-
-                newImages.push(imageName)
-
-                const imageBuffer: UploadedFile = images[fileIndex];
-                console.log(imageBuffer);
-
-                const bufferImage = imageBuffer.data
-                console.log(bufferImage);
-
-                if (bufferImage) {
-                    await fs.promises.writeFile(path, Buffer.from(bufferImage));
+                const imageName: string | boolean = utilHelper.extractImageNameFromPresignedUrl(images[fileIndex]);
+                if (imageName) {
+                    newImages.push(imageName.toString())
                 }
             }
 
-
             const initFundRaise: iFundRaiseModel | null = await this.FundRaiserRepo.findFundPostByFundId(fundRaiserID);;
-            console.log(initFundRaise);
 
             if (initFundRaise) {
                 const replaceImage: string[] = initFundRaise[field] //initFundRaise[field] as string[]

@@ -1,5 +1,6 @@
 import { FundRaiserCreatedBy } from "../../types/Enums/DbEnum";
 import { IUtilHelper } from "../../types/Interface/IHelper";
+import url from 'url'
 
 
 class UtilHelper implements IUtilHelper {
@@ -36,6 +37,17 @@ class UtilHelper implements IUtilHelper {
         }
 
         return result;
+    }
+
+    extractImageNameFromPresignedUrl(presigned_url: string): string | boolean {
+        const newUrl = url.parse(presigned_url, true)
+        const urlPath = newUrl.pathname;
+        const splitPath = urlPath?.split("/");
+        if (splitPath && splitPath?.length >= 2) {
+            const imageName = splitPath[2];
+            return imageName
+        }
+        return false
     }
 
 }

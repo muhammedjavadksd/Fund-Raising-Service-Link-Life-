@@ -14,6 +14,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const FundRaiserService_1 = __importDefault(require("../services/FundRaiserService"));
 const DbEnum_1 = require("../types/Enums/DbEnum");
+const UtilEnum_1 = require("../types/Enums/UtilEnum");
 const FundRaiserRepo_1 = __importDefault(require("../repositorys/FundRaiserRepo"));
 const utilHelper_1 = __importDefault(require("../util/helper/utilHelper"));
 const ConstData_1 = require("../types/Enums/ConstData");
@@ -136,39 +137,22 @@ class UserController {
         return __awaiter(this, void 0, void 0, function* () {
             var _a, _b;
             try {
-                const body_file = req.files;
-                const files = [];
-                if (typeof body_file == 'object' && body_file) {
-                    Object.keys(body_file).forEach((each) => {
-                        const file = body_file[each];
-                        if (Array.isArray(file)) {
-                            files.push(...file);
-                        }
-                        else {
-                            files.push(file);
+                let imagesPresignedUrl = req.body.presigned_url;
+                const fundRaiserID = req.params.edit_id;
+                if (imagesPresignedUrl.length) {
+                    const edit_type = req.body.image_type;
+                    const saveFundRaise = yield this.fundRaiserService.uploadImage(imagesPresignedUrl, fundRaiserID, edit_type);
+                    res.status(saveFundRaise.statusCode).json({
+                        status: saveFundRaise.status,
+                        msg: saveFundRaise.msg,
+                        data: {
+                            picture: (_a = saveFundRaise.data) === null || _a === void 0 ? void 0 : _a.picture,
+                            documents: (_b = saveFundRaise.data) === null || _b === void 0 ? void 0 : _b.documents
                         }
                     });
-                    console.log(req.files);
-                    console.log(req.body);
-                    if (files.length) {
-                        const fundRaiserID = req.params.edit_id;
-                        const edit_type = req.body.image_type;
-                        const saveFundRaise = yield this.fundRaiserService.uploadImage(files, fundRaiserID, edit_type);
-                        res.status(saveFundRaise.statusCode).json({
-                            status: saveFundRaise.status,
-                            msg: saveFundRaise.msg,
-                            data: {
-                                picture: (_a = saveFundRaise.data) === null || _a === void 0 ? void 0 : _a.picture,
-                                documents: (_b = saveFundRaise.data) === null || _b === void 0 ? void 0 : _b.documents
-                            }
-                        });
-                    }
-                    else {
-                        res.status(400).json({
-                            status: false,
-                            msg: "Please provide valid files"
-                        });
-                    }
+                }
+                else {
+                    res.status(UtilEnum_1.StatusCode.BAD_REQUESR).json({ status: false, msg: "Please provid valid images" });
                 }
             }
             catch (e) {

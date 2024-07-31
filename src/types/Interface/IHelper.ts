@@ -12,6 +12,7 @@ interface IUtilHelper {
     createFundRaiseID(created_by: FundRaiserCreatedBy): string
     generateAnOTP(length: number): number
     createRandomText(length: number): string
+    extractImageNameFromPresignedUrl(url: string): string | boolean
 }
 
 export { ITokenHelper, IUtilHelper }

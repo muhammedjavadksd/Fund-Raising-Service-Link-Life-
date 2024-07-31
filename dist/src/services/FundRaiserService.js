@@ -15,7 +15,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const FundRaiserRepo_1 = __importDefault(require("../repositorys/FundRaiserRepo"));
 const DbEnum_1 = require("../types/Enums/DbEnum");
 const UtilEnum_1 = require("../types/Enums/UtilEnum");
-const fs_1 = __importDefault(require("fs"));
 const s3Bucket_1 = __importDefault(require("../util/helper/s3Bucket"));
 const ConstData_1 = require("../types/Enums/ConstData");
 const utilHelper_1 = __importDefault(require("../util/helper/utilHelper"));
@@ -108,7 +107,11 @@ class FundRaiserService {
                     msg: createFundRaise.msg,
                     data: {
                         id: (_a = createFundRaise.data) === null || _a === void 0 ? void 0 : _a.id,
-                        fund_id: (_b = createFundRaise.data) === null || _b === void 0 ? void 0 : _b.fund_id
+                        fund_id: (_b = createFundRaise.data) === null || _b === void 0 ? void 0 : _b.fund_id,
+                        upload_images: {
+                            pictures: picturesPreisgnedUrl,
+                            documents: DocumentsPreisgnedUrl
+                        }
                     },
                     statusCode: createFundRaise.statusCode
                 };
@@ -278,25 +281,17 @@ class FundRaiserService {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const newImages = [];
-                const isDocument = document_type == UtilEnum_1.FundRaiserFileType.Document;
                 const field = document_type == UtilEnum_1.FundRaiserFileType.Document ? "documents" : "picture";
                 const imageLength = images.length;
-                console.log(__dirname);
+                const utilHelper = new utilHelper_1.default();
                 for (let fileIndex = 0; fileIndex < imageLength; fileIndex++) {
-                    const imageName = images[fileIndex].name;
-                    const path = isDocument ? `../public/images/fund_raise_document/${imageName}` : `../public/images/fund_raiser_image/${imageName}`;
-                    newImages.push(imageName);
-                    const imageBuffer = images[fileIndex];
-                    console.log(imageBuffer);
-                    const bufferImage = imageBuffer.data;
-                    console.log(bufferImage);
-                    if (bufferImage) {
-                        yield fs_1.default.promises.writeFile(path, Buffer.from(bufferImage));
+                    const imageName = utilHelper.extractImageNameFromPresignedUrl(images[fileIndex]);
+                    if (imageName) {
+                        newImages.push(imageName.toString());
                     }
                 }
                 const initFundRaise = yield this.FundRaiserRepo.findFundPostByFundId(fundRaiserID);
                 ;
-                console.log(initFundRaise);
                 if (initFundRaise) {
                     const replaceImage = initFundRaise[field]; //initFundRaise[field] as string[]
                     initFundRaise[field] = [...replaceImage, ...newImages];

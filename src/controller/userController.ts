@@ -4,7 +4,7 @@ import { CustomRequest } from "../types/DataType/Objects";
 import { FundRaiserCreatedBy, FundRaiserStatus } from "../types/Enums/DbEnum";
 import { HelperFuncationResponse } from "../types/Interface/Util";
 import { IEditableFundRaiser, IFundRaiseInitialData, iFundRaiseModel } from "../types/Interface/IDBmodel";
-import { FundRaiserFileType } from "../types/Enums/UtilEnum";
+import { FundRaiserFileType, StatusCode } from "../types/Enums/UtilEnum";
 import FundRaiserRepo from "../repositorys/FundRaiserRepo";
 import UtilHelper from "../util/helper/utilHelper";
 import { BucketsOnS3, const_data } from "../types/Enums/ConstData";
@@ -142,49 +142,25 @@ class UserController implements IUserController {
         try {
 
 
-            const body_file = req.files;
-            const files: UploadedFile[] = [];
-            if (typeof body_file == 'object' && body_file) {
-                Object.keys(body_file).forEach((each) => {
-                    const file = body_file[each];
-                    if (Array.isArray(file)) {
-                        files.push(...file);
-                    } else {
-                        files.push(file);
+            let imagesPresignedUrl: string[] = req.body.presigned_url;
+            const fundRaiserID: string = req.params.edit_id;
+
+            if (imagesPresignedUrl.length) {
+                const edit_type: FundRaiserFileType = req.body.image_type;
+
+                const saveFundRaise: HelperFuncationResponse = await this.fundRaiserService.uploadImage(imagesPresignedUrl, fundRaiserID, edit_type)
+
+                res.status(saveFundRaise.statusCode).json({
+                    status: saveFundRaise.status,
+                    msg: saveFundRaise.msg,
+                    data: {
+                        picture: saveFundRaise.data?.picture,
+                        documents: saveFundRaise.data?.documents
                     }
                 })
-
-
-                console.log(req.files);
-                console.log(req.body);
-
-
-
-                if (files.length) {
-                    const fundRaiserID: string = req.params.edit_id;
-                    const edit_type: FundRaiserFileType = req.body.image_type;
-
-                    const saveFundRaise: HelperFuncationResponse = await this.fundRaiserService.uploadImage(files, fundRaiserID, edit_type)
-
-
-
-
-                    res.status(saveFundRaise.statusCode).json({
-                        status: saveFundRaise.status,
-                        msg: saveFundRaise.msg,
-                        data: {
-                            picture: saveFundRaise.data?.picture,
-                            documents: saveFundRaise.data?.documents
-                        }
-                    })
-                } else {
-                    res.status(400).json({
-                        status: false,
-                        msg: "Please provide valid files"
-                    })
-                }
+            } else {
+                res.status(StatusCode.BAD_REQUESR).json({ status: false, msg: "Please provid valid images" })
             }
-
         } catch (e) {
             console.log(e);
             res.status(500).json({
