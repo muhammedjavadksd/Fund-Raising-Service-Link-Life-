@@ -1,13 +1,20 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.FundRaiseDetails = exports.const_data = void 0;
+exports.BucketsOnS3 = exports.FundRaiseDetails = exports.const_data = void 0;
 const UtilEnum_1 = require("./UtilEnum");
 var const_data;
 (function (const_data) {
     const_data[const_data["OTP_LENGTH"] = 6] = "OTP_LENGTH";
     const_data[const_data["OTP_EXPIRE_TIME"] = Date.now() + 1800000] = "OTP_EXPIRE_TIME";
+    const_data[const_data["FUND_RAISER_PICTURES_LENGTH"] = 5] = "FUND_RAISER_PICTURES_LENGTH";
+    const_data[const_data["FUND_RAISER_DOCUMENTS_LENGTH"] = 5] = "FUND_RAISER_DOCUMENTS_LENGTH";
 })(const_data || (exports.const_data = const_data = {}));
 ;
+var BucketsOnS3;
+(function (BucketsOnS3) {
+    BucketsOnS3["FundRaiserPicture"] = "fund-raiser-pictures";
+    BucketsOnS3["FundRaiserDocument"] = "fund-raiser-documents";
+})(BucketsOnS3 || (exports.BucketsOnS3 = BucketsOnS3 = {}));
 const FundRaiseDetails = {
     [UtilEnum_1.FundRaiserCategory.Education]: [
         "School Supplies",

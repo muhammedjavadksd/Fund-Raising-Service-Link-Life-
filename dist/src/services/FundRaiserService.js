@@ -16,6 +16,9 @@ const FundRaiserRepo_1 = __importDefault(require("../repositorys/FundRaiserRepo"
 const DbEnum_1 = require("../types/Enums/DbEnum");
 const UtilEnum_1 = require("../types/Enums/UtilEnum");
 const fs_1 = __importDefault(require("fs"));
+const s3Bucket_1 = __importDefault(require("../util/helper/s3Bucket"));
+const ConstData_1 = require("../types/Enums/ConstData");
+const utilHelper_1 = __importDefault(require("../util/helper/utilHelper"));
 class FundRaiserService {
     constructor() {
         this.deleteImage = this.deleteImage.bind(this);
@@ -26,6 +29,8 @@ class FundRaiserService {
         this.editFundRaiser = this.editFundRaiser.bind(this);
         this.uploadImage = this.uploadImage.bind(this);
         this.FundRaiserRepo = new FundRaiserRepo_1.default();
+        this.fundRaiserPictureBucket = new s3Bucket_1.default(ConstData_1.BucketsOnS3.FundRaiserPicture);
+        this.fundRaiserDocumentBucket = new s3Bucket_1.default(ConstData_1.BucketsOnS3.FundRaiserDocument);
     }
     getOwnerSingleProfile(profile_id, user_type, owner_id) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -88,6 +93,16 @@ class FundRaiserService {
             var _a, _b;
             try {
                 const createFundRaise = yield this.FundRaiserRepo.createFundRaiserPost(data); //this.createFundRaisePost(data);
+                const picturesPreisgnedUrl = [];
+                const DocumentsPreisgnedUrl = [];
+                const utlHelper = new utilHelper_1.default();
+                for (let index = 0; index < ConstData_1.const_data.FUND_RAISER_DOCUMENTS_LENGTH; index++) {
+                    const randomImageName = `${utlHelper.createRandomText(5)}${new Date().getMilliseconds()}.jpeg`;
+                    const picPresignedUrl = yield this.fundRaiserDocumentBucket.generatePresignedUrl(`pics_${randomImageName}`);
+                    const docsPresignedUrl = yield this.fundRaiserDocumentBucket.generatePresignedUrl(`docs_${randomImageName}`);
+                    picturesPreisgnedUrl.push(picPresignedUrl);
+                    DocumentsPreisgnedUrl.push(docsPresignedUrl);
+                }
                 return {
                     status: createFundRaise.status,
                     msg: createFundRaise.msg,

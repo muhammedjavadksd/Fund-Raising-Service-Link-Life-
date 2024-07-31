@@ -25,7 +25,6 @@
     "axios": "^1.7.2",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
-    "express-fileupload": "^1.5.0",
     "jsonwebtoken": "^9.0.2",
     "life-link-": "^0.0.1",
     "mongoose": "^8.4.1",

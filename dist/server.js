@@ -5,7 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const dotenv_1 = __importDefault(require("dotenv"));
-const express_fileupload_1 = __importDefault(require("express-fileupload"));
+// import fileUpload from 'express-fileupload'
 const morgan_1 = __importDefault(require("morgan"));
 const mongo_connection_1 = __importDefault(require("./src/db/mongo_connection"));
 const userRouter_1 = __importDefault(require("./src/router/userRouter"));
@@ -18,7 +18,7 @@ const PORT = process.env.PORT || 7005;
 app.use(express_1.default.json({}));
 app.use(express_1.default.urlencoded({ extended: true }));
 // console.log("Path : ", path.join(__dirname, "public"));
-app.use((0, express_fileupload_1.default)({ createParentPath: true }));
+// app.use(fileUpload({ createParentPath: true }))
 app.use((0, morgan_1.default)("dev"));
 // import fs from 'fs';
 // const imagePath = path.join(__dirname, 'public/images/fund_raiser_image/a.jpg');

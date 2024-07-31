@@ -7,10 +7,11 @@ import { IEditableFundRaiser, IFundRaiseInitialData, iFundRaiseModel } from "../
 import { FundRaiserFileType } from "../types/Enums/UtilEnum";
 import FundRaiserRepo from "../repositorys/FundRaiserRepo";
 import UtilHelper from "../util/helper/utilHelper";
-import { const_data } from "../types/Enums/ConstData";
+import { BucketsOnS3, const_data } from "../types/Enums/ConstData";
 import { IUserController } from "../types/Interface/IController";
 import { UploadedFile } from "express-fileupload";
 import S3BucketHelper from "../util/helper/s3Bucket";
+import url from 'url'
 
 class UserController implements IUserController {
 
@@ -34,8 +35,39 @@ class UserController implements IUserController {
 
         this.fundRaiserService = new FundRaiserService();
         this.fundRaiserRepo = new FundRaiserRepo();
+
     }
 
+
+    async uploadImageIntoS3(req: Request, res: Response) {
+        const pre_url = req.body.presigned_url;
+
+        const file: Express.Multer.File | undefined = req.file;
+        if (file) {
+            const presignedUrl = url.parse(pre_url, true).pathname //.parse(url, true)
+            if (presignedUrl) {
+                const extractPath = presignedUrl.split("/");
+                const imageName = extractPath[2];
+                if (imageName) {
+                    console.log(presignedUrl);
+
+                    const s3Bucket = new S3BucketHelper("file-bucket");
+                    const buffer = file.buffer;
+                    const uploadImage = await s3Bucket.uploadFile(buffer, pre_url, file.mimetype, imageName)
+                    if (uploadImage) {
+                        res.status(200).json({ status: true, msg: "Image uploaded success", image_name: uploadImage })
+                    } else {
+                        res.status(400).json({ status: false, msg: "Image uploaded failed" })
+                    }
+                } else {
+                    res.status(500).json({ status: false, msg: "No image found" })
+                }
+            }
+        } else {
+            res.status(400).json({ status: false, msg: "Please upload valid image" })
+        }
+
+    }
 
 
     async getPresignedUrl(req: Request, res: Response) {
@@ -44,6 +76,7 @@ class UserController implements IUserController {
         const s3Helper = new S3BucketHelper("file-bucket");
         const url = await s3Helper.generatePresignedUrl(key);
         console.log("The url is : ", url);
+        console.log("token is ;", key);
 
         res.status(200).json({ status: true, msg: "Signed url createed", data: { url } })
     }
@@ -185,26 +218,16 @@ class UserController implements IUserController {
 
             const bodyData = req.body;
             const utilHelper = new UtilHelper();
-
-            console.log(bodyData);
-
-
             const amount: number = bodyData.amount;
             const category: string = bodyData.category;
             const sub_category: string = bodyData.sub_category;
             const phone_number: number = bodyData.phone_number;
             const email: string = bodyData.email;
-
             const otpNumber: number = utilHelper.generateAnOTP(const_data.OTP_LENGTH);
             const otpExpire: number = const_data.OTP_EXPIRE_TIME;
             const todayDate: Date = new Date();
             const user_id: string | undefined = req.context?.user_id;
             const fund_id: string = utilHelper.createFundRaiseID(FundRaiserCreatedBy.USER).toUpperCase()
-
-
-            console.log(fund_id);
-            console.log(req.context);
-
 
             if (user_id && fund_id) {
 
@@ -224,8 +247,6 @@ class UserController implements IUserController {
                     email_id: email,
                     status: FundRaiserStatus.CREATED
                 }
-
-                console.log(fundRaiseData);
 
                 const createFundRaise: HelperFuncationResponse = await this.fundRaiserService.createFundRaisePost(fundRaiseData);
                 if (createFundRaise.status) {

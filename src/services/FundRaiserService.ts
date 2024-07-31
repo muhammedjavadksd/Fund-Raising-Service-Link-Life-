@@ -6,12 +6,17 @@ import { IFundRaiserService } from "../types/Interface/IService";
 import { HelperFuncationResponse } from "../types/Interface/Util";
 import fs from 'fs'
 import { UploadedFile } from 'express-fileupload'
+import S3BucketHelper from "../util/helper/s3Bucket";
+import { BucketsOnS3, const_data } from "../types/Enums/ConstData";
+import UtilHelper from "../util/helper/utilHelper";
 
 
 
 class FundRaiserService implements IFundRaiserService {
 
     private readonly FundRaiserRepo;
+    private readonly fundRaiserPictureBucket;
+    private readonly fundRaiserDocumentBucket;
 
     constructor() {
         this.deleteImage = this.deleteImage.bind(this)
@@ -23,6 +28,8 @@ class FundRaiserService implements IFundRaiserService {
         this.uploadImage = this.uploadImage.bind(this)
 
         this.FundRaiserRepo = new FundRaiserRepo();
+        this.fundRaiserPictureBucket = new S3BucketHelper(BucketsOnS3.FundRaiserPicture);
+        this.fundRaiserDocumentBucket = new S3BucketHelper(BucketsOnS3.FundRaiserDocument);
     }
 
 
@@ -89,6 +96,21 @@ class FundRaiserService implements IFundRaiserService {
 
         try {
             const createFundRaise = await this.FundRaiserRepo.createFundRaiserPost(data) //this.createFundRaisePost(data);
+
+            const picturesPreisgnedUrl = []
+            const DocumentsPreisgnedUrl = []
+            const utlHelper = new UtilHelper()
+            for (let index = 0; index < const_data.FUND_RAISER_DOCUMENTS_LENGTH; index++) {
+                const randomImageName = `${utlHelper.createRandomText(5)}${new Date().getMilliseconds()}.jpeg`
+                const picPresignedUrl = await this.fundRaiserDocumentBucket.generatePresignedUrl(`pics_${randomImageName}`)
+                const docsPresignedUrl = await this.fundRaiserDocumentBucket.generatePresignedUrl(`docs_${randomImageName}`)
+                picturesPreisgnedUrl.push(picPresignedUrl)
+                DocumentsPreisgnedUrl.push(docsPresignedUrl)
+            }
+
+
+
+
             return {
                 status: createFundRaise.status,
                 msg: createFundRaise.msg,

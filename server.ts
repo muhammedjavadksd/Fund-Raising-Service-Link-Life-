@@ -1,6 +1,6 @@
 import express, { Express } from 'express';
 import dotenv from 'dotenv'
-import fileUpload from 'express-fileupload'
+// import fileUpload from 'express-fileupload'
 import morgan from 'morgan'
 import fundRaiseDbConnection from './src/db/mongo_connection';
 import userRouter from './src/router/userRouter';
@@ -17,7 +17,7 @@ app.use(express.json({}))
 app.use(express.urlencoded({ extended: true }))
 // console.log("Path : ", path.join(__dirname, "public"));
 
-app.use(fileUpload({ createParentPath: true }))
+// app.use(fileUpload({ createParentPath: true }))
 app.use(morgan("dev"))
 
 // import fs from 'fs';

@@ -18,6 +18,7 @@ const FundRaiserRepo_1 = __importDefault(require("../repositorys/FundRaiserRepo"
 const utilHelper_1 = __importDefault(require("../util/helper/utilHelper"));
 const ConstData_1 = require("../types/Enums/ConstData");
 const s3Bucket_1 = __importDefault(require("../util/helper/s3Bucket"));
+const url_1 = __importDefault(require("url"));
 class UserController {
     constructor() {
         this.getUserFundRaisePost = this.getUserFundRaisePost.bind(this);
@@ -31,6 +32,37 @@ class UserController {
         this.fundRaiserService = new FundRaiserService_1.default();
         this.fundRaiserRepo = new FundRaiserRepo_1.default();
     }
+    uploadImageIntoS3(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const pre_url = req.body.presigned_url;
+            const file = req.file;
+            if (file) {
+                const presignedUrl = url_1.default.parse(pre_url, true).pathname; //.parse(url, true)
+                if (presignedUrl) {
+                    const extractPath = presignedUrl.split("/");
+                    const imageName = extractPath[2];
+                    if (imageName) {
+                        console.log(presignedUrl);
+                        const s3Bucket = new s3Bucket_1.default("file-bucket");
+                        const buffer = file.buffer;
+                        const uploadImage = yield s3Bucket.uploadFile(buffer, pre_url, file.mimetype, imageName);
+                        if (uploadImage) {
+                            res.status(200).json({ status: true, msg: "Image uploaded success", image_name: uploadImage });
+                        }
+                        else {
+                            res.status(400).json({ status: false, msg: "Image uploaded failed" });
+                        }
+                    }
+                    else {
+                        res.status(500).json({ status: false, msg: "No image found" });
+                    }
+                }
+            }
+            else {
+                res.status(400).json({ status: false, msg: "Please upload valid image" });
+            }
+        });
+    }
     getPresignedUrl(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const util = new utilHelper_1.default();
@@ -38,6 +70,7 @@ class UserController {
             const s3Helper = new s3Bucket_1.default("file-bucket");
             const url = yield s3Helper.generatePresignedUrl(key);
             console.log("The url is : ", url);
+            console.log("token is ;", key);
             res.status(200).json({ status: true, msg: "Signed url createed", data: { url } });
         });
     }
@@ -171,7 +204,6 @@ class UserController {
             try {
                 const bodyData = req.body;
                 const utilHelper = new utilHelper_1.default();
-                console.log(bodyData);
                 const amount = bodyData.amount;
                 const category = bodyData.category;
                 const sub_category = bodyData.sub_category;
@@ -182,8 +214,6 @@ class UserController {
                 const todayDate = new Date();
                 const user_id = (_a = req.context) === null || _a === void 0 ? void 0 : _a.user_id;
                 const fund_id = utilHelper.createFundRaiseID(DbEnum_1.FundRaiserCreatedBy.USER).toUpperCase();
-                console.log(fund_id);
-                console.log(req.context);
                 if (user_id && fund_id) {
                     const fundRaiseData = {
                         validate: {
@@ -201,7 +231,6 @@ class UserController {
                         email_id: email,
                         status: DbEnum_1.FundRaiserStatus.CREATED
                     };
-                    console.log(fundRaiseData);
                     const createFundRaise = yield this.fundRaiserService.createFundRaisePost(fundRaiseData);
                     if (createFundRaise.status) {
                         res.status(createFundRaise.statusCode).json({ status: true, msg: createFundRaise.msg, data: { id: (_b = createFundRaise.data) === null || _b === void 0 ? void 0 : _b.id, fund_id: createFundRaise.data.fund_id } });

@@ -29,10 +29,11 @@ class S3BucketHelper {
         return url;
     }
 
-    async uploadFile(file: Buffer, presigned_url: string, fileType: string): Promise<boolean> {
+    async uploadFile(file: Buffer, presigned_url: string, fileType: string, imageName: string): Promise<boolean | string> {
         try {
             await axios.put(presigned_url, file, { headers: { "Content-Type": fileType, } })
-            return true
+            const imageUrl = `http://localhost:4566/${this.bucketName}/${imageName}`
+            return imageUrl
         } catch (e) {
             return false
         }

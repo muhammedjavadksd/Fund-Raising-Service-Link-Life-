@@ -1,14 +1,19 @@
 import UserController from "../controller/userController";
 import express, { Router } from 'express'
 import AuthMiddleware from "../middleware/authMiddleware";
+import { Multer } from "multer";
 
 
 const userRouter: Router = express.Router();
 
 const UserControllers = new UserController();
 const authMiddleware = new AuthMiddleware()
+const multer = require("multer");
+const multerDisk = multer.memoryStorage();
+const multerStorage = multer({ storage: multerDisk })
 
 userRouter.get("/generate_presigned_url", UserControllers.getPresignedUrl); //test completed
+userRouter.put("/upload_image_presigned", multerStorage.single("file"), UserControllers.uploadImageIntoS3); //test completed
 
 
 //Get method

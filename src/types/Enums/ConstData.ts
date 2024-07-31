@@ -2,8 +2,16 @@ import { FundRaiserCategory } from "./UtilEnum";
 
 enum const_data {
     OTP_LENGTH = 6,
-    OTP_EXPIRE_TIME = Date.now() + 1800000
+    OTP_EXPIRE_TIME = Date.now() + 1800000,
+    FUND_RAISER_PICTURES_LENGTH = 5,
+    FUND_RAISER_DOCUMENTS_LENGTH = 5
 };
+
+
+enum BucketsOnS3 {
+    FundRaiserPicture = "fund-raiser-pictures",
+    FundRaiserDocument = "fund-raiser-documents"
+}
 
 const FundRaiseDetails: { [key in FundRaiserCategory]: string[] } = {
     [FundRaiserCategory.Education]: [
@@ -219,4 +227,4 @@ const FundRaiseDetails: { [key in FundRaiserCategory]: string[] } = {
 };
 
 
-export { const_data, FundRaiseDetails }
+export { const_data, FundRaiseDetails, BucketsOnS3 }

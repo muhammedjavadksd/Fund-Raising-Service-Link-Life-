@@ -32,11 +32,12 @@ class S3BucketHelper {
             return url;
         });
     }
-    uploadFile(file, presigned_url, fileType) {
+    uploadFile(file, presigned_url, fileType, imageName) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 yield axios_1.default.put(presigned_url, file, { headers: { "Content-Type": fileType, } });
-                return true;
+                const imageUrl = `http://localhost:4566/${this.bucketName}/${imageName}`;
+                return imageUrl;
             }
             catch (e) {
                 return false;
