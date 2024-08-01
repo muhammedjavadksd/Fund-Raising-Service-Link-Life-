@@ -30,7 +30,7 @@ userRouter.patch("/upload_images/:edit_id", authMiddleware.isValidUser, authMidd
 userRouter.patch("/close/:edit_id", authMiddleware.isValidUser, authMiddleware.isFundRaiseRequestValid, UserControllers.closeFundRaise); // test completed
 
 //delete method
-userRouter.delete("/delete_image/:type/:edit_id/:image_id", authMiddleware.isValidUser, authMiddleware.isFundRaiseRequestValid, UserControllers.deleteImage) //test completed
+userRouter.delete("/delete_image/:type/:edit_id/:bucket_name/:image_id", authMiddleware.isValidUser, authMiddleware.isFundRaiseRequestValid, UserControllers.deleteImage) //test completed
 
 
 export default userRouter

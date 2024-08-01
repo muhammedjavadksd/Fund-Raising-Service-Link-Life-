@@ -28,7 +28,7 @@ class S3BucketHelper {
     }
     generatePresignedUrl(key) {
         return __awaiter(this, void 0, void 0, function* () {
-            const url = yield (0, s3_request_presigner_1.getSignedUrl)(this.s3Config, new client_s3_1.GetObjectCommand({ Bucket: this.bucketName, Key: key }), { expiresIn: 3600 });
+            const url = yield (0, s3_request_presigner_1.getSignedUrl)(this.s3Config, new client_s3_1.PutObjectCommand({ Bucket: this.bucketName, Key: key }), { expiresIn: 3600 });
             return url;
         });
     }

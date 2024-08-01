@@ -97,7 +97,7 @@ class FundRaiserService {
                 const utlHelper = new utilHelper_1.default();
                 for (let index = 0; index < ConstData_1.const_data.FUND_RAISER_DOCUMENTS_LENGTH; index++) {
                     const randomImageName = `${utlHelper.createRandomText(5)}${new Date().getMilliseconds()}.jpeg`;
-                    const picPresignedUrl = yield this.fundRaiserDocumentBucket.generatePresignedUrl(`pics_${randomImageName}`);
+                    const picPresignedUrl = yield this.fundRaiserPictureBucket.generatePresignedUrl(`pics_${randomImageName}`);
                     const docsPresignedUrl = yield this.fundRaiserDocumentBucket.generatePresignedUrl(`docs_${randomImageName}`);
                     picturesPreisgnedUrl.push(picPresignedUrl);
                     DocumentsPreisgnedUrl.push(docsPresignedUrl);
@@ -282,10 +282,12 @@ class FundRaiserService {
             try {
                 const newImages = [];
                 const field = document_type == UtilEnum_1.FundRaiserFileType.Document ? "documents" : "picture";
+                console.log("Field type :" + document_type);
                 const imageLength = images.length;
                 const utilHelper = new utilHelper_1.default();
                 for (let fileIndex = 0; fileIndex < imageLength; fileIndex++) {
-                    const imageName = utilHelper.extractImageNameFromPresignedUrl(images[fileIndex]);
+                    // axios.put(images[fileIndex])
+                    const imageName = `${document_type == UtilEnum_1.FundRaiserFileType.Document ? ConstData_1.BucketsOnS3.FundRaiserDocument : ConstData_1.BucketsOnS3.FundRaiserPicture}/${utilHelper.extractImageNameFromPresignedUrl(images[fileIndex])}`;
                     if (imageName) {
                         newImages.push(imageName.toString());
                     }

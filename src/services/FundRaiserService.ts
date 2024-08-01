@@ -9,6 +9,7 @@ import { UploadedFile } from 'express-fileupload'
 import S3BucketHelper from "../util/helper/s3Bucket";
 import { BucketsOnS3, const_data } from "../types/Enums/ConstData";
 import UtilHelper from "../util/helper/utilHelper";
+import axios from "axios";
 
 
 
@@ -102,7 +103,7 @@ class FundRaiserService implements IFundRaiserService {
             const utlHelper = new UtilHelper()
             for (let index = 0; index < const_data.FUND_RAISER_DOCUMENTS_LENGTH; index++) {
                 const randomImageName = `${utlHelper.createRandomText(5)}${new Date().getMilliseconds()}.jpeg`
-                const picPresignedUrl = await this.fundRaiserDocumentBucket.generatePresignedUrl(`pics_${randomImageName}`)
+                const picPresignedUrl = await this.fundRaiserPictureBucket.generatePresignedUrl(`pics_${randomImageName}`)
                 const docsPresignedUrl = await this.fundRaiserDocumentBucket.generatePresignedUrl(`docs_${randomImageName}`)
                 picturesPreisgnedUrl.push(picPresignedUrl)
                 DocumentsPreisgnedUrl.push(docsPresignedUrl)
@@ -275,11 +276,14 @@ class FundRaiserService implements IFundRaiserService {
 
             const newImages: string[] = [];
             const field: 'picture' | 'documents' = document_type == FundRaiserFileType.Document ? "documents" : "picture"
+            console.log("Field type :" + document_type);
+
             const imageLength = images.length
 
             const utilHelper = new UtilHelper();
             for (let fileIndex = 0; fileIndex < imageLength; fileIndex++) {
-                const imageName: string | boolean = utilHelper.extractImageNameFromPresignedUrl(images[fileIndex]);
+                // axios.put(images[fileIndex])
+                const imageName: string | boolean = `${document_type == FundRaiserFileType.Document ? BucketsOnS3.FundRaiserDocument : BucketsOnS3.FundRaiserPicture}/${utilHelper.extractImageNameFromPresignedUrl(images[fileIndex])}`
                 if (imageName) {
                     newImages.push(imageName.toString())
                 }

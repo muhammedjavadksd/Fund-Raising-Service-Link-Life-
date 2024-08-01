@@ -111,9 +111,11 @@ class UserController implements IUserController {
         const type: FundRaiserFileType = req.params.type as FundRaiserFileType;
         const edit_id: string = req.params.edit_id;
         const image_id: string = req.params.image_id;
+        const bucketName: string = req.params.bucket_name;
+        const imageName = `${bucketName}/${image_id}`
 
         try {
-            const deleteImage: boolean = await this.fundRaiserService.deleteImage(edit_id, type, image_id)
+            const deleteImage: boolean = await this.fundRaiserService.deleteImage(edit_id, type, imageName)
             if (deleteImage) {
                 res.status(200).json({ status: true, msg: "Image delete success" })
             } else {
@@ -142,11 +144,21 @@ class UserController implements IUserController {
         try {
 
 
+            console.log(req.body);
+
+
             let imagesPresignedUrl: string[] = req.body.presigned_url;
             const fundRaiserID: string = req.params.edit_id;
 
+
+            console.log(imagesPresignedUrl);
+
+
             if (imagesPresignedUrl.length) {
                 const edit_type: FundRaiserFileType = req.body.image_type;
+
+                console.log("Image type is :" + edit_type);
+
 
                 const saveFundRaise: HelperFuncationResponse = await this.fundRaiserService.uploadImage(imagesPresignedUrl, fundRaiserID, edit_type)
 
@@ -226,7 +238,7 @@ class UserController implements IUserController {
 
                 const createFundRaise: HelperFuncationResponse = await this.fundRaiserService.createFundRaisePost(fundRaiseData);
                 if (createFundRaise.status) {
-                    res.status(createFundRaise.statusCode).json({ status: true, msg: createFundRaise.msg, data: { id: createFundRaise.data?.id, fund_id: createFundRaise.data.fund_id } })
+                    res.status(createFundRaise.statusCode).json({ status: true, msg: createFundRaise.msg, data: createFundRaise.data })
                 } else {
                     res.status(createFundRaise.statusCode).json({ status: false, msg: createFundRaise.msg })
                 }

@@ -106,8 +106,10 @@ class UserController {
             const type = req.params.type;
             const edit_id = req.params.edit_id;
             const image_id = req.params.image_id;
+            const bucketName = req.params.bucket_name;
+            const imageName = `${bucketName}/${image_id}`;
             try {
-                const deleteImage = yield this.fundRaiserService.deleteImage(edit_id, type, image_id);
+                const deleteImage = yield this.fundRaiserService.deleteImage(edit_id, type, imageName);
                 if (deleteImage) {
                     res.status(200).json({ status: true, msg: "Image delete success" });
                 }
@@ -137,10 +139,13 @@ class UserController {
         return __awaiter(this, void 0, void 0, function* () {
             var _a, _b;
             try {
+                console.log(req.body);
                 let imagesPresignedUrl = req.body.presigned_url;
                 const fundRaiserID = req.params.edit_id;
+                console.log(imagesPresignedUrl);
                 if (imagesPresignedUrl.length) {
                     const edit_type = req.body.image_type;
+                    console.log("Image type is :" + edit_type);
                     const saveFundRaise = yield this.fundRaiserService.uploadImage(imagesPresignedUrl, fundRaiserID, edit_type);
                     res.status(saveFundRaise.statusCode).json({
                         status: saveFundRaise.status,
@@ -184,7 +189,7 @@ class UserController {
     }
     createFundRaise(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            var _a, _b;
+            var _a;
             try {
                 const bodyData = req.body;
                 const utilHelper = new utilHelper_1.default();
@@ -217,7 +222,7 @@ class UserController {
                     };
                     const createFundRaise = yield this.fundRaiserService.createFundRaisePost(fundRaiseData);
                     if (createFundRaise.status) {
-                        res.status(createFundRaise.statusCode).json({ status: true, msg: createFundRaise.msg, data: { id: (_b = createFundRaise.data) === null || _b === void 0 ? void 0 : _b.id, fund_id: createFundRaise.data.fund_id } });
+                        res.status(createFundRaise.statusCode).json({ status: true, msg: createFundRaise.msg, data: createFundRaise.data });
                     }
                     else {
                         res.status(createFundRaise.statusCode).json({ status: false, msg: createFundRaise.msg });
