@@ -114,6 +114,7 @@ class AdminController implements IAdminController {
             const email_id: string = req.body.email_id;
             const age: number = req.body.age;
             const about: string = req.body.about;
+            const description: string = req.body.description;
             const benificiary_relation: string = req.body.benificiary_relation;
             const full_name: string = req.body.full_name;
             const city: string = req.body.city;
@@ -126,6 +127,9 @@ class AdminController implements IAdminController {
 
             console.log(req.body);
             console.log("body");
+
+            console.log("Reached here");
+
 
             console.log(documents);
             console.log(pictures);
@@ -142,6 +146,7 @@ class AdminController implements IAdminController {
                 "sub_category": sub_category,
                 "phone_number": phone_number,
                 "email_id": email_id,
+                "description": description,
                 "created_date": createdDate,
                 "created_by": FundRaiserCreatedBy.ADMIN,
                 "user_id": "667868f8e5922a99a6e87d95",
@@ -158,7 +163,9 @@ class AdminController implements IAdminController {
                 "state": state
             }
 
-            // console.log(this);
+            console.log("Thsi data will svae");
+
+            console.log(fundRaiserData);
 
             this.fundRaiserService.createFundRaisePost(fundRaiserData).then(async (data) => {
                 let picturesUrl = data.data?.upload_images?.pictures.slice(0, pictures)

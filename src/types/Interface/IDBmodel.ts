@@ -59,6 +59,7 @@ interface IFundRaise {
     "phone_number": number,
     "email_id": string,
     "created_date": Date,
+    "description": string,
     "created_by": FundRaiserCreatedBy,
     "user_id": mongoose.Types.ObjectId | string,
     "closed": boolean,

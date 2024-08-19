@@ -108,6 +108,7 @@ class AdminController {
             const email_id = req.body.email_id;
             const age = req.body.age;
             const about = req.body.about;
+            const description = req.body.description;
             const benificiary_relation = req.body.benificiary_relation;
             const full_name = req.body.full_name;
             const city = req.body.city;
@@ -119,6 +120,7 @@ class AdminController {
             const pictures = req.body.pictures;
             console.log(req.body);
             console.log("body");
+            console.log("Reached here");
             console.log(documents);
             console.log(pictures);
             const utilHelper = new utilHelper_1.default();
@@ -131,6 +133,7 @@ class AdminController {
                 "sub_category": sub_category,
                 "phone_number": phone_number,
                 "email_id": email_id,
+                "description": description,
                 "created_date": createdDate,
                 "created_by": DbEnum_1.FundRaiserCreatedBy.ADMIN,
                 "user_id": "667868f8e5922a99a6e87d95",
@@ -146,7 +149,8 @@ class AdminController {
                 "pincode": pincode,
                 "state": state
             };
-            // console.log(this);
+            console.log("Thsi data will svae");
+            console.log(fundRaiserData);
             this.fundRaiserService.createFundRaisePost(fundRaiserData).then((data) => __awaiter(this, void 0, void 0, function* () {
                 var _a, _b, _c, _d;
                 let picturesUrl = (_b = (_a = data.data) === null || _a === void 0 ? void 0 : _a.upload_images) === null || _b === void 0 ? void 0 : _b.pictures.slice(0, pictures);
