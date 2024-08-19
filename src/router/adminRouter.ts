@@ -13,7 +13,7 @@ adminRouter.get("/view/:profile_id", authMiddleware.isValidAdmin, AdminControlle
 adminRouter.get("/view/:limit/:page", authMiddleware.isValidAdmin, AdminControllers.getAllFundRaise); //test completed
 
 //Post Method
-adminRouter.post("/create", authMiddleware.isValidAdmin, AdminControllers.addFundRaiser) // test completed
+adminRouter.post("/create", AdminControllers.addFundRaiser) // test completed
 
 //patch method
 adminRouter.patch("/edit/:edit_id", authMiddleware.isValidAdmin, AdminControllers.editFundRaiser) //test completed

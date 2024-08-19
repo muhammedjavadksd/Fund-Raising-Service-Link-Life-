@@ -42,6 +42,8 @@ class FundRaiserRepo implements IFundRaiserRepo {
         try {
             const skip = (page - 1) * limit;
             const limitedData: iFundRaiseModel[] = await this.FundRaiserModel.find({ status: FundRaiserStatus.APPROVED, closed: false }).skip(skip).limit(limit);
+            console.log(limitedData);
+
             return limitedData;
         } catch (e) {
             return []

@@ -90,8 +90,11 @@ class FundRaiserService {
     createFundRaisePost(data) {
         return __awaiter(this, void 0, void 0, function* () {
             var _a, _b;
+            console.log(data);
             try {
                 const createFundRaise = yield this.FundRaiserRepo.createFundRaiserPost(data); //this.createFundRaisePost(data);
+                console.log(createFundRaise);
+                console.log("this");
                 const picturesPreisgnedUrl = [];
                 const DocumentsPreisgnedUrl = [];
                 const utlHelper = new utilHelper_1.default();

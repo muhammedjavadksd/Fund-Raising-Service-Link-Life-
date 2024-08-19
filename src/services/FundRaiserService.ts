@@ -1,7 +1,7 @@
 import FundRaiserRepo from "../repositorys/FundRaiserRepo";
 import { FundRaiserCreatedBy, FundRaiserStatus } from "../types/Enums/DbEnum";
 import { FundRaiserFileType, StatusCode } from "../types/Enums/UtilEnum";
-import { IEditableFundRaiser, IFundRaiseInitialData, iFundRaiseModel } from "../types/Interface/IDBmodel";
+import { IEditableFundRaiser, IFundRaise, IFundRaiseInitialData, iFundRaiseModel } from "../types/Interface/IDBmodel";
 import { IFundRaiserService } from "../types/Interface/IService";
 import { HelperFuncationResponse } from "../types/Interface/Util";
 import fs from 'fs'
@@ -92,11 +92,16 @@ class FundRaiserService implements IFundRaiserService {
         }
     }
 
-    async createFundRaisePost(data: IFundRaiseInitialData): Promise<HelperFuncationResponse> {
+    async createFundRaisePost(data: IFundRaiseInitialData | IFundRaise): Promise<HelperFuncationResponse> {
+
+        console.log(data);
 
 
         try {
             const createFundRaise = await this.FundRaiserRepo.createFundRaiserPost(data) //this.createFundRaisePost(data);
+            console.log(createFundRaise);
+            console.log("this");
+
 
             const picturesPreisgnedUrl = []
             const DocumentsPreisgnedUrl = []

@@ -115,6 +115,12 @@ class AdminController {
             const full_address = req.body.full_address;
             const pincode = req.body.pin_code;
             const state = req.body.state;
+            const documents = req.body.documents;
+            const pictures = req.body.pictures;
+            console.log(req.body);
+            console.log("body");
+            console.log(documents);
+            console.log(pictures);
             const utilHelper = new utilHelper_1.default();
             const fundID = utilHelper.createFundRaiseID(DbEnum_1.FundRaiserCreatedBy.ADMIN).toUpperCase();
             const createdDate = new Date();
@@ -141,9 +147,14 @@ class AdminController {
                 "state": state
             };
             // console.log(this);
-            this.fundRaiserRepo.createFundRaiserPost(fundRaiserData).then((data) => {
+            this.fundRaiserService.createFundRaisePost(fundRaiserData).then((data) => __awaiter(this, void 0, void 0, function* () {
+                var _a, _b, _c, _d;
+                let picturesUrl = (_b = (_a = data.data) === null || _a === void 0 ? void 0 : _a.upload_images) === null || _b === void 0 ? void 0 : _b.pictures.slice(0, pictures);
+                let documentsUrl = (_d = (_c = data.data) === null || _c === void 0 ? void 0 : _c.upload_images) === null || _d === void 0 ? void 0 : _d.pictures.slice(0, documents);
+                yield this.fundRaiserService.uploadImage(picturesUrl, fundID, UtilEnum_1.FundRaiserFileType.Pictures);
+                yield this.fundRaiserService.uploadImage(documentsUrl, fundID, UtilEnum_1.FundRaiserFileType.Document);
                 res.status(data.statusCode).json({ status: true, msg: data.msg, data: data.data });
-            }).catch((err) => {
+            })).catch((err) => {
                 res.status(500).json({ status: false, msg: "Interanl server error", });
             });
         }

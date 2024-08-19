@@ -45,6 +45,7 @@ class FundRaiserRepo {
             try {
                 const skip = (page - 1) * limit;
                 const limitedData = yield this.FundRaiserModel.find({ status: DbEnum_1.FundRaiserStatus.APPROVED, closed: false }).skip(skip).limit(limit);
+                console.log(limitedData);
                 return limitedData;
             }
             catch (e) {

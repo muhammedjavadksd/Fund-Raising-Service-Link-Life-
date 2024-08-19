@@ -1,12 +1,13 @@
 import { Request, Response } from "express";
-import { IEditableFundRaiser, IFundRaise, iFundRaiseModel } from "../types/Interface/IDBmodel";
+import { IEditableFundRaiser, IFundRaise, IFundRaiseInitialData, iFundRaiseModel } from "../types/Interface/IDBmodel";
 import { FundRaiserCreatedBy, FundRaiserStatus } from "../types/Enums/DbEnum";
 import FundRaiserRepo from "../repositorys/FundRaiserRepo";
 import { HelperFuncationResponse } from "../types/Interface/Util";
 import FundRaiserService from "../services/FundRaiserService";
 import UtilHelper from "../util/helper/utilHelper";
 import { IAdminController } from "../types/Interface/IController";
-import { FundRaiserCategory, StatusCode } from "../types/Enums/UtilEnum";
+import { FundRaiserCategory, FundRaiserFileType, StatusCode } from "../types/Enums/UtilEnum";
+import { File } from "node:buffer";
 
 class AdminController implements IAdminController {
 
@@ -120,6 +121,15 @@ class AdminController implements IAdminController {
             const full_address: string = req.body.full_address;
             const pincode: number = req.body.pin_code;
             const state: string = req.body.state
+            const documents: number = req.body.documents
+            const pictures: number = req.body.pictures
+
+            console.log(req.body);
+            console.log("body");
+
+            console.log(documents);
+            console.log(pictures);
+
 
             const utilHelper = new UtilHelper();
 
@@ -150,7 +160,12 @@ class AdminController implements IAdminController {
 
             // console.log(this);
 
-            this.fundRaiserRepo.createFundRaiserPost(fundRaiserData).then((data: HelperFuncationResponse) => {
+            this.fundRaiserService.createFundRaisePost(fundRaiserData).then(async (data) => {
+                let picturesUrl = data.data?.upload_images?.pictures.slice(0, pictures)
+                let documentsUrl = data.data?.upload_images?.pictures.slice(0, documents)
+
+                await this.fundRaiserService.uploadImage(picturesUrl, fundID, FundRaiserFileType.Pictures)
+                await this.fundRaiserService.uploadImage(documentsUrl, fundID, FundRaiserFileType.Document)
                 res.status(data.statusCode).json({ status: true, msg: data.msg, data: data.data })
             }).catch((err) => {
                 res.status(500).json({ status: false, msg: "Interanl server error", })
