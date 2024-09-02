@@ -46,8 +46,6 @@ class UserController implements IUserController {
         const mention = req.body.mention;
 
 
-
-
     }
 
 

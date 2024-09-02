@@ -1,5 +1,5 @@
 import CommentCollection from "../db/model/comments";
-import { ICommentTemplate, IEditComment } from "../types/Interface/IDBmodel";
+import { ICommentTemplate } from "../types/Interface/IDBmodel";
 import { HelperFuncationResponse } from "../types/Interface/Util";
 
 
@@ -7,7 +7,7 @@ interface ICommentRepo {
     addComment(data: ICommentTemplate): Promise<undefined | string>
     deleteComment(comment_id: string): Promise<boolean>
     editComment(comment_id: string, new_comment: string,): Promise<boolean>
-    getAllComment(fund_id: string): Promise<ICommentTemplate[]>
+    getAllComment(fund_id: string, skip: number, limit: number): Promise<ICommentTemplate[]>
 }
 
 class CommentsRepo implements ICommentRepo {
@@ -22,8 +22,8 @@ class CommentsRepo implements ICommentRepo {
         return edit.modifiedCount > 0
     }
 
-    async getAllComment(fund_id: string): Promise<ICommentTemplate[]> {
-        const findComments: ICommentTemplate[] = await CommentCollection.find({ fund_id }).lean()
+    async getAllComment(fund_id: string, skip: number, limit: number): Promise<ICommentTemplate[]> {
+        const findComments: ICommentTemplate[] = await CommentCollection.find({ fund_id }).lean().skip(skip).limit(limit)
         return findComments
     }
 
@@ -32,5 +32,6 @@ class CommentsRepo implements ICommentRepo {
         const saveComment = await commentInstance.save()
         return saveComment?.id
     }
-
 }
+
+export default CommentsRepo

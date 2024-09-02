@@ -26,9 +26,9 @@ class CommentsRepo {
             return edit.modifiedCount > 0;
         });
     }
-    getAllComment(fund_id) {
+    getAllComment(fund_id, skip, limit) {
         return __awaiter(this, void 0, void 0, function* () {
-            const findComments = yield comments_1.default.find({ fund_id }).lean();
+            const findComments = yield comments_1.default.find({ fund_id }).lean().skip(skip).limit(limit);
             return findComments;
         });
     }
@@ -40,3 +40,4 @@ class CommentsRepo {
         });
     }
 }
+exports.default = CommentsRepo;

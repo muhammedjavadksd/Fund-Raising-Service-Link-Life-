@@ -89,10 +89,10 @@ interface IFundRaise {
 interface ICommentTemplate {
     comment: string,
     fund_id: string,
-    comment_id?: string,
+    comment_id: string,
     user_id: string,
     user_name: string,
-    date: Date,
+    date?: Date,
     is_edited: boolean,
     mention: string //profile id
 }
