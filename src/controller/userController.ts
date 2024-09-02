@@ -12,11 +12,14 @@ import { IUserController } from "../types/Interface/IController";
 import { UploadedFile } from "express-fileupload";
 import S3BucketHelper from "../util/helper/s3Bucket";
 import url from 'url'
+import CommentService from "../services/CommentService";
 
 class UserController implements IUserController {
 
     private readonly fundRaiserService;
+    private readonly commentService;
     private readonly fundRaiserRepo;
+
 
 
 
@@ -34,18 +37,20 @@ class UserController implements IUserController {
         this.getSingleProfile = this.getSingleProfile.bind(this);
         this.addComment = this.addComment.bind(this);
         this.fundRaiserService = new FundRaiserService();
+        this.commentService = new CommentService();
         this.fundRaiserRepo = new FundRaiserRepo();
     }
 
-    addComment(req: CustomRequest, res: Response): Promise<void> {
+    async addComment(req: CustomRequest, res: Response): Promise<void> {
 
         const comment = req.body.comment;
-        const pody_id = req.params.post_id;
+        const post_id = req.params.post_id;
         const user_name = req?.context?.full_name;
         const user_id = req?.context?.profile_id;
         const mention = req.body.mention;
 
-
+        const saveComment = await this.commentService.addComment(comment, post_id, user_id, user_name, mention);
+        res.status(saveComment.statusCode).json({ status: saveComment.status, msg: saveComment.msg, data: saveComment.data })
     }
 
 

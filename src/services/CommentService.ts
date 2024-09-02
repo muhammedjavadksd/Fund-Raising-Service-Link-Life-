@@ -127,3 +127,5 @@ class CommentService implements ICommentService {
     }
 
 }
+
+export default CommentService;

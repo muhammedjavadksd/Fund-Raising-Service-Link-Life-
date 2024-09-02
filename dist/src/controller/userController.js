@@ -20,6 +20,7 @@ const utilHelper_1 = __importDefault(require("../util/helper/utilHelper"));
 const ConstData_1 = require("../types/Enums/ConstData");
 const s3Bucket_1 = __importDefault(require("../util/helper/s3Bucket"));
 const url_1 = __importDefault(require("url"));
+const CommentService_1 = __importDefault(require("../services/CommentService"));
 class UserController {
     constructor() {
         this.getUserFundRaisePost = this.getUserFundRaisePost.bind(this);
@@ -32,15 +33,20 @@ class UserController {
         this.getSingleProfile = this.getSingleProfile.bind(this);
         this.addComment = this.addComment.bind(this);
         this.fundRaiserService = new FundRaiserService_1.default();
+        this.commentService = new CommentService_1.default();
         this.fundRaiserRepo = new FundRaiserRepo_1.default();
     }
     addComment(req, res) {
-        var _a, _b;
-        const comment = req.body.comment;
-        const pody_id = req.params.post_id;
-        const user_name = (_a = req === null || req === void 0 ? void 0 : req.context) === null || _a === void 0 ? void 0 : _a.full_name;
-        const user_id = (_b = req === null || req === void 0 ? void 0 : req.context) === null || _b === void 0 ? void 0 : _b.profile_id;
-        const mention = req.body.mention;
+        return __awaiter(this, void 0, void 0, function* () {
+            var _a, _b;
+            const comment = req.body.comment;
+            const post_id = req.params.post_id;
+            const user_name = (_a = req === null || req === void 0 ? void 0 : req.context) === null || _a === void 0 ? void 0 : _a.full_name;
+            const user_id = (_b = req === null || req === void 0 ? void 0 : req.context) === null || _b === void 0 ? void 0 : _b.profile_id;
+            const mention = req.body.mention;
+            const saveComment = yield this.commentService.addComment(comment, post_id, user_id, user_name, mention);
+            res.status(saveComment.statusCode).json({ status: saveComment.status, msg: saveComment.msg, data: saveComment.data });
+        });
     }
     uploadImageIntoS3(req, res) {
         return __awaiter(this, void 0, void 0, function* () {

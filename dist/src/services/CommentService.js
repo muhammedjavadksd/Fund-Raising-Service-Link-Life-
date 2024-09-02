@@ -130,3 +130,4 @@ class CommentService {
         });
     }
 }
+exports.default = CommentService;
