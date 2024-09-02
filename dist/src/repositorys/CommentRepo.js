@@ -32,10 +32,33 @@ class CommentsRepo {
             return edit.modifiedCount > 0;
         });
     }
-    getAllComment(fund_id, skip, limit) {
+    getPaginatedComments(fund_id, skip, limit) {
         return __awaiter(this, void 0, void 0, function* () {
-            const findComments = yield comments_1.default.find({ fund_id }).lean().skip(skip).limit(limit);
-            return findComments;
+            const findComments = yield comments_1.default.aggregate([
+                {
+                    $match: {
+                        fund_id
+                    }
+                },
+                {
+                    $facet: {
+                        paginated: [
+                            {
+                                $skip: skip
+                            },
+                            {
+                                $limit: limit
+                            }
+                        ],
+                        total_records: [
+                            {
+                                $count: "total_records"
+                            }
+                        ]
+                    }
+                }
+            ]);
+            return findComments[0];
         });
     }
     addComment(data) {

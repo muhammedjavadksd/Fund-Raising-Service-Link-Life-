@@ -1,5 +1,5 @@
 import CommentCollection from "../db/model/comments";
-import { ICommentTemplate } from "../types/Interface/IDBmodel";
+import { ICommentTemplate, IPaginatedCommente } from "../types/Interface/IDBmodel";
 import { HelperFuncationResponse } from "../types/Interface/Util";
 
 
@@ -8,7 +8,7 @@ interface ICommentRepo {
     addComment(data: ICommentTemplate): Promise<undefined | string>
     deleteComment(comment_id: string): Promise<boolean>
     editComment(comment_id: string, comments: Partial<ICommentTemplate>): Promise<boolean>
-    getAllComment(fund_id: string, skip: number, limit: number): Promise<ICommentTemplate[]>
+    getPaginatedComments(fund_id: string, skip: number, limit: number): Promise<IPaginatedCommente>
 }
 
 class CommentsRepo implements ICommentRepo {
@@ -28,9 +28,33 @@ class CommentsRepo implements ICommentRepo {
         return edit.modifiedCount > 0
     }
 
-    async getAllComment(fund_id: string, skip: number, limit: number): Promise<ICommentTemplate[]> {
-        const findComments: ICommentTemplate[] = await CommentCollection.find({ fund_id }).lean().skip(skip).limit(limit)
-        return findComments
+    async getPaginatedComments(fund_id: string, skip: number, limit: number): Promise<IPaginatedCommente> {
+        const findComments: IPaginatedCommente[] = await CommentCollection.aggregate(
+            [
+                {
+                    $match: {
+                        fund_id
+                    }
+                },
+                {
+                    $facet: {
+                        paginated: [
+                            {
+                                $skip: skip
+                            },
+                            {
+                                $limit: limit
+                            }
+                        ],
+                        total_records: [
+                            {
+                                $count: "total_records"
+                            }
+                        ]
+                    }
+                }
+            ])
+        return findComments[0]
     }
 
     async addComment(data: ICommentTemplate): Promise<undefined | string> {

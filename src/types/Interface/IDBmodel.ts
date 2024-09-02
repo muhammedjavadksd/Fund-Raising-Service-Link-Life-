@@ -84,6 +84,10 @@ interface IFundRaise {
 }
 
 
+interface IPaginatedCommente {
+    paginated: ICommentTemplate[],
+    total_records: number,
+}
 
 
 interface ICommentTemplate {
@@ -99,4 +103,4 @@ interface ICommentTemplate {
 
 interface ICommentCollection extends Document, ICommentTemplate { }
 
-export { ICommentCollection, ICommentTemplate, IWithdrawDetails, IFundRaise, IFundRaiseInitialData, iFundRaiseModel, IEditableFundRaiser }
+export { IPaginatedCommente, ICommentCollection, ICommentTemplate, IWithdrawDetails, IFundRaise, IFundRaiseInitialData, iFundRaiseModel, IEditableFundRaiser }

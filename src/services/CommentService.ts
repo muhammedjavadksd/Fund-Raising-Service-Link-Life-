@@ -92,8 +92,22 @@ class CommentService implements ICommentService {
         }
     }
 
-    getPaginatedComments(fund_id: string, skip: number, limit: number): Promise<HelperFuncationResponse> {
-        throw new Error("Method not implemented.");
+    async getPaginatedComments(fund_id: string, skip: number, limit: number): Promise<HelperFuncationResponse> {
+        const findComments = await this.commentsRepo.getPaginatedComments(fund_id, skip, limit);
+        if (findComments.total_records > 0) {
+            return {
+                status: true,
+                msg: "All comment fetched",
+                statusCode: StatusCode.OK,
+                data: findComments
+            }
+        } else {
+            return {
+                status: false,
+                msg: "No comments found",
+                statusCode: StatusCode.NOT_FOUND,
+            }
+        }
     }
 
     async createCommentId(): Promise<string> {

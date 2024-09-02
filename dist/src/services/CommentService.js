@@ -97,7 +97,7 @@ class CommentService {
     getPaginatedComments(fund_id, skip, limit) {
         return __awaiter(this, void 0, void 0, function* () {
             const findComments = yield this.commentsRepo.getPaginatedComments(fund_id, skip, limit);
-            if (findComments.) {
+            if (findComments.total_records > 0) {
                 return {
                     status: true,
                     msg: "All comment fetched",
