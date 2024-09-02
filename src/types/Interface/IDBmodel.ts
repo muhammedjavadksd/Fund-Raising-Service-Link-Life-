@@ -84,14 +84,11 @@ interface IFundRaise {
 }
 
 
-interface IEditComment {
-    comment: string,
-    comment_id?: string,
-    mention: string //profile id
-}
+
 
 interface ICommentTemplate {
     comment: string,
+    fund_id: string,
     comment_id?: string,
     user_id: string,
     user_name: string,

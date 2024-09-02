@@ -18,10 +18,16 @@ class CommentsRepo {
         throw new Error("Method not implemented.");
     }
     editComment(comment_id, new_comment) {
-        throw new Error("Method not implemented.");
+        return __awaiter(this, void 0, void 0, function* () {
+            const edit = yield comments_1.default.updateOne({ comment_id }, { $set: { comment_id: comment_id, comment: new_comment, } });
+            return edit.modifiedCount > 0;
+        });
     }
     getAllComment(fund_id) {
-        throw new Error("Method not implemented.");
+        return __awaiter(this, void 0, void 0, function* () {
+            const findComments = yield comments_1.default.find({ fund_id }).lean();
+            return findComments;
+        });
     }
     addComment(data) {
         return __awaiter(this, void 0, void 0, function* () {

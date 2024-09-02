@@ -32,6 +32,10 @@ const schema = new mongoose_1.Schema({
     mention: {
         type: String,
     },
+    fund_id: {
+        type: String,
+        required: true
+    }
 });
 const CommentCollection = (0, mongoose_1.model)("comments", schema, "comments");
 exports.default = CommentCollection;

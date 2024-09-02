@@ -33,7 +33,10 @@ const schema = new Schema<ICommentCollection>({
     mention: {
         type: String,
     },
-
+    fund_id: {
+        type: String,
+        required: true
+    }
 })
 
 const CommentCollection = model("comments", schema, "comments");
