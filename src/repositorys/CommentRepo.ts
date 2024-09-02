@@ -4,6 +4,7 @@ import { HelperFuncationResponse } from "../types/Interface/Util";
 
 
 interface ICommentRepo {
+    findCommentByCommentId(comment_id: string): Promise<ICommentTemplate | null>
     addComment(data: ICommentTemplate): Promise<undefined | string>
     deleteComment(comment_id: string): Promise<boolean>
     editComment(comment_id: string, new_comment: string,): Promise<boolean>
@@ -11,6 +12,11 @@ interface ICommentRepo {
 }
 
 class CommentsRepo implements ICommentRepo {
+
+    async findCommentByCommentId(comment_id: string): Promise<ICommentTemplate | null> {
+        const findComment = await CommentCollection.findOne({ comment_id }).lean();
+        return findComment
+    }
 
     async deleteComment(comment_id: string): Promise<boolean> {
         const deleteComment = await CommentCollection.deleteOne({ comment_id });

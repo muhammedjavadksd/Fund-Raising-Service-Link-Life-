@@ -14,6 +14,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const comments_1 = __importDefault(require("../db/model/comments"));
 class CommentsRepo {
+    findCommentByCommentId(comment_id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const findComment = yield comments_1.default.findOne({ comment_id }).lean();
+            return findComment;
+        });
+    }
     deleteComment(comment_id) {
         return __awaiter(this, void 0, void 0, function* () {
             const deleteComment = yield comments_1.default.deleteOne({ comment_id });
