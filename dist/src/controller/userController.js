@@ -33,9 +33,22 @@ class UserController {
         this.getSingleProfile = this.getSingleProfile.bind(this);
         this.addComment = this.addComment.bind(this);
         this.getPaginatedComments = this.getPaginatedComments.bind(this);
+        this.editComment = this.editComment.bind(this);
+        this.deleteComment = this.deleteComment.bind(this);
         this.fundRaiserService = new FundRaiserService_1.default();
         this.commentService = new CommentService_1.default();
         this.fundRaiserRepo = new FundRaiserRepo_1.default();
+    }
+    editComment(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const newComment = req.body.new_comment;
+            const comment_id = req.params.comment_id;
+            const editComment = yield this.commentService.editComment(newComment, comment_id);
+            res.status(editComment.statusCode).json({ status: editComment.status, msg: editComment.msg, data: editComment.data });
+        });
+    }
+    deleteComment(req, res) {
+        throw new Error("Method not implemented.");
     }
     getPaginatedComments(req, res) {
         return __awaiter(this, void 0, void 0, function* () {

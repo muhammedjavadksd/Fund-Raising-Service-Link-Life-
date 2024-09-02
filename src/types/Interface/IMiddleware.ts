@@ -7,6 +7,7 @@ interface IAuthMiddleware {
     isValidAdmin(req: CustomRequest, res: Response, next: NextFunction): Promise<void>
     isValidOrganization(req: Request, res: Response, next: NextFunction): Promise<void>
     isOrganizationAuthraized(req: Request, res: Response, next: NextFunction): Promise<void>
+    isValidCommentOwner(req: Request, res: Response, next: NextFunction): Promise<void>
 }
 
 export { IAuthMiddleware }

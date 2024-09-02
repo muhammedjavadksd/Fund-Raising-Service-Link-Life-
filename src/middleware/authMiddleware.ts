@@ -5,9 +5,26 @@ import { JwtPayload } from "jsonwebtoken";
 import FundRaiserRepo from "../repositorys/FundRaiserRepo";
 import { IAuthMiddleware } from "../types/Interface/IMiddleware";
 import { StatusCode } from "../types/Enums/UtilEnum";
+import CommentsRepo from "../repositorys/CommentRepo";
 
 
 class AuthMiddleware implements IAuthMiddleware {
+
+
+    async isValidCommentOwner(req: CustomRequest, res: Response, next: NextFunction): Promise<void> {
+        const comment_id = req.params.comment_id;
+        const profile_id = req.context?.profile_id;
+        const commentRepo = new CommentsRepo();
+        const findComment = await commentRepo.findCommentByCommentId(comment_id);
+        if (findComment?.user_id == profile_id) {
+            next()
+        } else {
+            res.status(StatusCode.UNAUTHORIZED).json({ status: false, msg: "Un authraized access" })
+        }
+    }
+
+
+
 
     async isValidUser(req: CustomRequest, res: Response, next: NextFunction): Promise<void> {
         const headers: Request['headers'] = req.headers;

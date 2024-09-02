@@ -37,9 +37,24 @@ class UserController implements IUserController {
         this.getSingleProfile = this.getSingleProfile.bind(this);
         this.addComment = this.addComment.bind(this);
         this.getPaginatedComments = this.getPaginatedComments.bind(this);
+        this.editComment = this.editComment.bind(this)
+        this.deleteComment = this.deleteComment.bind(this)
         this.fundRaiserService = new FundRaiserService();
         this.commentService = new CommentService();
         this.fundRaiserRepo = new FundRaiserRepo();
+    }
+
+    async editComment(req: Request, res: Response): Promise<void> {
+
+        const newComment = req.body.new_comment;
+        const comment_id = req.params.comment_id;
+
+        const editComment = await this.commentService.editComment(newComment, comment_id);
+        res.status(editComment.statusCode).json({ status: editComment.status, msg: editComment.msg, data: editComment.data })
+    }
+
+    deleteComment(req: Request, res: Response): Promise<void> {
+        throw new Error("Method not implemented.");
     }
 
     async getPaginatedComments(req: Request, res: Response): Promise<void> {

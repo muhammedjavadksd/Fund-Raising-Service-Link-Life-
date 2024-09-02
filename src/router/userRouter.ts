@@ -20,7 +20,7 @@ userRouter.put("/upload_image_presigned", multerStorage.single("file"), UserCont
 userRouter.get("/view/self", authMiddleware.isValidUser, UserControllers.getUserFundRaisePost); //test completed
 userRouter.get("/view/:profile_id", UserControllers.getSingleProfile); //test completed
 userRouter.get("/view/:limit/:page", UserControllers.getActiveFundRaise); //test completed
-userRouter.get("/comment/:fund_id/:limit/:page/", UserControllers.getActiveFundRaise); //test completed
+userRouter.get("/comment/:fund_id/:limit/:page/", UserControllers.getPaginatedComments); //test completed
 
 // POST method
 userRouter.post("/create", authMiddleware.isValidUser, UserControllers.createFundRaise); //test completed
@@ -30,7 +30,7 @@ userRouter.post("/add_comment/:post_id", authMiddleware.isValidUser, UserControl
 userRouter.patch("/edit/:edit_id", authMiddleware.isValidUser, authMiddleware.isFundRaiseRequestValid, UserControllers.editFundRaise); //test completed
 userRouter.patch("/upload_images/:edit_id", authMiddleware.isValidUser, authMiddleware.isFundRaiseRequestValid, UserControllers.uploadImage); // test completed
 userRouter.patch("/close/:edit_id", authMiddleware.isValidUser, authMiddleware.isFundRaiseRequestValid, UserControllers.closeFundRaise); // test completed
-userRouter.patch("/edit_comment/:comment_id", authMiddleware.isValidUser, UserControllers.addComment)
+userRouter.patch("/edit_comment/:comment_id", authMiddleware.isValidUser, authMiddleware.isValidCommentOwner, UserControllers.editComment)
 
 //delete method
 userRouter.delete("/delete_image/:type/:edit_id/:bucket_name/:image_id", authMiddleware.isValidUser, authMiddleware.isFundRaiseRequestValid, UserControllers.deleteImage) //test completed

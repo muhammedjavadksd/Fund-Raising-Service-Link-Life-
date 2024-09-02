@@ -15,7 +15,23 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const tokenHelper_1 = __importDefault(require("../util/helper/tokenHelper"));
 const FundRaiserRepo_1 = __importDefault(require("../repositorys/FundRaiserRepo"));
 const UtilEnum_1 = require("../types/Enums/UtilEnum");
+const CommentRepo_1 = __importDefault(require("../repositorys/CommentRepo"));
 class AuthMiddleware {
+    isValidCommentOwner(req, res, next) {
+        return __awaiter(this, void 0, void 0, function* () {
+            var _a;
+            const comment_id = req.params.comment_id;
+            const profile_id = (_a = req.context) === null || _a === void 0 ? void 0 : _a.profile_id;
+            const commentRepo = new CommentRepo_1.default();
+            const findComment = yield commentRepo.findCommentByCommentId(comment_id);
+            if ((findComment === null || findComment === void 0 ? void 0 : findComment.user_id) == profile_id) {
+                next();
+            }
+            else {
+                res.status(UtilEnum_1.StatusCode.UNAUTHORIZED).json({ status: false, msg: "Un authraized access" });
+            }
+        });
+    }
     isValidUser(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
             const headers = req.headers;
