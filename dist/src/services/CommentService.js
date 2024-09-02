@@ -22,7 +22,7 @@ class CommentService {
     }
     addComment(comment, fund_id, user_id, user_name, mention, replay_id) {
         return __awaiter(this, void 0, void 0, function* () {
-            const comment_id = yield this.createCommentId();
+            const comment_id = (yield this.createCommentId()).toUpperCase();
             const comments_data = {
                 comment,
                 comment_id,

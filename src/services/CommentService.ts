@@ -24,7 +24,7 @@ class CommentService implements ICommentService {
     }
 
     async addComment(comment: string, fund_id: string, user_id: string, user_name: string, mention: string, replay_id: string): Promise<HelperFuncationResponse> {
-        const comment_id: string = await this.createCommentId();
+        const comment_id: string = (await this.createCommentId()).toUpperCase();
         const comments_data: ICommentTemplate = {
             comment,
             comment_id,
