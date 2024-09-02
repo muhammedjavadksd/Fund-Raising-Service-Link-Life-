@@ -76,7 +76,23 @@ class CommentService {
         });
     }
     deleteComment(comment_id) {
-        throw new Error("Method not implemented.");
+        return __awaiter(this, void 0, void 0, function* () {
+            const deleteComment = yield this.commentsRepo.deleteComment(comment_id);
+            if (deleteComment) {
+                return {
+                    status: true,
+                    statusCode: UtilEnum_1.StatusCode.OK,
+                    msg: "Comment deleted success"
+                };
+            }
+            else {
+                return {
+                    status: false,
+                    statusCode: UtilEnum_1.StatusCode.BAD_REQUESR,
+                    msg: "Comment deleted failed"
+                };
+            }
+        });
     }
     getPaginatedComments(fund_id, skip, limit) {
         throw new Error("Method not implemented.");

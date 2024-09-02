@@ -75,9 +75,23 @@ class CommentService implements ICommentService {
         }
     }
 
-    deleteComment(comment_id: string): Promise<HelperFuncationResponse> {
-        throw new Error("Method not implemented.");
+    async deleteComment(comment_id: string): Promise<HelperFuncationResponse> {
+        const deleteComment = await this.commentsRepo.deleteComment(comment_id);
+        if (deleteComment) {
+            return {
+                status: true,
+                statusCode: StatusCode.OK,
+                msg: "Comment deleted success"
+            }
+        } else {
+            return {
+                status: false,
+                statusCode: StatusCode.BAD_REQUESR,
+                msg: "Comment deleted failed"
+            }
+        }
     }
+
     getPaginatedComments(fund_id: string, skip: number, limit: number): Promise<HelperFuncationResponse> {
         throw new Error("Method not implemented.");
     }
