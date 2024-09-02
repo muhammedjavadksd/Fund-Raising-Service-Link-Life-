@@ -12,15 +12,17 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const comments_1 = __importDefault(require("../db/model/comments"));
 const CommentRepo_1 = __importDefault(require("../repositorys/CommentRepo"));
 const UtilEnum_1 = require("../types/Enums/UtilEnum");
+const utilHelper_1 = __importDefault(require("../util/helper/utilHelper"));
 class CommentService {
     constructor() {
         this.commentsRepo = new CommentRepo_1.default();
     }
     addComment(comment, fund_id, user_id, user_name, mention) {
         return __awaiter(this, void 0, void 0, function* () {
-            const comment_id = "123";
+            const comment_id = yield this.createCommentId();
             const comments_data = {
                 comment,
                 comment_id,
@@ -60,6 +62,18 @@ class CommentService {
         throw new Error("Method not implemented.");
     }
     createCommentId() {
-        throw new Error("Method not implemented.");
+        return __awaiter(this, void 0, void 0, function* () {
+            const utilHelper = new utilHelper_1.default();
+            let randomNumber = utilHelper.generateAnOTP(4);
+            let randomText = utilHelper.createRandomText(4);
+            let commentId = `${randomText}${randomNumber}`;
+            let findComment = yield comments_1.default.findOne({ comment_id: commentId });
+            while (findComment) {
+                randomNumber++;
+                commentId = `${randomText}${randomNumber}`;
+                findComment = yield comments_1.default.findOne({ comment_id: commentId });
+            }
+            return commentId;
+        });
     }
 }

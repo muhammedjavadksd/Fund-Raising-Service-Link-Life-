@@ -1,7 +1,9 @@
+import CommentCollection from "../db/model/comments";
 import CommentsRepo from "../repositorys/CommentRepo";
 import { StatusCode } from "../types/Enums/UtilEnum";
 import { ICommentTemplate } from "../types/Interface/IDBmodel";
 import { HelperFuncationResponse } from "../types/Interface/Util";
+import UtilHelper from "../util/helper/utilHelper";
 
 
 interface ICommentService {
@@ -9,7 +11,7 @@ interface ICommentService {
     editComment(new_comment: string, comment_id: string): Promise<HelperFuncationResponse>
     deleteComment(comment_id: string): Promise<HelperFuncationResponse>
     getPaginatedComments(fund_id: string, skip: number, limit: number): Promise<HelperFuncationResponse>
-    createCommentId(): Promise<HelperFuncationResponse>
+    createCommentId(): Promise<string>
 }
 
 
@@ -22,7 +24,7 @@ class CommentService implements ICommentService {
     }
 
     async addComment(comment: string, fund_id: string, user_id: string, user_name: string, mention: string): Promise<HelperFuncationResponse> {
-        const comment_id: string = "123";
+        const comment_id: string = await this.createCommentId();
         const comments_data: ICommentTemplate = {
             comment,
             comment_id,
@@ -61,8 +63,21 @@ class CommentService implements ICommentService {
     getPaginatedComments(fund_id: string, skip: number, limit: number): Promise<HelperFuncationResponse> {
         throw new Error("Method not implemented.");
     }
-    createCommentId(): Promise<HelperFuncationResponse> {
-        throw new Error("Method not implemented.");
+
+    async createCommentId(): Promise<string> {
+
+        const utilHelper = new UtilHelper();
+        let randomNumber: number = utilHelper.generateAnOTP(4)
+        let randomText: string = utilHelper.createRandomText(4)
+        let commentId: string = `${randomText}${randomNumber}`;
+        let findComment = await CommentCollection.findOne({ comment_id: commentId })
+        while (findComment) {
+            randomNumber++
+            commentId = `${randomText}${randomNumber}`;
+            findComment = await CommentCollection.findOne({ comment_id: commentId })
+        }
+
+        return commentId
     }
 
 }
