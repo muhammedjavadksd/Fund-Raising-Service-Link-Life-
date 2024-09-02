@@ -36,9 +36,21 @@ class UserController implements IUserController {
         this.getActiveFundRaise = this.getActiveFundRaise.bind(this);
         this.getSingleProfile = this.getSingleProfile.bind(this);
         this.addComment = this.addComment.bind(this);
+        this.getPaginatedComments = this.getPaginatedComments.bind(this);
         this.fundRaiserService = new FundRaiserService();
         this.commentService = new CommentService();
         this.fundRaiserRepo = new FundRaiserRepo();
+    }
+
+    async getPaginatedComments(req: Request, res: Response): Promise<void> {
+
+        const page: number = +req.params.page;
+        const limit: number = +req.params.limit;
+        const fund_id: string = req.params.fund_id;
+
+        const skip = (page - 1) * limit;
+        const findComment = await this.commentService.getPaginatedComments(fund_id, skip, limit);
+        res.status(findComment.statusCode).json({ status: findComment.status, msg: findComment.msg, data: findComment.data })
     }
 
     async addComment(req: CustomRequest, res: Response): Promise<void> {

@@ -12,6 +12,7 @@ interface IUserController {
     getActiveFundRaise(req: Request, res: Response): Promise<void>
     getSingleProfile(req: Request, res: Response): Promise<void>
     addComment(req: Request, res: Response): Promise<void>
+    getPaginatedComments(req: Request, res: Response): Promise<void>
 }
 
 interface IAdminController {
