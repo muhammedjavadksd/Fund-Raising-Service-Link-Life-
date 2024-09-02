@@ -48,7 +48,11 @@ class UserController {
         });
     }
     deleteComment(req, res) {
-        throw new Error("Method not implemented.");
+        return __awaiter(this, void 0, void 0, function* () {
+            const comment_id = req.params.comment_id;
+            const deleteComment = yield this.commentService.deleteComment(comment_id);
+            res.status(deleteComment.statusCode).json({ status: deleteComment.status, msg: deleteComment.msg, data: deleteComment.data });
+        });
     }
     getPaginatedComments(req, res) {
         return __awaiter(this, void 0, void 0, function* () {

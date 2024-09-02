@@ -53,8 +53,10 @@ class UserController implements IUserController {
         res.status(editComment.statusCode).json({ status: editComment.status, msg: editComment.msg, data: editComment.data })
     }
 
-    deleteComment(req: Request, res: Response): Promise<void> {
-        throw new Error("Method not implemented.");
+    async deleteComment(req: Request, res: Response): Promise<void> {
+        const comment_id: string = req.params.comment_id;
+        const deleteComment = await this.commentService.deleteComment(comment_id);
+        res.status(deleteComment.statusCode).json({ status: deleteComment.status, msg: deleteComment.msg, data: deleteComment.data })
     }
 
     async getPaginatedComments(req: Request, res: Response): Promise<void> {

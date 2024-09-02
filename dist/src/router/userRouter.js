@@ -29,5 +29,5 @@ userRouter.patch("/close/:edit_id", authMiddleware.isValidUser, authMiddleware.i
 userRouter.patch("/edit_comment/:comment_id", authMiddleware.isValidUser, authMiddleware.isValidCommentOwner, UserControllers.editComment);
 //delete method
 userRouter.delete("/delete_image/:type/:edit_id/:bucket_name/:image_id", authMiddleware.isValidUser, authMiddleware.isFundRaiseRequestValid, UserControllers.deleteImage); //test completed
-userRouter.delete("/delete_comment", authMiddleware.isValidUser, UserControllers.addComment);
+userRouter.delete("/delete_comment/:comment_id", authMiddleware.isValidUser, authMiddleware.isValidCommentOwner, UserControllers.addComment);
 exports.default = userRouter;
