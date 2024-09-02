@@ -72,7 +72,8 @@ class UserController {
             const user_name = (_a = req === null || req === void 0 ? void 0 : req.context) === null || _a === void 0 ? void 0 : _a.full_name;
             const user_id = (_b = req === null || req === void 0 ? void 0 : req.context) === null || _b === void 0 ? void 0 : _b.profile_id;
             const mention = req.body.mention;
-            const saveComment = yield this.commentService.addComment(comment, post_id, user_id, user_name, mention);
+            const replay_id = req.body.replay_id;
+            const saveComment = yield this.commentService.addComment(comment, post_id, user_id, user_name, mention, replay_id);
             res.status(saveComment.statusCode).json({ status: saveComment.status, msg: saveComment.msg, data: saveComment.data });
         });
     }

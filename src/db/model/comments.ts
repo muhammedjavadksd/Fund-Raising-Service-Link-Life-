@@ -36,6 +36,9 @@ const schema = new Schema<ICommentCollection>({
     fund_id: {
         type: String,
         required: true
+    },
+    replay_id: {
+        type: String,
     }
 })
 

@@ -35,6 +35,9 @@ const schema = new mongoose_1.Schema({
     fund_id: {
         type: String,
         required: true
+    },
+    replay_id: {
+        type: String,
     }
 });
 const CommentCollection = (0, mongoose_1.model)("comments", schema, "comments");

@@ -7,7 +7,7 @@ import UtilHelper from "../util/helper/utilHelper";
 
 
 interface ICommentService {
-    addComment(comment: string, fund_id: string, user_id: string, user_name: string, mention: string): Promise<HelperFuncationResponse>
+    addComment(comment: string, fund_id: string, user_id: string, user_name: string, mention: string, replay_id: string): Promise<HelperFuncationResponse>
     editComment(new_comment: string, comment_id: string): Promise<HelperFuncationResponse>
     deleteComment(comment_id: string): Promise<HelperFuncationResponse>
     getPaginatedComments(fund_id: string, skip: number, limit: number): Promise<HelperFuncationResponse>
@@ -23,7 +23,7 @@ class CommentService implements ICommentService {
         this.commentsRepo = new CommentsRepo()
     }
 
-    async addComment(comment: string, fund_id: string, user_id: string, user_name: string, mention: string): Promise<HelperFuncationResponse> {
+    async addComment(comment: string, fund_id: string, user_id: string, user_name: string, mention: string, replay_id: string): Promise<HelperFuncationResponse> {
         const comment_id: string = await this.createCommentId();
         const comments_data: ICommentTemplate = {
             comment,
@@ -32,7 +32,8 @@ class CommentService implements ICommentService {
             is_edited: false,
             mention,
             user_name,
-            user_id
+            user_id,
+            replay_id
         }
 
         const saveComment: string | undefined = await this.commentsRepo.addComment(comments_data);

@@ -37,7 +37,8 @@ class CommentsRepo {
             const findComments = yield comments_1.default.aggregate([
                 {
                     $match: {
-                        fund_id
+                        fund_id,
+                        replay_id: { $exist: false }
                     }
                 },
                 {
@@ -48,6 +49,19 @@ class CommentsRepo {
                             },
                             {
                                 $limit: limit
+                            },
+                            {
+                                $lookup: {
+                                    from: "comments",
+                                    as: "replays",
+                                    foreignField: "comment_id",
+                                    localField: "replay_id",
+                                    pipeline: [{
+                                            $sort: {
+                                                date: -1
+                                            }
+                                        }]
+                                }
                             }
                         ],
                         total_records: [
@@ -55,6 +69,11 @@ class CommentsRepo {
                                 $count: "total_records"
                             }
                         ]
+                    }
+                },
+                {
+                    $sort: {
+                        date: -1
                     }
                 }
             ]);

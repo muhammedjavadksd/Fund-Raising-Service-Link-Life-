@@ -98,7 +98,8 @@ interface ICommentTemplate {
     user_name: string,
     date?: Date,
     is_edited: boolean,
-    mention: string //profile id
+    mention: string, //profile id
+    replay_id: string,
 }
 
 interface ICommentCollection extends Document, ICommentTemplate { }

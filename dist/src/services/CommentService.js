@@ -20,7 +20,7 @@ class CommentService {
     constructor() {
         this.commentsRepo = new CommentRepo_1.default();
     }
-    addComment(comment, fund_id, user_id, user_name, mention) {
+    addComment(comment, fund_id, user_id, user_name, mention, replay_id) {
         return __awaiter(this, void 0, void 0, function* () {
             const comment_id = yield this.createCommentId();
             const comments_data = {
@@ -30,7 +30,8 @@ class CommentService {
                 is_edited: false,
                 mention,
                 user_name,
-                user_id
+                user_id,
+                replay_id
             };
             const saveComment = yield this.commentsRepo.addComment(comments_data);
             if (saveComment) {

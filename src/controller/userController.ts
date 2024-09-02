@@ -77,8 +77,9 @@ class UserController implements IUserController {
         const user_name = req?.context?.full_name;
         const user_id = req?.context?.profile_id;
         const mention = req.body.mention;
+        const replay_id = req.body.replay_id;
 
-        const saveComment = await this.commentService.addComment(comment, post_id, user_id, user_name, mention);
+        const saveComment = await this.commentService.addComment(comment, post_id, user_id, user_name, mention, replay_id);
         res.status(saveComment.statusCode).json({ status: saveComment.status, msg: saveComment.msg, data: saveComment.data })
     }
 

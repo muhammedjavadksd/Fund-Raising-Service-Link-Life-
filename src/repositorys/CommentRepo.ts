@@ -33,7 +33,8 @@ class CommentsRepo implements ICommentRepo {
             [
                 {
                     $match: {
-                        fund_id
+                        fund_id,
+                        replay_id: { $exist: false }
                     }
                 },
                 {
@@ -44,6 +45,19 @@ class CommentsRepo implements ICommentRepo {
                             },
                             {
                                 $limit: limit
+                            },
+                            {
+                                $lookup: {
+                                    from: "comments",
+                                    as: "replays",
+                                    foreignField: "comment_id",
+                                    localField: "replay_id",
+                                    pipeline: [{
+                                        $sort: {
+                                            date: -1
+                                        }
+                                    }]
+                                }
                             }
                         ],
                         total_records: [
@@ -51,6 +65,11 @@ class CommentsRepo implements ICommentRepo {
                                 $count: "total_records"
                             }
                         ]
+                    }
+                },
+                {
+                    $sort: {
+                        date: -1
                     }
                 }
             ])
