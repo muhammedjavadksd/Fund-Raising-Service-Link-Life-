@@ -60,6 +60,8 @@ class UserController {
             const limit = +req.params.limit;
             const fund_id = req.params.fund_id;
             const skip = (page - 1) * limit;
+            console.log(skip, page, limit);
+            console.log(req.params);
             const findComment = yield this.commentService.getPaginatedComments(fund_id, skip, limit);
             res.status(findComment.statusCode).json({ status: findComment.status, msg: findComment.msg, data: findComment.data });
         });

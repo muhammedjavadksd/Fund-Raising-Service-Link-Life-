@@ -66,6 +66,11 @@ class UserController implements IUserController {
         const fund_id: string = req.params.fund_id;
 
         const skip = (page - 1) * limit;
+        console.log(skip, page, limit);
+        console.log(req.params);
+
+
+
         const findComment = await this.commentService.getPaginatedComments(fund_id, skip, limit);
         res.status(findComment.statusCode).json({ status: findComment.status, msg: findComment.msg, data: findComment.data })
     }

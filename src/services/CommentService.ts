@@ -95,7 +95,9 @@ class CommentService implements ICommentService {
 
     async getPaginatedComments(fund_id: string, skip: number, limit: number): Promise<HelperFuncationResponse> {
         const findComments = await this.commentsRepo.getPaginatedComments(fund_id, skip, limit);
-        if (findComments.total_records > 0) {
+        console.log(findComments);
+
+        if (findComments && findComments.total_records && findComments.total_records > 0) {
             return {
                 status: true,
                 msg: "All comment fetched",

@@ -34,7 +34,7 @@ class CommentsRepo implements ICommentRepo {
                 {
                     $match: {
                         fund_id,
-                        replay_id: { $exist: false }
+                        replay_id: null
                     }
                 },
                 {
@@ -60,6 +60,7 @@ class CommentsRepo implements ICommentRepo {
                                 }
                             }
                         ],
+
                         total_records: [
                             {
                                 $count: "total_records"
@@ -71,8 +72,18 @@ class CommentsRepo implements ICommentRepo {
                     $sort: {
                         date: -1
                     }
+                },
+                {
+                    $unwind: "$total_records"
+                },
+                {
+                    $project: {
+                        paginated: 1,
+                        total_records: "$total_records.total_records"
+                    }
                 }
             ])
+        console.log(findComments)
         return findComments[0]
     }
 
