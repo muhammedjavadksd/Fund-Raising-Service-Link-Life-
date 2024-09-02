@@ -5,15 +5,16 @@ import { HelperFuncationResponse } from "../types/Interface/Util";
 
 interface ICommentRepo {
     addComment(data: ICommentTemplate): Promise<undefined | string>
-    deleteComment(comment_id: string): Promise<HelperFuncationResponse>
+    deleteComment(comment_id: string): Promise<boolean>
     editComment(comment_id: string, new_comment: string,): Promise<boolean>
     getAllComment(fund_id: string): Promise<ICommentTemplate[]>
 }
 
 class CommentsRepo implements ICommentRepo {
 
-    deleteComment(comment_id: string): Promise<HelperFuncationResponse> {
-        throw new Error("Method not implemented.");
+    async deleteComment(comment_id: string): Promise<boolean> {
+        const deleteComment = await CommentCollection.deleteOne({ comment_id });
+        return deleteComment.deletedCount > 0
     }
 
     async editComment(comment_id: string, new_comment: string): Promise<boolean> {

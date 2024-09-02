@@ -15,7 +15,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const comments_1 = __importDefault(require("../db/model/comments"));
 class CommentsRepo {
     deleteComment(comment_id) {
-        throw new Error("Method not implemented.");
+        return __awaiter(this, void 0, void 0, function* () {
+            const deleteComment = yield comments_1.default.deleteOne({ comment_id });
+            return deleteComment.deletedCount > 0;
+        });
     }
     editComment(comment_id, new_comment) {
         return __awaiter(this, void 0, void 0, function* () {
