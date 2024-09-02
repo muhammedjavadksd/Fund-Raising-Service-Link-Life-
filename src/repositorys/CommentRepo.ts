@@ -7,7 +7,7 @@ interface ICommentRepo {
     findCommentByCommentId(comment_id: string): Promise<ICommentTemplate | null>
     addComment(data: ICommentTemplate): Promise<undefined | string>
     deleteComment(comment_id: string): Promise<boolean>
-    editComment(comment_id: string, new_comment: string,): Promise<boolean>
+    editComment(comment_id: string, comments: Partial<ICommentTemplate>): Promise<boolean>
     getAllComment(fund_id: string, skip: number, limit: number): Promise<ICommentTemplate[]>
 }
 
@@ -23,8 +23,8 @@ class CommentsRepo implements ICommentRepo {
         return deleteComment.deletedCount > 0
     }
 
-    async editComment(comment_id: string, new_comment: string): Promise<boolean> {
-        const edit = await CommentCollection.updateOne({ comment_id }, { $set: { comment_id: comment_id, comment: new_comment, } })
+    async editComment(comment_id: string, comments: Partial<ICommentTemplate>): Promise<boolean> {
+        const edit = await CommentCollection.updateOne({ comment_id }, { $set: comments })
         return edit.modifiedCount > 0
     }
 

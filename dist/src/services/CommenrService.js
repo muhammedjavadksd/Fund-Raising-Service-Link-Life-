@@ -53,7 +53,27 @@ class CommentService {
         });
     }
     editComment(new_comment, comment_id) {
-        throw new Error("Method not implemented.");
+        return __awaiter(this, void 0, void 0, function* () {
+            let editData = {
+                comment: new_comment,
+                is_edited: true,
+            };
+            const editComment = yield this.commentsRepo.editComment(comment_id, editData);
+            if (editComment) {
+                return {
+                    status: true,
+                    statusCode: UtilEnum_1.StatusCode.OK,
+                    msg: "Comment updated success",
+                };
+            }
+            else {
+                return {
+                    status: false,
+                    statusCode: UtilEnum_1.StatusCode.BAD_REQUESR,
+                    msg: "Comment updated failed",
+                };
+            }
+        });
     }
     deleteComment(comment_id) {
         throw new Error("Method not implemented.");

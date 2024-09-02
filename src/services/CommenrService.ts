@@ -54,9 +54,27 @@ class CommentService implements ICommentService {
         }
     }
 
-    editComment(new_comment: string, comment_id: string): Promise<HelperFuncationResponse> {
-        throw new Error("Method not implemented.");
+    async editComment(new_comment: string, comment_id: string): Promise<HelperFuncationResponse> {
+        let editData: Partial<ICommentTemplate> = {
+            comment: new_comment,
+            is_edited: true,
+        }
+        const editComment = await this.commentsRepo.editComment(comment_id, editData)
+        if (editComment) {
+            return {
+                status: true,
+                statusCode: StatusCode.OK,
+                msg: "Comment updated success",
+            }
+        } else {
+            return {
+                status: false,
+                statusCode: StatusCode.BAD_REQUESR,
+                msg: "Comment updated failed",
+            }
+        }
     }
+
     deleteComment(comment_id: string): Promise<HelperFuncationResponse> {
         throw new Error("Method not implemented.");
     }

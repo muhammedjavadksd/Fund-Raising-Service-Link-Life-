@@ -26,9 +26,9 @@ class CommentsRepo {
             return deleteComment.deletedCount > 0;
         });
     }
-    editComment(comment_id, new_comment) {
+    editComment(comment_id, comments) {
         return __awaiter(this, void 0, void 0, function* () {
-            const edit = yield comments_1.default.updateOne({ comment_id }, { $set: { comment_id: comment_id, comment: new_comment, } });
+            const edit = yield comments_1.default.updateOne({ comment_id }, { $set: comments });
             return edit.modifiedCount > 0;
         });
     }
