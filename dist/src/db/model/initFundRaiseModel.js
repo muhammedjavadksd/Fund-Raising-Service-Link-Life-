@@ -137,7 +137,7 @@ const schemeFundRaise = new mongoose_1.default.Schema({
         account_number: String,
         holder_name: String,
         ifsc_code: String,
-        accont_type: {
+        account_type: {
             type: String,
             enum: Object.values(UtilEnum_1.FundRaiserBankAccountType)
         }

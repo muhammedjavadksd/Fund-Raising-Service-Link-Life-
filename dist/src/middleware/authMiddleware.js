@@ -20,7 +20,6 @@ class AuthMiddleware {
         return __awaiter(this, void 0, void 0, function* () {
             const headers = req.headers;
             const auth = headers['authorization'];
-            console.log("Hello world");
             console.log(auth);
             console.log(headers);
             if (auth && auth.split(' ')[0] === 'Bearer') {
@@ -41,6 +40,7 @@ class AuthMiddleware {
                         req.context.token = token;
                         req.context.user_id = checkValidity.user_id;
                         req.context.profile_id = checkValidity.profile_id;
+                        req.context.full_name = checkValidity.first_name + checkValidity.last_name;
                         console.log("Test");
                         next();
                     }

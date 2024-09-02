@@ -20,6 +20,7 @@ userRouter.get("/view/:profile_id", UserControllers.getSingleProfile); //test co
 userRouter.get("/view/:limit/:page", UserControllers.getActiveFundRaise); //test completed
 // POST method
 userRouter.post("/create", authMiddleware.isValidUser, UserControllers.createFundRaise); //test completed
+userRouter.post("/add_comment/:post_id", authMiddleware.isValidUser, UserControllers.addComment);
 //Patch method
 userRouter.patch("/edit/:edit_id", authMiddleware.isValidUser, authMiddleware.isFundRaiseRequestValid, UserControllers.editFundRaise); //test completed
 userRouter.patch("/upload_images/:edit_id", authMiddleware.isValidUser, authMiddleware.isFundRaiseRequestValid, UserControllers.uploadImage); // test completed

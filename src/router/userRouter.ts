@@ -23,6 +23,7 @@ userRouter.get("/view/:limit/:page", UserControllers.getActiveFundRaise); //test
 
 // POST method
 userRouter.post("/create", authMiddleware.isValidUser, UserControllers.createFundRaise); //test completed
+userRouter.post("/add_comment/:post_id", authMiddleware.isValidUser, UserControllers.addComment)
 
 //Patch method
 userRouter.patch("/edit/:edit_id", authMiddleware.isValidUser, authMiddleware.isFundRaiseRequestValid, UserControllers.editFundRaise); //test completed

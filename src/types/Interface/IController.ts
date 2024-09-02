@@ -11,6 +11,7 @@ interface IUserController {
     createFundRaise(req: CustomRequest, res: Response): Promise<void>
     getActiveFundRaise(req: Request, res: Response): Promise<void>
     getSingleProfile(req: Request, res: Response): Promise<void>
+    addComment(req: Request, res: Response): Promise<void>
 }
 
 interface IAdminController {

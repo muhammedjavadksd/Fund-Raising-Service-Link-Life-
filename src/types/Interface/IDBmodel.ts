@@ -48,6 +48,7 @@ interface IEditableFundRaiser {
     "pincode"?: number,
     "state"?: string
     "deadline"?: Date
+    "withdraw_docs": IWithdrawDetails
 }
 
 interface IWithdrawDetails {
@@ -82,4 +83,23 @@ interface IFundRaise {
     "withdraw_docs": IWithdrawDetails
 }
 
-export { IWithdrawDetails, IFundRaise, IFundRaiseInitialData, iFundRaiseModel, IEditableFundRaiser }
+
+interface IEditComment {
+    comment: string,
+    comment_id?: string,
+    mention: string //profile id
+}
+
+interface ICommentTemplate {
+    comment: string,
+    comment_id?: string,
+    user_id: string,
+    user_name: string,
+    date: Date,
+    is_edited: boolean,
+    mention: string //profile id
+}
+
+interface ICommentCollection extends Document, ICommentTemplate { }
+
+export { ICommentCollection, ICommentTemplate, IWithdrawDetails, IFundRaise, IFundRaiseInitialData, iFundRaiseModel, IEditableFundRaiser }

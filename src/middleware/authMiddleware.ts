@@ -13,7 +13,7 @@ class AuthMiddleware implements IAuthMiddleware {
         const headers: Request['headers'] = req.headers;
         const auth: string = headers['authorization'] as string;
 
-        console.log("Hello world");
+
         console.log(auth);
         console.log(headers);
 
@@ -47,6 +47,7 @@ class AuthMiddleware implements IAuthMiddleware {
                     req.context.token = token;
                     req.context.user_id = checkValidity.user_id;
                     req.context.profile_id = checkValidity.profile_id;
+                    req.context.full_name = checkValidity.first_name + checkValidity.last_name;
                     console.log("Test");
 
                     next()

@@ -32,9 +32,21 @@ class UserController implements IUserController {
         this.createFundRaise = this.createFundRaise.bind(this);
         this.getActiveFundRaise = this.getActiveFundRaise.bind(this);
         this.getSingleProfile = this.getSingleProfile.bind(this);
-
+        this.addComment = this.addComment.bind(this);
         this.fundRaiserService = new FundRaiserService();
         this.fundRaiserRepo = new FundRaiserRepo();
+    }
+
+    addComment(req: CustomRequest, res: Response): Promise<void> {
+
+        const comment = req.body.comment;
+        const pody_id = req.params.post_id;
+        const user_name = req?.context?.full_name;
+        const user_id = req?.context?.profile_id;
+        const mention = req.body.mention;
+
+
+
 
     }
 

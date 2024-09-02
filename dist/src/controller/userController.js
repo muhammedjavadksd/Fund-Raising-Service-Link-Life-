@@ -30,8 +30,17 @@ class UserController {
         this.createFundRaise = this.createFundRaise.bind(this);
         this.getActiveFundRaise = this.getActiveFundRaise.bind(this);
         this.getSingleProfile = this.getSingleProfile.bind(this);
+        this.addComment = this.addComment.bind(this);
         this.fundRaiserService = new FundRaiserService_1.default();
         this.fundRaiserRepo = new FundRaiserRepo_1.default();
+    }
+    addComment(req, res) {
+        var _a, _b;
+        const comment = req.body.comment;
+        const pody_id = req.params.post_id;
+        const user_name = (_a = req === null || req === void 0 ? void 0 : req.context) === null || _a === void 0 ? void 0 : _a.full_name;
+        const user_id = (_b = req === null || req === void 0 ? void 0 : req.context) === null || _b === void 0 ? void 0 : _b.profile_id;
+        const mention = req.body.mention;
     }
     uploadImageIntoS3(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
