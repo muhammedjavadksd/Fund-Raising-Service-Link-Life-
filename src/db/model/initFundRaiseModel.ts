@@ -1,11 +1,13 @@
-import mongoose from "mongoose";
+import mongoose, { Schema } from "mongoose";
 import { iFundRaiseModel } from "../../types/Interface/IDBmodel";
 import { const_data } from "../../types/Enums/ConstData";
 import { FundRaiserCreatedBy, FundRaiserStatus } from "../../types/Enums/DbEnum";
-import { FundRaiserCategory } from "../../types/Enums/UtilEnum";
+import { FundRaiserBankAccountType, FundRaiserCategory } from "../../types/Enums/UtilEnum";
 // FundRaiserCategory
 
-const _fundRaiseSchema = {
+
+
+const schemeFundRaise = new mongoose.Schema<iFundRaiseModel>({
     fund_id: {
         type: String,
         required: true,
@@ -62,7 +64,7 @@ const _fundRaiseSchema = {
         enum: FundRaiserCreatedBy
     },
     user_id: {
-        type: mongoose.Types.ObjectId,
+        type: Schema.Types.ObjectId,
         required: true
     },
     age: {
@@ -84,10 +86,10 @@ const _fundRaiseSchema = {
         type: String,
     },
     picture: {
-        type: Array,
+        type: [String],
     },
     documents: {
-        type: Array,
+        type: [String],
     },
     about: {
         type: String,
@@ -104,16 +106,24 @@ const _fundRaiseSchema = {
     },
     status: {
         type: String,
-        enum: FundRaiserStatus,
-        default: false,
+        enum: Object.values(FundRaiserStatus),
+        required: true
     },
     deadline: {
         type: Date,
         required: false
     },
-}
+    withdraw_docs: {
+        account_number: String,
+        holder_name: String,
+        ifsc_code: String,
+        accont_type: {
+            type: String,
+            enum: Object.values(FundRaiserBankAccountType)
+        }
+    }
+});
 
-const schemeFundRaise = new mongoose.Schema(_fundRaiseSchema);
 const InitFundRaisingModel = mongoose.model<iFundRaiseModel>("init_fund_raising", schemeFundRaise, "init_fund_raising");
 
 export default InitFundRaisingModel

@@ -1,11 +1,16 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.StatusCode = exports.FundRaiserCategory = exports.FundRaiserFileType = void 0;
+exports.StatusCode = exports.FundRaiserCategory = exports.FundRaiserFileType = exports.FundRaiserBankAccountType = void 0;
 var FundRaiserFileType;
 (function (FundRaiserFileType) {
     FundRaiserFileType["Document"] = "Document";
     FundRaiserFileType["Pictures"] = "Pictures";
 })(FundRaiserFileType || (exports.FundRaiserFileType = FundRaiserFileType = {}));
+var FundRaiserBankAccountType;
+(function (FundRaiserBankAccountType) {
+    FundRaiserBankAccountType["Savings"] = "saving";
+    FundRaiserBankAccountType["Current"] = "current";
+})(FundRaiserBankAccountType || (exports.FundRaiserBankAccountType = FundRaiserBankAccountType = {}));
 var FundRaiserCategory;
 (function (FundRaiserCategory) {
     FundRaiserCategory["Education"] = "Education";

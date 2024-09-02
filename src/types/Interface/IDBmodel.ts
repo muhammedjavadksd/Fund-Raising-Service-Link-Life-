@@ -1,6 +1,6 @@
 import mongoose, { Document } from "mongoose";
 import { FundRaiserCreatedBy, FundRaiserStatus } from "../Enums/DbEnum";
-import { FundRaiserCategory } from "../Enums/UtilEnum";
+import { FundRaiserBankAccountType, FundRaiserCategory } from "../Enums/UtilEnum";
 
 
 interface iFundRaiseModel extends Document, IFundRaise {
@@ -50,6 +50,12 @@ interface IEditableFundRaiser {
     "deadline"?: Date
 }
 
+interface IWithdrawDetails {
+    account_number: string,
+    holder_name: string,
+    ifsc_code: string,
+    accont_type: FundRaiserBankAccountType
+}
 
 interface IFundRaise {
     "fund_id": string,
@@ -72,7 +78,8 @@ interface IFundRaise {
     "district": string,
     "full_address": string,
     "pincode": number,
-    "state": string
+    "state": string,
+    "withdraw_docs": IWithdrawDetails
 }
 
-export { IFundRaise, IFundRaiseInitialData, iFundRaiseModel, IEditableFundRaiser }
+export { IWithdrawDetails, IFundRaise, IFundRaiseInitialData, iFundRaiseModel, IEditableFundRaiser }

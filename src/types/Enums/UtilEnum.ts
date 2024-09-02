@@ -5,6 +5,11 @@ enum FundRaiserFileType {
     Pictures = "Pictures"
 }
 
+enum FundRaiserBankAccountType {
+    Savings = "saving",
+    Current = "current",
+}
+
 enum FundRaiserCategory {
     Education = "Education",
     MedicalAndHealth = "Medical and Health",
@@ -54,4 +59,4 @@ enum StatusCode {
 
 
 
-export { FundRaiserFileType, FundRaiserCategory, StatusCode }
+export { FundRaiserBankAccountType, FundRaiserFileType, FundRaiserCategory, StatusCode }
