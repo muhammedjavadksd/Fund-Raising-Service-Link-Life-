@@ -132,13 +132,54 @@ class FundRaiserRepo implements IFundRaiserRepo {
         }
     }
 
-    async getUserPosts(user_id: string): Promise<iFundRaiseModel[] | null> {
+    async getUserPosts(user_id: string, skip: number, limit: number): Promise<IPaginatedResponse<iFundRaiseModel>> {
+        console.log(user_id);
+
         try {
-            const fundRaisePost: iFundRaiseModel[] = await this.FundRaiserModel.find({ created_by: FundRaiserCreatedBy.USER, user_id });
-            return fundRaisePost
+            const fundRaisePost = await this.FundRaiserModel.aggregate([
+                {
+                    $match: {
+                        user_id
+                    }
+                },
+                {
+                    $facet: {
+                        paginated: [
+                            {
+                                $skip: skip
+                            },
+                            {
+                                $limit: limit
+                            }
+                        ],
+                        total_records: [
+                            {
+                                $count: "total_records"
+                            }
+                        ]
+                    }
+                },
+                {
+                    $unwind: "$total_records"
+                },
+                {
+                    $project: {
+                        paginated: 1,
+                        total_records: "$total_records.total_records"
+                    }
+                }
+            ])
+            const response: IPaginatedResponse<iFundRaiseModel> = {
+                paginated: fundRaisePost[0].paginated,
+                total_records: fundRaisePost[0].total_records,
+            }
+            return response
         } catch (e) {
             console.log(e);
-            return null
+            return {
+                paginated: [],
+                total_records: 0
+            }
         }
     }
 

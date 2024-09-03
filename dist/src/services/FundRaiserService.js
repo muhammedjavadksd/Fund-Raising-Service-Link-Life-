@@ -13,7 +13,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const FundRaiserRepo_1 = __importDefault(require("../repositorys/FundRaiserRepo"));
-const DbEnum_1 = require("../types/Enums/DbEnum");
 const UtilEnum_1 = require("../types/Enums/UtilEnum");
 const s3Bucket_1 = __importDefault(require("../util/helper/s3Bucket"));
 const ConstData_1 = require("../types/Enums/ConstData");
@@ -91,7 +90,7 @@ class FundRaiserService {
             }
         });
     }
-    getOwnerSingleProfile(profile_id, user_type, owner_id) {
+    getOwnerSingleProfile(profile_id) {
         return __awaiter(this, void 0, void 0, function* () {
             let fundraiser_data = yield this.FundRaiserRepo.findFundPostByFundId(profile_id);
             if (!fundraiser_data) {
@@ -101,15 +100,7 @@ class FundRaiserService {
                     statusCode: UtilEnum_1.StatusCode.NOT_FOUND,
                 };
             }
-            if (user_type == DbEnum_1.FundRaiserCreatedBy.ADMIN) {
-                return {
-                    msg: "Data fetched success",
-                    status: true,
-                    statusCode: UtilEnum_1.StatusCode.OK,
-                    data: fundraiser_data
-                };
-            }
-            if (fundraiser_data.user_id == owner_id) {
+            if (fundraiser_data.user_id == profile_id) {
                 return {
                     msg: "Data fetched success",
                     status: true,
@@ -188,38 +179,23 @@ class FundRaiserService {
             }
         });
     }
-    getOwnerFundRaise(owner_id, owner_type, limit, skip) {
+    getOwnerFundRaise(user_id, limit, skip) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                if (owner_id) {
-                    let fundraiser_data;
-                    if (owner_type == DbEnum_1.FundRaiserCreatedBy.ORGANIZATION) {
-                        fundraiser_data = yield this.FundRaiserRepo.getOrganizationPosts(owner_id, skip, limit);
-                    }
-                    else if (owner_type == DbEnum_1.FundRaiserCreatedBy.USER) {
-                        fundraiser_data = yield this.FundRaiserRepo.getUserPosts(owner_id);
-                    }
-                    if (fundraiser_data && (fundraiser_data === null || fundraiser_data === void 0 ? void 0 : fundraiser_data.length)) {
-                        return {
-                            msg: "Data fetched success",
-                            status: true,
-                            statusCode: UtilEnum_1.StatusCode.OK,
-                            data: fundraiser_data
-                        };
-                    }
-                    else {
-                        return {
-                            msg: "No data found",
-                            status: false,
-                            statusCode: UtilEnum_1.StatusCode.NOT_FOUND
-                        };
-                    }
+                let fundraiser_data = yield this.FundRaiserRepo.getUserPosts(user_id, limit, skip);
+                if (fundraiser_data.total_records) {
+                    return {
+                        msg: "Data fetched success",
+                        status: true,
+                        statusCode: UtilEnum_1.StatusCode.OK,
+                        data: fundraiser_data
+                    };
                 }
                 else {
                     return {
-                        msg: "Please provide valid user id",
+                        msg: "No data found",
                         status: false,
-                        statusCode: UtilEnum_1.StatusCode.UNAUTHORIZED
+                        statusCode: UtilEnum_1.StatusCode.NOT_FOUND
                     };
                 }
             }

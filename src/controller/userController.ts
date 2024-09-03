@@ -181,7 +181,10 @@ class UserController implements IUserController {
     }
 
     async getUserFundRaisePost(req: CustomRequest, res: Response): Promise<void> {
-        console.log("recivied");
+
+        const limit: number = +req.params.limit;
+        const page: number = +req.params.page;
+        const skip = (page - 1) * limit
 
 
         try {
@@ -190,7 +193,7 @@ class UserController implements IUserController {
             console.log(user_id);
 
             if (user_id) {
-                const getMyFundRaisePost: HelperFuncationResponse = await this.fundRaiserService.getOwnerFundRaise(user_id, FundRaiserCreatedBy.USER, 1, 2);
+                const getMyFundRaisePost: HelperFuncationResponse = await this.fundRaiserService.getOwnerFundRaise(user_id, limit, skip);
                 if (getMyFundRaisePost.status) {
                     const data: iFundRaiseModel = getMyFundRaisePost.data;
                     res.status(getMyFundRaisePost.statusCode).json({ status: true, data })

@@ -132,15 +132,55 @@ class FundRaiserRepo {
             }
         });
     }
-    getUserPosts(user_id) {
+    getUserPosts(user_id, skip, limit) {
         return __awaiter(this, void 0, void 0, function* () {
+            console.log(user_id);
             try {
-                const fundRaisePost = yield this.FundRaiserModel.find({ created_by: DbEnum_1.FundRaiserCreatedBy.USER, user_id });
-                return fundRaisePost;
+                const fundRaisePost = yield this.FundRaiserModel.aggregate([
+                    {
+                        $match: {
+                            user_id
+                        }
+                    },
+                    {
+                        $facet: {
+                            paginated: [
+                                {
+                                    $skip: skip
+                                },
+                                {
+                                    $limit: limit
+                                }
+                            ],
+                            total_records: [
+                                {
+                                    $count: "total_records"
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        $unwind: "$total_records"
+                    },
+                    {
+                        $project: {
+                            paginated: 1,
+                            total_records: "$total_records.total_records"
+                        }
+                    }
+                ]);
+                const response = {
+                    paginated: fundRaisePost[0].paginated,
+                    total_records: fundRaisePost[0].total_records,
+                };
+                return response;
             }
             catch (e) {
                 console.log(e);
-                return null;
+                return {
+                    paginated: [],
+                    total_records: 0
+                };
             }
         });
     }

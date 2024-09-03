@@ -102,7 +102,7 @@ class FundRaiserService implements IFundRaiserService {
 
 
 
-    async getOwnerSingleProfile(profile_id: string, user_type: FundRaiserCreatedBy, owner_id: string): Promise<HelperFuncationResponse> {
+    async getOwnerSingleProfile(profile_id: string): Promise<HelperFuncationResponse> {
         let fundraiser_data: iFundRaiseModel | null = await this.FundRaiserRepo.findFundPostByFundId(profile_id);
         if (!fundraiser_data) {
             return {
@@ -111,16 +111,9 @@ class FundRaiserService implements IFundRaiserService {
                 statusCode: StatusCode.NOT_FOUND,
             }
         }
-        if (user_type == FundRaiserCreatedBy.ADMIN) {
-            return {
-                msg: "Data fetched success",
-                status: true,
-                statusCode: StatusCode.OK,
-                data: fundraiser_data
-            }
-        }
 
-        if (fundraiser_data.user_id == owner_id) {
+
+        if (fundraiser_data.user_id == profile_id) {
             return {
                 msg: "Data fetched success",
                 status: true,
@@ -134,7 +127,6 @@ class FundRaiserService implements IFundRaiserService {
                 statusCode: StatusCode.UNAUTHORIZED,
             }
         }
-
     }
 
 
@@ -203,35 +195,22 @@ class FundRaiserService implements IFundRaiserService {
         }
     }
 
-    async getOwnerFundRaise(owner_id: string, owner_type: FundRaiserCreatedBy, limit: number, skip: number): Promise<HelperFuncationResponse> {
+    async getOwnerFundRaise(user_id: string, limit: number, skip: number): Promise<HelperFuncationResponse> {
         try {
-            if (owner_id) {
-                let fundraiser_data;
-                if (owner_type == FundRaiserCreatedBy.ORGANIZATION) {
-                    fundraiser_data = await this.FundRaiserRepo.getOrganizationPosts(owner_id, skip, limit);
-                } else if (owner_type == FundRaiserCreatedBy.USER) {
-                    fundraiser_data = await this.FundRaiserRepo.getUserPosts(owner_id);
-                }
+            let fundraiser_data: IPaginatedResponse<iFundRaiseModel[]> = await this.FundRaiserRepo.getUserPosts(user_id, limit, skip);
 
-                if (fundraiser_data && fundraiser_data?.length) {
-                    return {
-                        msg: "Data fetched success",
-                        status: true,
-                        statusCode: StatusCode.OK,
-                        data: fundraiser_data
-                    }
-                } else {
-                    return {
-                        msg: "No data found",
-                        status: false,
-                        statusCode: StatusCode.NOT_FOUND
-                    }
+            if (fundraiser_data.total_records) {
+                return {
+                    msg: "Data fetched success",
+                    status: true,
+                    statusCode: StatusCode.OK,
+                    data: fundraiser_data
                 }
             } else {
                 return {
-                    msg: "Please provide valid user id",
+                    msg: "No data found",
                     status: false,
-                    statusCode: StatusCode.UNAUTHORIZED
+                    statusCode: StatusCode.NOT_FOUND
                 }
             }
         } catch (e) {

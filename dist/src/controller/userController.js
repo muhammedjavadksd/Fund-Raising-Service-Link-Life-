@@ -169,12 +169,14 @@ class UserController {
     getUserFundRaisePost(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             var _a;
-            console.log("recivied");
+            const limit = +req.params.limit;
+            const page = +req.params.page;
+            const skip = (page - 1) * limit;
             try {
                 const user_id = (_a = req.context) === null || _a === void 0 ? void 0 : _a.user_id;
                 console.log(user_id);
                 if (user_id) {
-                    const getMyFundRaisePost = yield this.fundRaiserService.getOwnerFundRaise(user_id, DbEnum_1.FundRaiserCreatedBy.USER, 1, 2);
+                    const getMyFundRaisePost = yield this.fundRaiserService.getOwnerFundRaise(user_id, limit, skip);
                     if (getMyFundRaisePost.status) {
                         const data = getMyFundRaisePost.data;
                         res.status(getMyFundRaisePost.statusCode).json({ status: true, data });
