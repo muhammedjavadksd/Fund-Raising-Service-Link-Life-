@@ -2,8 +2,8 @@ import { Request, Response } from "express";
 import FundRaiserService from "../services/FundRaiserService";
 import { CustomRequest } from "../types/DataType/Objects";
 import { FundRaiserCreatedBy, FundRaiserStatus } from "../types/Enums/DbEnum";
-import { HelperFuncationResponse } from "../types/Interface/Util";
-import { IEditableFundRaiser, IFundRaiseInitialData, iFundRaiseModel } from "../types/Interface/IDBmodel";
+import { HelperFuncationResponse, IPaginatedResponse } from "../types/Interface/Util";
+import { IEditableFundRaiser, IFundRaise, IFundRaiseInitialData, iFundRaiseModel } from "../types/Interface/IDBmodel";
 import { FundRaiserFileType, StatusCode } from "../types/Enums/UtilEnum";
 import FundRaiserRepo from "../repositorys/FundRaiserRepo";
 import UtilHelper from "../util/helper/utilHelper";
@@ -323,13 +323,15 @@ class UserController implements IUserController {
     async getActiveFundRaise(req: Request, res: Response): Promise<void> {
 
 
+        console.log(req.params);
+
         try {
 
             const limit: number = Number(req.params.limit);
             const page: number = Number(req.params.page);
-            const getLimitedData: iFundRaiseModel[] = await this.fundRaiserRepo.getActiveFundRaiserPost(page, limit)
+            const getLimitedData: IPaginatedResponse<IFundRaise[]> = await this.fundRaiserRepo.getActiveFundRaiserPost(page, limit)
 
-            if (getLimitedData?.length) {
+            if (getLimitedData?.total_records) {
                 res.status(200).json({ status: true, data: getLimitedData })
             } else {
                 console.log("This works");

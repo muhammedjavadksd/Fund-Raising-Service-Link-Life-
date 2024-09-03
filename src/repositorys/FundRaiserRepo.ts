@@ -4,7 +4,7 @@ import { FundRaiserCreatedBy, FundRaiserStatus } from "../types/Enums/DbEnum";
 import { StatusCode } from "../types/Enums/UtilEnum";
 import { IEditableFundRaiser, IFundRaise, IFundRaiseInitialData, iFundRaiseModel } from "../types/Interface/IDBmodel";
 import { IFundRaiserRepo } from "../types/Interface/IRepo";
-import { HelperFuncationResponse } from "../types/Interface/Util";
+import { HelperFuncationResponse, IPaginatedResponse } from "../types/Interface/Util";
 
 
 
@@ -48,15 +48,58 @@ class FundRaiserRepo implements IFundRaiserRepo {
 
 
 
-    async getActiveFundRaiserPost(page: number, limit: number): Promise<iFundRaiseModel[]> {
+    async getActiveFundRaiserPost(page: number, limit: number): Promise<IPaginatedResponse<IFundRaise[]>> {
         try {
-            const skip = (page - 1) * limit;
-            const limitedData: iFundRaiseModel[] = await this.FundRaiserModel.find({ status: FundRaiserStatus.APPROVED, closed: false }).skip(skip).limit(limit);
-            console.log(limitedData);
+            console.log(page, limit);
 
-            return limitedData;
+            const skip = (page - 1) * limit;
+            const limitedData = await this.FundRaiserModel.aggregate(
+                [
+                    {
+                        $match: {
+                            status: FundRaiserStatus.APPROVED,
+                            closed: false
+                        }
+                    },
+                    {
+                        $facet: {
+                            paginated: [
+                                {
+                                    $skip: skip
+                                },
+                                {
+                                    $limit: limit
+                                }
+                            ],
+                            total_records: [
+                                {
+                                    $count: "total_records"
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        $unwind: "$total_records"
+                    },
+                    {
+                        $project: {
+                            paginated: 1,
+                            total_records: "$total_records.total_records"
+                        }
+                    }
+                ])
+
+            const response: IPaginatedResponse<IFundRaise[]> = {
+                paginated: limitedData[0].paginated,
+                total_records: limitedData[0].total_records
+            }
+
+            return response;
         } catch (e) {
-            return []
+            return {
+                paginated: [],
+                total_records: 0
+            }
         }
     }
 

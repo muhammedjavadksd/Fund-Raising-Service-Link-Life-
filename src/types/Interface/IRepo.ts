@@ -1,5 +1,5 @@
 import { IEditableFundRaiser, IFundRaise, iFundRaiseModel } from "./IDBmodel"
-import { HelperFuncationResponse } from "./Util"
+import { HelperFuncationResponse, IPaginatedResponse } from "./Util"
 
 interface IFundRaiserRepo {
     getSingleFundRaiseOfUser(user_id: string, fund_id: string): Promise<iFundRaiseModel | null>
@@ -11,7 +11,7 @@ interface IFundRaiserRepo {
     getUserPosts(user_id: string): Promise<iFundRaiseModel[] | null>
     getRestrictedFundRaisePost(fund_id: string): Promise<iFundRaiseModel | null>
     getAllFundRaiserPost(page: number, limit: number): Promise<iFundRaiseModel[]>
-    getActiveFundRaiserPost(page: number, limit: number): Promise<iFundRaiseModel[]>
+    getActiveFundRaiserPost(page: number, limit: number): Promise<IPaginatedResponse<IFundRaise[]>>
     fundRaiserPaginatedByCategory(category: string, skip: number, limit: number): Promise<iFundRaiseModel[]>
 }
 

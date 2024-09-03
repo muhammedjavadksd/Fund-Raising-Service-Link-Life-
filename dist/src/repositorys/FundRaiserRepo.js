@@ -55,13 +55,53 @@ class FundRaiserRepo {
     getActiveFundRaiserPost(page, limit) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
+                console.log(page, limit);
                 const skip = (page - 1) * limit;
-                const limitedData = yield this.FundRaiserModel.find({ status: DbEnum_1.FundRaiserStatus.APPROVED, closed: false }).skip(skip).limit(limit);
-                console.log(limitedData);
-                return limitedData;
+                const limitedData = yield this.FundRaiserModel.aggregate([
+                    {
+                        $match: {
+                            status: DbEnum_1.FundRaiserStatus.APPROVED,
+                            closed: false
+                        }
+                    },
+                    {
+                        $facet: {
+                            paginated: [
+                                {
+                                    $skip: skip
+                                },
+                                {
+                                    $limit: limit
+                                }
+                            ],
+                            total_records: [
+                                {
+                                    $count: "total_records"
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        $unwind: "$total_records"
+                    },
+                    {
+                        $project: {
+                            paginated: 1,
+                            total_records: "$total_records.total_records"
+                        }
+                    }
+                ]);
+                const response = {
+                    paginated: limitedData[0].paginated,
+                    total_records: limitedData[0].total_records
+                };
+                return response;
             }
             catch (e) {
-                return [];
+                return {
+                    paginated: [],
+                    total_records: 0
+                };
             }
         });
     }

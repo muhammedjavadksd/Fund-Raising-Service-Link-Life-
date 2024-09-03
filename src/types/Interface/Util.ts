@@ -8,7 +8,11 @@ interface HelperFuncationResponse {
     data?: any
 }
 
+interface IPaginatedResponse<T> {
+    paginated: T[]
+    total_records: number
+}
 
 
 
-export { HelperFuncationResponse }
+export { HelperFuncationResponse, IPaginatedResponse }

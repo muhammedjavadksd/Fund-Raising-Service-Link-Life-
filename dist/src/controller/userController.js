@@ -304,11 +304,12 @@ class UserController {
     }
     getActiveFundRaise(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
+            console.log(req.params);
             try {
                 const limit = Number(req.params.limit);
                 const page = Number(req.params.page);
                 const getLimitedData = yield this.fundRaiserRepo.getActiveFundRaiserPost(page, limit);
-                if (getLimitedData === null || getLimitedData === void 0 ? void 0 : getLimitedData.length) {
+                if (getLimitedData === null || getLimitedData === void 0 ? void 0 : getLimitedData.total_records) {
                     res.status(200).json({ status: true, data: getLimitedData });
                 }
                 else {
