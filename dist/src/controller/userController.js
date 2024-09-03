@@ -36,9 +36,26 @@ class UserController {
         this.editComment = this.editComment.bind(this);
         this.deleteComment = this.deleteComment.bind(this);
         this.categoryFundRaiserPaginated = this.categoryFundRaiserPaginated.bind(this);
+        this.verifyCloseToken = this.verifyCloseToken.bind(this);
         this.fundRaiserService = new FundRaiserService_1.default();
         this.commentService = new CommentService_1.default();
         this.fundRaiserRepo = new FundRaiserRepo_1.default();
+    }
+    verifyCloseToken(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const headers = req.headers;
+            const authToken = headers.authorization;
+            if (authToken) {
+                const splitToken = authToken.split(" ");
+                const token = splitToken[1];
+                if (splitToken[0] == "Bearer" && token) {
+                    const closeFundRaiser = yield this.fundRaiserService.closeFundRaiserVerification(token);
+                    res.status(closeFundRaiser.statusCode).json({ status: closeFundRaiser.status, msg: closeFundRaiser.msg });
+                    return;
+                }
+            }
+            res.status(UtilEnum_1.StatusCode.UNAUTHORIZED).json({ status: false, msg: "Un authrazied access" });
+        });
     }
     categoryFundRaiserPaginated(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -46,7 +63,23 @@ class UserController {
             const page = +req.params.page;
             const limit = +req.params.limit;
             const skip = (page - 1) * limit;
-            const findProfile = yield this.fundRaiserService.paginatedFundRaiserByCategory(category, limit, skip);
+            let filter = {};
+            if (req.query.sub_category) {
+                filter['sub_category'] = req.query.sub_category;
+            }
+            if (req.query.urgency) {
+                filter['urgency'] = req.query.urgency == "urgent";
+            }
+            if (req.query.state) {
+                filter['state'] = req.query.state;
+            }
+            if (req.query.min) {
+                filter['min'] = req.query.min;
+            }
+            if (req.query.max) {
+                filter['max'] = req.query.max;
+            }
+            const findProfile = yield this.fundRaiserService.paginatedFundRaiserByCategory(category, limit, skip, filter);
             res.status(findProfile.statusCode).json({ status: findProfile.status, msg: findProfile.msg, data: findProfile.data });
         });
     }
@@ -232,6 +265,8 @@ class UserController {
             try {
                 const edit_id = req.params.edit_id;
                 const body = req.body;
+                console.log("the body");
+                console.log(body);
                 const editResponse = yield this.fundRaiserRepo.updateFundRaiser(edit_id, body);
                 if (editResponse) {
                     res.status(200).json({ status: true, msg: "Updated success" });
@@ -308,7 +343,7 @@ class UserController {
             try {
                 const limit = Number(req.params.limit);
                 const page = Number(req.params.page);
-                const getLimitedData = yield this.fundRaiserRepo.getActiveFundRaiserPost(page, limit);
+                const getLimitedData = yield this.fundRaiserRepo.getActiveFundRaiserPost(page, limit, {});
                 if (getLimitedData === null || getLimitedData === void 0 ? void 0 : getLimitedData.total_records) {
                     res.status(200).json({ status: true, data: getLimitedData });
                 }

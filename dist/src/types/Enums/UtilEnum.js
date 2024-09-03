@@ -1,11 +1,22 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.StatusCode = exports.FundRaiserCategory = exports.FundRaiserFileType = exports.FundRaiserBankAccountType = void 0;
+exports.StatusCode = exports.FundRaiserCategory = exports.FundRaiserFileType = exports.JwtType = exports.FundRaiserBankAccountType = exports.JwtTimer = void 0;
 var FundRaiserFileType;
 (function (FundRaiserFileType) {
     FundRaiserFileType["Document"] = "Document";
     FundRaiserFileType["Pictures"] = "Pictures";
 })(FundRaiserFileType || (exports.FundRaiserFileType = FundRaiserFileType = {}));
+var JwtTimer;
+(function (JwtTimer) {
+    JwtTimer["_15Min"] = "15m";
+    JwtTimer["_7Days"] = "7d";
+    JwtTimer["_1Hour"] = "1h";
+    JwtTimer["_1Day"] = "24h";
+})(JwtTimer || (exports.JwtTimer = JwtTimer = {}));
+var JwtType;
+(function (JwtType) {
+    JwtType["CloseFundRaise"] = "close-fund-raiser";
+})(JwtType || (exports.JwtType = JwtType = {}));
 var FundRaiserBankAccountType;
 (function (FundRaiserBankAccountType) {
     FundRaiserBankAccountType["Savings"] = "saving";

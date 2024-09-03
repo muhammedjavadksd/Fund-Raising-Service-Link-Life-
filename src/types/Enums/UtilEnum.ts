@@ -5,6 +5,17 @@ enum FundRaiserFileType {
     Pictures = "Pictures"
 }
 
+enum JwtTimer {
+    _15Min = "15m",
+    _7Days = "7d",
+    _1Hour = "1h",
+    _1Day = "24h",
+}
+
+enum JwtType {
+    CloseFundRaise = "close-fund-raiser"
+}
+
 enum FundRaiserBankAccountType {
     Savings = "saving",
     Current = "current",
@@ -59,4 +70,5 @@ enum StatusCode {
 
 
 
-export { FundRaiserBankAccountType, FundRaiserFileType, FundRaiserCategory, StatusCode }
+
+export { JwtTimer, FundRaiserBankAccountType, JwtType, FundRaiserFileType, FundRaiserCategory, StatusCode }

@@ -28,17 +28,25 @@ class FundRaiserRepo {
         this.findFundPostByFundId = this.findFundPostByFundId.bind(this);
         this.getSingleFundRaiseOfUser = this.getSingleFundRaiseOfUser.bind(this);
         this.fundRaiserPaginatedByCategory = this.fundRaiserPaginatedByCategory.bind(this);
+        this.closeFundRaiser = this.closeFundRaiser.bind(this);
         this.FundRaiserModel = initFundRaiseModel_1.default;
+    }
+    closeFundRaiser(fund_id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const findUpdate = yield this.FundRaiserModel.findOneAndUpdate({ fund_id }, { closed: true });
+            return !!(findUpdate === null || findUpdate === void 0 ? void 0 : findUpdate.isModified());
+        });
     }
     fundRaiserPaginatedByCategory(category, skip, limit) {
         return __awaiter(this, void 0, void 0, function* () {
-            try {
-                const findProfile = yield this.FundRaiserModel.find({ category, status: DbEnum_1.FundRaiserStatus.APPROVED, closed: false }).skip(skip).limit(limit);
-                return findProfile;
-            }
-            catch (e) {
-                return [];
-            }
+            // try {
+            //     const findProfile = await this.FundRaiserModel.find({ category, status: FundRaiserStatus.APPROVED, closed: false }).skip(skip).limit(limit);
+            //     return findProfile
+            // } catch (e) {
+            //     return [];
+            // }
+            //dont need this function use getActiveFundRaiserPost
+            return [];
         });
     }
     countRecords() {
@@ -52,17 +60,12 @@ class FundRaiserRepo {
             }
         });
     }
-    getActiveFundRaiserPost(page, limit) {
+    getActiveFundRaiserPost(skip, limit, query) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                console.log(page, limit);
-                const skip = (page - 1) * limit;
                 const limitedData = yield this.FundRaiserModel.aggregate([
                     {
-                        $match: {
-                            status: DbEnum_1.FundRaiserStatus.APPROVED,
-                            closed: false
-                        }
+                        $match: Object.assign({ status: DbEnum_1.FundRaiserStatus.APPROVED, closed: false }, query)
                     },
                     {
                         $facet: {

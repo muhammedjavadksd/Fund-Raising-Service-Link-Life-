@@ -1,3 +1,4 @@
+import { FundRaiserStatus } from "../Enums/DbEnum"
 import { IEditableFundRaiser, IFundRaise, iFundRaiseModel } from "./IDBmodel"
 import { HelperFuncationResponse, IPaginatedResponse } from "./Util"
 
@@ -11,8 +12,9 @@ interface IFundRaiserRepo {
     getUserPosts(user_id: string): Promise<iFundRaiseModel[] | null>
     getRestrictedFundRaisePost(fund_id: string): Promise<iFundRaiseModel | null>
     getAllFundRaiserPost(page: number, limit: number): Promise<iFundRaiseModel[]>
-    getActiveFundRaiserPost(page: number, limit: number): Promise<IPaginatedResponse<IFundRaise[]>>
+    getActiveFundRaiserPost(page: number, limit: number, query: Record<string, any>): Promise<IPaginatedResponse<IFundRaise[]>>
     fundRaiserPaginatedByCategory(category: string, skip: number, limit: number): Promise<iFundRaiseModel[]>
+    closeFundRaiser(fund_id: string): Promise<boolean>
 }
 
 export { IFundRaiserRepo }

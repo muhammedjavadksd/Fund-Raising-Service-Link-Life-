@@ -2,9 +2,9 @@ import { Request, Response } from "express";
 import FundRaiserService from "../services/FundRaiserService";
 import { CustomRequest } from "../types/DataType/Objects";
 import { FundRaiserCreatedBy, FundRaiserStatus } from "../types/Enums/DbEnum";
-import { HelperFuncationResponse, IPaginatedResponse } from "../types/Interface/Util";
+import { HelperFuncationResponse, ICloseFundRaiseJwtToken, IPaginatedResponse } from "../types/Interface/Util";
 import { IEditableFundRaiser, IFundRaise, IFundRaiseInitialData, iFundRaiseModel } from "../types/Interface/IDBmodel";
-import { FundRaiserFileType, StatusCode } from "../types/Enums/UtilEnum";
+import { FundRaiserFileType, JwtTimer, JwtType, StatusCode } from "../types/Enums/UtilEnum";
 import FundRaiserRepo from "../repositorys/FundRaiserRepo";
 import UtilHelper from "../util/helper/utilHelper";
 import { BucketsOnS3, const_data } from "../types/Enums/ConstData";
@@ -13,6 +13,7 @@ import { UploadedFile } from "express-fileupload";
 import S3BucketHelper from "../util/helper/s3Bucket";
 import url from 'url'
 import CommentService from "../services/CommentService";
+import TokenHelper from "../util/helper/tokenHelper";
 
 class UserController implements IUserController {
 
@@ -40,9 +41,25 @@ class UserController implements IUserController {
         this.editComment = this.editComment.bind(this)
         this.deleteComment = this.deleteComment.bind(this)
         this.categoryFundRaiserPaginated = this.categoryFundRaiserPaginated.bind(this);
+        this.verifyCloseToken = this.verifyCloseToken.bind(this)
         this.fundRaiserService = new FundRaiserService();
         this.commentService = new CommentService();
         this.fundRaiserRepo = new FundRaiserRepo();
+    }
+
+    async verifyCloseToken(req: Request, res: Response): Promise<void> {
+        const headers = req.headers;
+        const authToken = headers.authorization;
+        if (authToken) {
+            const splitToken = authToken.split(" ")
+            const token = splitToken[1];
+            if (splitToken[0] == "Bearer" && token) {
+                const closeFundRaiser = await this.fundRaiserService.closeFundRaiserVerification(token);
+                res.status(closeFundRaiser.statusCode).json({ status: closeFundRaiser.status, msg: closeFundRaiser.msg })
+                return
+            }
+        }
+        res.status(StatusCode.UNAUTHORIZED).json({ status: false, msg: "Un authrazied access" })
     }
 
 
@@ -53,7 +70,26 @@ class UserController implements IUserController {
         const limit: number = +req.params.limit
         const skip: number = (page - 1) * limit;
 
-        const findProfile = await this.fundRaiserService.paginatedFundRaiserByCategory(category, limit, skip);
+        let filter: Record<string, any> = {};
+        if (req.query.sub_category) {
+            filter['sub_category'] = req.query.sub_category
+        }
+        if (req.query.urgency) {
+            filter['urgency'] = req.query.urgency == "urgent"
+        }
+        if (req.query.state) {
+            filter['state'] = req.query.state
+        }
+        if (req.query.min) {
+            filter['min'] = req.query.min
+        }
+        if (req.query.max) {
+            filter['max'] = req.query.max
+        }
+
+
+
+        const findProfile = await this.fundRaiserService.paginatedFundRaiserByCategory(category, limit, skip, filter);
         res.status(findProfile.statusCode).json({ status: findProfile.status, msg: findProfile.msg, data: findProfile.data })
     }
 
@@ -194,7 +230,6 @@ class UserController implements IUserController {
 
         try {
             const fund_id: string = req.params.edit_id;
-
             const closePost: HelperFuncationResponse = await this.fundRaiserService.closeFundRaiser(fund_id);
             res.status(closePost.statusCode).json({ status: closePost.status, msg: closePost.msg })
         } catch (e) {
@@ -251,6 +286,10 @@ class UserController implements IUserController {
 
             const edit_id: string = req.params.edit_id;
             const body: IEditableFundRaiser = req.body;
+            console.log("the body");
+
+            console.log(body);
+
 
             const editResponse: boolean = await this.fundRaiserRepo.updateFundRaiser(edit_id, body);
             if (editResponse) {
@@ -329,7 +368,7 @@ class UserController implements IUserController {
 
             const limit: number = Number(req.params.limit);
             const page: number = Number(req.params.page);
-            const getLimitedData: IPaginatedResponse<IFundRaise[]> = await this.fundRaiserRepo.getActiveFundRaiserPost(page, limit)
+            const getLimitedData: IPaginatedResponse<IFundRaise[]> = await this.fundRaiserRepo.getActiveFundRaiserPost(page, limit, {})
 
             if (getLimitedData?.total_records) {
                 res.status(200).json({ status: true, data: getLimitedData })

@@ -1,4 +1,4 @@
-import { StatusCode } from "../Enums/UtilEnum"
+import { JwtType, StatusCode } from "../Enums/UtilEnum"
 
 
 interface HelperFuncationResponse {
@@ -9,10 +9,14 @@ interface HelperFuncationResponse {
 }
 
 interface IPaginatedResponse<T> {
-    paginated: T[]
+    paginated: []
     total_records: number
 }
 
+interface ICloseFundRaiseJwtToken {
+    fund_id: string,
+    type: JwtType
+}
 
 
-export { HelperFuncationResponse, IPaginatedResponse }
+export { HelperFuncationResponse, IPaginatedResponse, ICloseFundRaiseJwtToken }

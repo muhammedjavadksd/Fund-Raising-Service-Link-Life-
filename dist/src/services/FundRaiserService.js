@@ -18,6 +18,8 @@ const UtilEnum_1 = require("../types/Enums/UtilEnum");
 const s3Bucket_1 = __importDefault(require("../util/helper/s3Bucket"));
 const ConstData_1 = require("../types/Enums/ConstData");
 const utilHelper_1 = __importDefault(require("../util/helper/utilHelper"));
+const tokenHelper_1 = __importDefault(require("../util/helper/tokenHelper"));
+const provider_1 = __importDefault(require("../communication/provider"));
 class FundRaiserService {
     constructor() {
         this.deleteImage = this.deleteImage.bind(this);
@@ -28,14 +30,49 @@ class FundRaiserService {
         this.editFundRaiser = this.editFundRaiser.bind(this);
         this.uploadImage = this.uploadImage.bind(this);
         this.paginatedFundRaiserByCategory = this.paginatedFundRaiserByCategory.bind(this);
+        this.closeFundRaiserVerification = this.closeFundRaiserVerification.bind(this);
         this.FundRaiserRepo = new FundRaiserRepo_1.default();
         this.fundRaiserPictureBucket = new s3Bucket_1.default(ConstData_1.BucketsOnS3.FundRaiserPicture);
         this.fundRaiserDocumentBucket = new s3Bucket_1.default(ConstData_1.BucketsOnS3.FundRaiserDocument);
     }
-    paginatedFundRaiserByCategory(category, limit, skip) {
+    closeFundRaiserVerification(token) {
         return __awaiter(this, void 0, void 0, function* () {
-            const findProfile = yield this.FundRaiserRepo.fundRaiserPaginatedByCategory(category, skip, limit);
-            if (findProfile.length) {
+            const tokenHelper = new tokenHelper_1.default();
+            const verifyToken = yield tokenHelper.checkTokenValidity(token);
+            if (verifyToken && typeof verifyToken == "object") {
+                const fund_id = verifyToken === null || verifyToken === void 0 ? void 0 : verifyToken.fund_id;
+                const type = verifyToken === null || verifyToken === void 0 ? void 0 : verifyToken.type;
+                if (fund_id && type == UtilEnum_1.JwtType.CloseFundRaise) {
+                    yield this.FundRaiserRepo.closeFundRaiser(fund_id);
+                    return {
+                        status: true,
+                        msg: "Fund raising closed",
+                        statusCode: UtilEnum_1.StatusCode.OK
+                    };
+                }
+            }
+            return {
+                status: false,
+                msg: "Fund raising failed",
+                statusCode: UtilEnum_1.StatusCode.BAD_REQUESR
+            };
+        });
+    }
+    paginatedFundRaiserByCategory(category, limit, skip, filter) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const matchQuery = Object.assign(Object.assign(Object.assign(Object.assign({}, (filter.sub_category ? { sub_category: filter.sub_category } : {})), (filter.state ? { state: filter.state } : {})), (filter.min ? { amount: { $gte: +filter.min } } : {})), (filter.max ? { amount: { $lte: +filter.max } } : {}));
+            if (category != "all") {
+                matchQuery['category'] = category;
+            }
+            const date = new Date();
+            if (filter.urgency) {
+                matchQuery['deadline'] = {
+                    $lte: new Date(date.setDate(date.getDate() + 10))
+                };
+            }
+            const findProfile = yield this.FundRaiserRepo.getActiveFundRaiserPost(skip, limit, matchQuery);
+            // findProfile.paginated.filter()
+            if (findProfile.total_records) {
                 return {
                     status: true,
                     msg: "Profile found",
@@ -209,10 +246,24 @@ class FundRaiserService {
                         };
                     }
                     else {
-                        currentFund.closed = true;
-                        yield this.FundRaiserRepo.updateFundRaiserByModel(currentFund);
+                        const tokenHelper = new tokenHelper_1.default();
+                        const communication = new provider_1.default(process.env.FUND_RAISER_CLOSE_NOTIFICATION || "");
+                        yield communication._init__();
+                        const createToken = {
+                            fund_id,
+                            type: UtilEnum_1.JwtType.CloseFundRaise
+                        };
+                        const token = yield tokenHelper.createJWTToken(createToken, UtilEnum_1.JwtTimer._15Min);
+                        communication.transferData({
+                            token,
+                            email_id: currentFund.email_id,
+                            full_name: currentFund.full_name,
+                            collected_amount: currentFund.collected
+                        });
+                        // currentFund.closed = true;
+                        // await this.FundRaiserRepo.updateFundRaiserByModel(currentFund);
                         return {
-                            msg: "Fund raiser closed success",
+                            msg: "A verification email has been sent to the registered email address.",
                             status: true,
                             statusCode: UtilEnum_1.StatusCode.OK
                         };

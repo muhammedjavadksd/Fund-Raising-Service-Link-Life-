@@ -24,17 +24,27 @@ class FundRaiserRepo implements IFundRaiserRepo {
         this.findFundPostByFundId = this.findFundPostByFundId.bind(this)
         this.getSingleFundRaiseOfUser = this.getSingleFundRaiseOfUser.bind(this)
         this.fundRaiserPaginatedByCategory = this.fundRaiserPaginatedByCategory.bind(this);
+        this.closeFundRaiser = this.closeFundRaiser.bind(this);
 
         this.FundRaiserModel = InitFundRaisingModel
     }
 
+    async closeFundRaiser(fund_id: string): Promise<boolean> {
+        const findUpdate = await this.FundRaiserModel.findOneAndUpdate({ fund_id }, { closed: true })
+        return !!findUpdate?.isModified()
+    }
+
     async fundRaiserPaginatedByCategory(category: string, skip: number, limit: number): Promise<iFundRaiseModel[]> {
-        try {
-            const findProfile = await this.FundRaiserModel.find({ category, status: FundRaiserStatus.APPROVED, closed: false }).skip(skip).limit(limit);
-            return findProfile
-        } catch (e) {
-            return [];
-        }
+        // try {
+        //     const findProfile = await this.FundRaiserModel.find({ category, status: FundRaiserStatus.APPROVED, closed: false }).skip(skip).limit(limit);
+        //     return findProfile
+        // } catch (e) {
+        //     return [];
+        // }
+
+
+        //dont need this function use getActiveFundRaiserPost
+        return []
     }
 
     async countRecords(): Promise<number> {
@@ -48,17 +58,16 @@ class FundRaiserRepo implements IFundRaiserRepo {
 
 
 
-    async getActiveFundRaiserPost(page: number, limit: number): Promise<IPaginatedResponse<IFundRaise[]>> {
+    async getActiveFundRaiserPost(skip: number, limit: number, query: Record<string, any>): Promise<IPaginatedResponse<IFundRaise[]>> {
         try {
-            console.log(page, limit);
 
-            const skip = (page - 1) * limit;
             const limitedData = await this.FundRaiserModel.aggregate(
                 [
                     {
                         $match: {
                             status: FundRaiserStatus.APPROVED,
-                            closed: false
+                            closed: false,
+                            ...query
                         }
                     },
                     {

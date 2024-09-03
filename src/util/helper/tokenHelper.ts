@@ -1,10 +1,11 @@
 
 import jwt from 'jsonwebtoken'
 import { ITokenHelper } from '../../types/Interface/IHelper';
+import { JwtTimer } from '../../types/Enums/UtilEnum';
 
 
 class TokenHelper implements ITokenHelper {
-    async createJWTToken(payload = {}, timer: number): Promise<string | null> {
+    async createJWTToken(payload = {}, timer: JwtTimer): Promise<string | null> {
         try {
             const jwtToken = await jwt.sign(payload, process.env.JWT_SECRET as string, { algorithm: "HS256", expiresIn: timer });
             return jwtToken

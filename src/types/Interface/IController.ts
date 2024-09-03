@@ -16,6 +16,7 @@ interface IUserController {
     editComment(req: Request, res: Response): Promise<void>
     deleteComment(req: Request, res: Response): Promise<void>
     categoryFundRaiserPaginated(req: Request, res: Response): Promise<void>
+    verifyCloseToken(req: Request, res: Response): Promise<void>
 }
 
 interface IAdminController {

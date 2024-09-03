@@ -1,15 +1,17 @@
 import FundRaiserRepo from "../repositorys/FundRaiserRepo";
 import { FundRaiserCreatedBy, FundRaiserStatus } from "../types/Enums/DbEnum";
-import { FundRaiserFileType, StatusCode } from "../types/Enums/UtilEnum";
+import { FundRaiserFileType, JwtTimer, JwtType, StatusCode } from "../types/Enums/UtilEnum";
 import { IEditableFundRaiser, IFundRaise, IFundRaiseInitialData, iFundRaiseModel } from "../types/Interface/IDBmodel";
 import { IFundRaiserService } from "../types/Interface/IService";
-import { HelperFuncationResponse } from "../types/Interface/Util";
+import { HelperFuncationResponse, ICloseFundRaiseJwtToken, IPaginatedResponse } from "../types/Interface/Util";
 import fs from 'fs'
 import { UploadedFile } from 'express-fileupload'
 import S3BucketHelper from "../util/helper/s3Bucket";
 import { BucketsOnS3, const_data } from "../types/Enums/ConstData";
 import UtilHelper from "../util/helper/utilHelper";
 import axios from "axios";
+import TokenHelper from "../util/helper/tokenHelper";
+import FundRaiserProvider from "../communication/provider";
 
 
 
@@ -28,17 +30,59 @@ class FundRaiserService implements IFundRaiserService {
         this.editFundRaiser = this.editFundRaiser.bind(this)
         this.uploadImage = this.uploadImage.bind(this)
         this.paginatedFundRaiserByCategory = this.paginatedFundRaiserByCategory.bind(this);
+        this.closeFundRaiserVerification = this.closeFundRaiserVerification.bind(this);
 
         this.FundRaiserRepo = new FundRaiserRepo();
         this.fundRaiserPictureBucket = new S3BucketHelper(BucketsOnS3.FundRaiserPicture);
         this.fundRaiserDocumentBucket = new S3BucketHelper(BucketsOnS3.FundRaiserDocument);
     }
 
+    async closeFundRaiserVerification(token: string): Promise<HelperFuncationResponse> {
+        const tokenHelper = new TokenHelper();
+        const verifyToken = await tokenHelper.checkTokenValidity(token);
+        if (verifyToken && typeof verifyToken == "object") {
+            const fund_id = verifyToken?.fund_id
+            const type = verifyToken?.type;
+            if (fund_id && type == JwtType.CloseFundRaise) {
+                await this.FundRaiserRepo.closeFundRaiser(fund_id)
+                return {
+                    status: true,
+                    msg: "Fund raising closed",
+                    statusCode: StatusCode.OK
+                }
+            }
+        }
+        return {
+            status: false,
+            msg: "Fund raising failed",
+            statusCode: StatusCode.BAD_REQUESR
+        }
+    }
 
-    async paginatedFundRaiserByCategory(category: string, limit: number, skip: number): Promise<HelperFuncationResponse> {
 
-        const findProfile = await this.FundRaiserRepo.fundRaiserPaginatedByCategory(category, skip, limit);
-        if (findProfile.length) {
+    async paginatedFundRaiserByCategory(category: string, limit: number, skip: number, filter: Record<string, any>): Promise<HelperFuncationResponse> {
+
+        const matchQuery: Record<string, any> = {
+            ...(filter.sub_category ? { sub_category: filter.sub_category } : {}),
+            ...(filter.state ? { state: filter.state } : {}),
+            ...(filter.min ? { amount: { $gte: +filter.min } } : {}),
+            ...(filter.max ? { amount: { $lte: +filter.max } } : {})
+        };
+        if (category != "all") {
+            matchQuery['category'] = category
+        }
+        const date = new Date()
+        if (filter.urgency) {
+            matchQuery['deadline'] = {
+                $lte: new Date(date.setDate(date.getDate() + 10))
+            }
+        }
+
+
+        const findProfile: IPaginatedResponse<IFundRaise[]> = await this.FundRaiserRepo.getActiveFundRaiserPost(skip, limit, matchQuery);
+        // findProfile.paginated.filter()
+
+        if (findProfile.total_records) {
             return {
                 status: true,
                 msg: "Profile found",
@@ -211,10 +255,25 @@ class FundRaiserService implements IFundRaiserService {
                         statusCode: StatusCode.BAD_REQUESR,
                     }
                 } else {
-                    currentFund.closed = true;
-                    await this.FundRaiserRepo.updateFundRaiserByModel(currentFund);
+                    const tokenHelper = new TokenHelper()
+                    const communication = new FundRaiserProvider(process.env.FUND_RAISER_CLOSE_NOTIFICATION || "")
+                    await communication._init__()
+
+                    const createToken: ICloseFundRaiseJwtToken = {
+                        fund_id,
+                        type: JwtType.CloseFundRaise
+                    }
+                    const token = await tokenHelper.createJWTToken(createToken, JwtTimer._15Min);
+                    communication.transferData({
+                        token,
+                        email_id: currentFund.email_id,
+                        full_name: currentFund.full_name,
+                        collected_amount: currentFund.collected
+                    })
+                    // currentFund.closed = true;
+                    // await this.FundRaiserRepo.updateFundRaiserByModel(currentFund);
                     return {
-                        msg: "Fund raiser closed success",
+                        msg: "A verification email has been sent to the registered email address.",
                         status: true,
                         statusCode: StatusCode.OK
                     }
