@@ -38,29 +38,26 @@ class CommentsRepo {
                 {
                     $match: {
                         fund_id,
-                        replay_id: null
+                        replay_id: null,
                     }
+                },
+                {
+                    $skip: skip
+                },
+                {
+                    $limit: limit
                 },
                 {
                     $facet: {
                         paginated: [
                             {
-                                $skip: skip
-                            },
-                            {
-                                $limit: limit
-                            },
-                            {
-                                $lookup: {
+                                $graphLookup: {
                                     from: "comments",
-                                    as: "replays",
-                                    foreignField: "comment_id",
-                                    localField: "replay_id",
-                                    pipeline: [{
-                                            $sort: {
-                                                date: -1
-                                            }
-                                        }]
+                                    startWith: "$comment_id",
+                                    connectFromField: "comment_id",
+                                    connectToField: "replay_id",
+                                    as: "replay",
+                                    depthField: "depth"
                                 }
                             }
                         ],
@@ -86,7 +83,6 @@ class CommentsRepo {
                     }
                 }
             ]);
-            console.log(findComments);
             return findComments[0];
         });
     }

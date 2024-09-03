@@ -12,6 +12,7 @@ interface IFundRaiserRepo {
     getRestrictedFundRaisePost(fund_id: string): Promise<iFundRaiseModel | null>
     getAllFundRaiserPost(page: number, limit: number): Promise<iFundRaiseModel[]>
     getActiveFundRaiserPost(page: number, limit: number): Promise<iFundRaiseModel[]>
+    fundRaiserPaginatedByCategory(category: string, skip: number, limit: number): Promise<iFundRaiseModel[]>
 }
 
 export { IFundRaiserRepo }

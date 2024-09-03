@@ -35,9 +35,20 @@ class UserController {
         this.getPaginatedComments = this.getPaginatedComments.bind(this);
         this.editComment = this.editComment.bind(this);
         this.deleteComment = this.deleteComment.bind(this);
+        this.categoryFundRaiserPaginated = this.categoryFundRaiserPaginated.bind(this);
         this.fundRaiserService = new FundRaiserService_1.default();
         this.commentService = new CommentService_1.default();
         this.fundRaiserRepo = new FundRaiserRepo_1.default();
+    }
+    categoryFundRaiserPaginated(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const category = req.params.category;
+            const page = +req.params.page;
+            const limit = +req.params.limit;
+            const skip = (page - 1) * limit;
+            const findProfile = yield this.fundRaiserService.paginatedFundRaiserByCategory(category, limit, skip);
+            res.status(findProfile.statusCode).json({ status: findProfile.status, msg: findProfile.msg, data: findProfile.data });
+        });
     }
     editComment(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -69,6 +80,7 @@ class UserController {
     addComment(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             var _a, _b;
+            //add comment controller
             const comment = req.body.comment;
             const post_id = req.params.post_id;
             const user_name = (_a = req === null || req === void 0 ? void 0 : req.context) === null || _a === void 0 ? void 0 : _a.full_name;

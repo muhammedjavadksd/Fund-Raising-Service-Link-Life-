@@ -39,9 +39,22 @@ class UserController implements IUserController {
         this.getPaginatedComments = this.getPaginatedComments.bind(this);
         this.editComment = this.editComment.bind(this)
         this.deleteComment = this.deleteComment.bind(this)
+        this.categoryFundRaiserPaginated = this.categoryFundRaiserPaginated.bind(this);
         this.fundRaiserService = new FundRaiserService();
         this.commentService = new CommentService();
         this.fundRaiserRepo = new FundRaiserRepo();
+    }
+
+
+    async categoryFundRaiserPaginated(req: Request, res: Response): Promise<void> {
+
+        const category = req.params.category;
+        const page: number = +req.params.page
+        const limit: number = +req.params.limit
+        const skip: number = (page - 1) * limit;
+
+        const findProfile = await this.fundRaiserService.paginatedFundRaiserByCategory(category, limit, skip);
+        res.status(findProfile.statusCode).json({ status: findProfile.status, msg: findProfile.msg, data: findProfile.data })
     }
 
     async editComment(req: Request, res: Response): Promise<void> {
@@ -76,7 +89,7 @@ class UserController implements IUserController {
     }
 
     async addComment(req: CustomRequest, res: Response): Promise<void> {
-
+        //add comment controller
         const comment = req.body.comment;
         const post_id = req.params.post_id;
         const user_name = req?.context?.full_name;

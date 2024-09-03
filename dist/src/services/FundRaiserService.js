@@ -27,9 +27,32 @@ class FundRaiserService {
         this.updateStatus = this.updateStatus.bind(this);
         this.editFundRaiser = this.editFundRaiser.bind(this);
         this.uploadImage = this.uploadImage.bind(this);
+        this.paginatedFundRaiserByCategory = this.paginatedFundRaiserByCategory.bind(this);
         this.FundRaiserRepo = new FundRaiserRepo_1.default();
         this.fundRaiserPictureBucket = new s3Bucket_1.default(ConstData_1.BucketsOnS3.FundRaiserPicture);
         this.fundRaiserDocumentBucket = new s3Bucket_1.default(ConstData_1.BucketsOnS3.FundRaiserDocument);
+    }
+    paginatedFundRaiserByCategory(category, limit, skip) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const findProfile = yield this.FundRaiserRepo.fundRaiserPaginatedByCategory(category, skip, limit);
+            if (findProfile.length) {
+                return {
+                    status: true,
+                    msg: "Profile found",
+                    statusCode: UtilEnum_1.StatusCode.OK,
+                    data: {
+                        profile: findProfile
+                    }
+                };
+            }
+            else {
+                return {
+                    status: false,
+                    msg: "No profile found",
+                    statusCode: UtilEnum_1.StatusCode.BAD_REQUESR,
+                };
+            }
+        });
     }
     getOwnerSingleProfile(profile_id, user_type, owner_id) {
         return __awaiter(this, void 0, void 0, function* () {

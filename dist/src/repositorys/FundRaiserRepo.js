@@ -27,7 +27,19 @@ class FundRaiserRepo {
         this.updateFundRaiserByModel = this.updateFundRaiserByModel.bind(this);
         this.findFundPostByFundId = this.findFundPostByFundId.bind(this);
         this.getSingleFundRaiseOfUser = this.getSingleFundRaiseOfUser.bind(this);
+        this.fundRaiserPaginatedByCategory = this.fundRaiserPaginatedByCategory.bind(this);
         this.FundRaiserModel = initFundRaiseModel_1.default;
+    }
+    fundRaiserPaginatedByCategory(category, skip, limit) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const findProfile = yield this.FundRaiserModel.find({ category, status: DbEnum_1.FundRaiserStatus.APPROVED, closed: false }).skip(skip).limit(limit);
+                return findProfile;
+            }
+            catch (e) {
+                return [];
+            }
+        });
     }
     countRecords() {
         return __awaiter(this, void 0, void 0, function* () {

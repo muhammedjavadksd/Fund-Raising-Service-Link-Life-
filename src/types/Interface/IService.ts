@@ -15,6 +15,7 @@ interface IFundRaiserService {
     editFundRaiser(fund_id: string, edit_data: IEditableFundRaiser, ownerType: FundRaiserCreatedBy): Promise<HelperFuncationResponse>
     uploadImage(images: string[], fundRaiserID: string, document_type: FundRaiserFileType): Promise<HelperFuncationResponse>
     getOwnerSingleProfile(profile_id: string, user_type: FundRaiserCreatedBy, owner_id: string): Promise<HelperFuncationResponse>
+    paginatedFundRaiserByCategory(category: string, limit: number, skip: number): Promise<HelperFuncationResponse>
 }
 
 export { IFundRaiserService }

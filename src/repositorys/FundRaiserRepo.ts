@@ -23,8 +23,18 @@ class FundRaiserRepo implements IFundRaiserRepo {
         this.updateFundRaiserByModel = this.updateFundRaiserByModel.bind(this)
         this.findFundPostByFundId = this.findFundPostByFundId.bind(this)
         this.getSingleFundRaiseOfUser = this.getSingleFundRaiseOfUser.bind(this)
+        this.fundRaiserPaginatedByCategory = this.fundRaiserPaginatedByCategory.bind(this);
 
         this.FundRaiserModel = InitFundRaisingModel
+    }
+
+    async fundRaiserPaginatedByCategory(category: string, skip: number, limit: number): Promise<iFundRaiseModel[]> {
+        try {
+            const findProfile = await this.FundRaiserModel.find({ category, status: FundRaiserStatus.APPROVED, closed: false }).skip(skip).limit(limit);
+            return findProfile
+        } catch (e) {
+            return [];
+        }
     }
 
     async countRecords(): Promise<number> {

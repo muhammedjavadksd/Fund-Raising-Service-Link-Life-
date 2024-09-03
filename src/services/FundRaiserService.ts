@@ -27,10 +27,33 @@ class FundRaiserService implements IFundRaiserService {
         this.updateStatus = this.updateStatus.bind(this)
         this.editFundRaiser = this.editFundRaiser.bind(this)
         this.uploadImage = this.uploadImage.bind(this)
+        this.paginatedFundRaiserByCategory = this.paginatedFundRaiserByCategory.bind(this);
 
         this.FundRaiserRepo = new FundRaiserRepo();
         this.fundRaiserPictureBucket = new S3BucketHelper(BucketsOnS3.FundRaiserPicture);
         this.fundRaiserDocumentBucket = new S3BucketHelper(BucketsOnS3.FundRaiserDocument);
+    }
+
+
+    async paginatedFundRaiserByCategory(category: string, limit: number, skip: number): Promise<HelperFuncationResponse> {
+
+        const findProfile = await this.FundRaiserRepo.fundRaiserPaginatedByCategory(category, skip, limit);
+        if (findProfile.length) {
+            return {
+                status: true,
+                msg: "Profile found",
+                statusCode: StatusCode.OK,
+                data: {
+                    profile: findProfile
+                }
+            }
+        } else {
+            return {
+                status: false,
+                msg: "No profile found",
+                statusCode: StatusCode.BAD_REQUESR,
+            }
+        }
     }
 
 
