@@ -71,9 +71,59 @@ interface WebhookPayload {
 }
 
 
+interface IPaymentItem {
+    item_id: string,
+    item_name: string,
+    item_description: string,
+    item_details_url: string
+}
 
 
+interface IVerifyPaymentResponse {
+    created_at: string
+    cart_details: CartDetails
+    customer_details: CustomerDetails
+    order_amount: number
+    order_id: string
+    order_status: string
+}
+
+interface IOrderTemplate {
+    cart_details: CartDetails
+    cf_order_id: string
+    created_at: string
+    customer_details: CustomerDetails
+    entity: string
+    order_amount: number
+    order_currency: string
+    order_expiry_time: string
+    order_id: string
+    order_meta: OrderMeta
+    order_note: any
+    order_status: string
+    order_splits: any[]
+    order_tags: any
+    payment_session_id: string
+    terminal_data: any
+}
+
+interface CartDetails {
+    cart_id: string
+}
+
+interface CustomerDetails {
+    customer_id: string
+    customer_name: string | null
+    customer_email: string | null
+    customer_phone: string
+    customer_uid: any
+}
+
+interface OrderMeta {
+    return_url: any
+    notify_url: any
+    payment_methods: any
+}
 
 
-
-export { WebhookPayload, HelperFuncationResponse, IPaginatedResponse, ICloseFundRaiseJwtToken }
+export { IVerifyPaymentResponse, IOrderTemplate, WebhookPayload, IPaymentItem, HelperFuncationResponse, IPaginatedResponse, ICloseFundRaiseJwtToken }

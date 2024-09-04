@@ -24,7 +24,8 @@ userRouter.get("/view/:category/:limit/:page", UserControllers.categoryFundRaise
 userRouter.get("/comment/:fund_id/:limit/:page/", UserControllers.getPaginatedComments);//test completed
 
 //payemnt post
-userRouter.post("/pay/:fund_id",)
+userRouter.post("/pay/:fund_id", authMiddleware.isValidUser, UserControllers.payToFundRaiser)
+userRouter.post("/verify-payment", UserControllers.verifyPayment)
 
 
 // POST method

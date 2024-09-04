@@ -3,6 +3,10 @@ import { IPaymentOrderCollection } from "../../types/Interface/IDBmodel";
 
 
 const PaymentOrderSchema = new Schema<IPaymentOrderCollection>({
+    profile_id: {
+        type: String,
+        required: true
+    },
     order_id: {
         type: String,
         required: true,
@@ -23,6 +27,10 @@ const PaymentOrderSchema = new Schema<IPaymentOrderCollection>({
     amount: {
         type: Number,
         required: true,
+    },
+    hide_profile: {
+        type: Boolean,
+        required: true
     }
 })
 

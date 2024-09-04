@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import FundRaiserService from "../services/FundRaiserService";
 import { CustomRequest } from "../types/DataType/Objects";
 import { FundRaiserCreatedBy, FundRaiserStatus } from "../types/Enums/DbEnum";
-import { HelperFuncationResponse, ICloseFundRaiseJwtToken, IPaginatedResponse } from "../types/Interface/Util";
+import { HelperFuncationResponse, ICloseFundRaiseJwtToken, IPaginatedResponse, IVerifyPaymentResponse } from "../types/Interface/Util";
 import { IEditableFundRaiser, IFundRaise, IFundRaiseInitialData, iFundRaiseModel } from "../types/Interface/IDBmodel";
 import { FundRaiserFileType, JwtTimer, JwtType, StatusCode } from "../types/Enums/UtilEnum";
 import FundRaiserRepo from "../repositorys/FundRaiserRepo";
@@ -14,17 +14,14 @@ import S3BucketHelper from "../util/helper/s3Bucket";
 import url from 'url'
 import CommentService from "../services/CommentService";
 import TokenHelper from "../util/helper/tokenHelper";
+import DonationService from "../services/DonationService";
 
 class UserController implements IUserController {
 
     private readonly fundRaiserService;
     private readonly commentService;
     private readonly fundRaiserRepo;
-
-
-
-
-
+    private readonly donationService;
 
     constructor() {
 
@@ -43,20 +40,39 @@ class UserController implements IUserController {
         this.categoryFundRaiserPaginated = this.categoryFundRaiserPaginated.bind(this);
         this.verifyCloseToken = this.verifyCloseToken.bind(this)
         this.payToFundRaiser = this.payToFundRaiser.bind(this)
+        this.verifyPayment = this.verifyPayment.bind(this)
         this.fundRaiserService = new FundRaiserService();
         this.commentService = new CommentService();
         this.fundRaiserRepo = new FundRaiserRepo();
+        this.donationService = new DonationService()
     }
 
 
-    payToFundRaiser(req: Request, res: Response): Promise<void> {
+    async payToFundRaiser(req: CustomRequest, res: Response): Promise<void> {
 
         const full_name = req.body.full_name;
         const phone_number = req.body.phone_number;
         const email_id = req.body.email_id;
         const amount = req.body.amount;
+        const fund_id = req.params.fund_id;
+        const context = req.context
+        const hide_profile = req.body.hide_profile
+
+        if (context && context.profile_id) {
+            const profile_id = context.profile_id
+            const createOrder = await this.donationService.creatOrder(profile_id, full_name, phone_number, email_id, amount, fund_id, hide_profile);
+            res.status(createOrder.statusCode).json({ status: createOrder.status, msg: createOrder.msg, data: createOrder.data })
+        } else {
+            res.status(StatusCode.UNAUTHORIZED).json({ status: false, msg: "Un authrazied access", })
+        }
+    }
 
 
+    async verifyPayment(req: Request, res: Response): Promise<void> {
+
+        const verifyBody: IVerifyPaymentResponse = req.body
+        const verifyPayment = await this.donationService.verifyPayment(verifyBody.order_id);
+        res.status(verifyPayment.statusCode).json({ status: verifyPayment.status, msg: verifyPayment.msg, data: verifyPayment.data })
     }
 
     async verifyCloseToken(req: Request, res: Response): Promise<void> {

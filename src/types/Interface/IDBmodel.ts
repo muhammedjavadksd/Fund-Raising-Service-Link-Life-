@@ -120,6 +120,8 @@ interface IPaymentOrder {
     date: Date,
     status: boolean,
     amount: number
+    hide_profile: boolean,
+    profile_id: string
 }
 
 interface IDonateHistoryCollection extends Document, IDonateHistoryTemplate { }

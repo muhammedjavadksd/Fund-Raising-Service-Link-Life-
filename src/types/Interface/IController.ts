@@ -18,6 +18,7 @@ interface IUserController {
     categoryFundRaiserPaginated(req: Request, res: Response): Promise<void>
     verifyCloseToken(req: Request, res: Response): Promise<void>
     payToFundRaiser(req: Request, res: Response): Promise<void>
+    verifyPayment(req: Request, res: Response): Promise<void>
 }
 
 interface IAdminController {
