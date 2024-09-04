@@ -365,7 +365,14 @@ class UserController {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const profile_id = req.params.profile_id;
-                const profile = yield this.fundRaiserRepo.getRestrictedFundRaisePost(profile_id);
+                const isForce = req.query.isForce;
+                let profile;
+                if (isForce) {
+                    profile = yield this.fundRaiserRepo.getRestrictedFundRaisePost(profile_id);
+                }
+                else {
+                    profile = yield this.fundRaiserRepo.findFundPostByFundId(profile_id);
+                }
                 if (profile) {
                     res.status(200).json({ status: true, data: profile });
                 }
