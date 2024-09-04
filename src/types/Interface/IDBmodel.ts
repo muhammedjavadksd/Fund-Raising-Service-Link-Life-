@@ -113,7 +113,17 @@ interface IDonateHistoryTemplate {
     donation_id: string
 }
 
+
+interface IPaymentOrder {
+    order_id: string,
+    fund_id: string,
+    date: Date,
+    status: boolean,
+    amount: number
+}
+
 interface IDonateHistoryCollection extends Document, IDonateHistoryTemplate { }
+interface IPaymentOrderCollection extends IPaymentOrder, Document { }
 
 interface ICommentCollection extends Document, ICommentTemplate {
 }
@@ -121,6 +131,7 @@ interface ICommentCollection extends Document, ICommentTemplate {
 
 interface IWebhookCollection extends WebhookPayload, Document {
     is_checked: boolean
+
 }
 
-export { IDonateHistoryTemplate, IDonateHistoryCollection, IWebhookCollection, IPaginatedCommente, ICommentCollection, ICommentTemplate, IWithdrawDetails, IFundRaise, IFundRaiseInitialData, iFundRaiseModel, IEditableFundRaiser }
+export { IPaymentOrderCollection, IPaymentOrder, IDonateHistoryTemplate, IDonateHistoryCollection, IWebhookCollection, IPaginatedCommente, ICommentCollection, ICommentTemplate, IWithdrawDetails, IFundRaise, IFundRaiseInitialData, iFundRaiseModel, IEditableFundRaiser }
