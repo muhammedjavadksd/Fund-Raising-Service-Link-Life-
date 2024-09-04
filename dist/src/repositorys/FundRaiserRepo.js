@@ -15,6 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const initFundRaiseModel_1 = __importDefault(require("../db/model/initFundRaiseModel"));
 const DbEnum_1 = require("../types/Enums/DbEnum");
 const UtilEnum_1 = require("../types/Enums/UtilEnum");
+const mongoose_1 = __importDefault(require("mongoose"));
 class FundRaiserRepo {
     constructor() {
         this.getActiveFundRaiserPost = this.getActiveFundRaiserPost.bind(this);
@@ -135,11 +136,13 @@ class FundRaiserRepo {
     getUserPosts(user_id, skip, limit) {
         return __awaiter(this, void 0, void 0, function* () {
             console.log(user_id);
+            console.log("The limit is");
+            console.log(user_id);
             try {
                 const fundRaisePost = yield this.FundRaiserModel.aggregate([
                     {
                         $match: {
-                            user_id
+                            user_id: new mongoose_1.default.Types.ObjectId(user_id)
                         }
                     },
                     {
@@ -169,6 +172,7 @@ class FundRaiserRepo {
                         }
                     }
                 ]);
+                console.log(fundRaisePost);
                 const response = {
                     paginated: fundRaisePost[0].paginated,
                     total_records: fundRaisePost[0].total_records,
@@ -176,7 +180,7 @@ class FundRaiserRepo {
                 return response;
             }
             catch (e) {
-                console.log(e);
+                // console.log(e);
                 return {
                     paginated: [],
                     total_records: 0

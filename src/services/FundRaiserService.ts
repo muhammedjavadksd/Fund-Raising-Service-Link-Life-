@@ -197,7 +197,7 @@ class FundRaiserService implements IFundRaiserService {
 
     async getOwnerFundRaise(user_id: string, limit: number, skip: number): Promise<HelperFuncationResponse> {
         try {
-            let fundraiser_data: IPaginatedResponse<iFundRaiseModel[]> = await this.FundRaiserRepo.getUserPosts(user_id, limit, skip);
+            let fundraiser_data: IPaginatedResponse<iFundRaiseModel[]> = await this.FundRaiserRepo.getUserPosts(user_id, skip, limit);
 
             if (fundraiser_data.total_records) {
                 return {

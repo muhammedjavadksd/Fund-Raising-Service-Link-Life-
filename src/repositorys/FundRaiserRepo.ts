@@ -5,6 +5,7 @@ import { StatusCode } from "../types/Enums/UtilEnum";
 import { IEditableFundRaiser, IFundRaise, IFundRaiseInitialData, iFundRaiseModel } from "../types/Interface/IDBmodel";
 import { IFundRaiserRepo } from "../types/Interface/IRepo";
 import { HelperFuncationResponse, IPaginatedResponse } from "../types/Interface/Util";
+import mongoose, { Schema } from "mongoose";
 
 
 
@@ -135,11 +136,16 @@ class FundRaiserRepo implements IFundRaiserRepo {
     async getUserPosts(user_id: string, skip: number, limit: number): Promise<IPaginatedResponse<iFundRaiseModel>> {
         console.log(user_id);
 
+
+        console.log("The limit is");
+        console.log(user_id);
+
+
         try {
             const fundRaisePost = await this.FundRaiserModel.aggregate([
                 {
                     $match: {
-                        user_id
+                        user_id: new mongoose.Types.ObjectId(user_id)
                     }
                 },
                 {
@@ -169,13 +175,16 @@ class FundRaiserRepo implements IFundRaiserRepo {
                     }
                 }
             ])
+
+            console.log(fundRaisePost);
+
             const response: IPaginatedResponse<iFundRaiseModel> = {
                 paginated: fundRaisePost[0].paginated,
                 total_records: fundRaisePost[0].total_records,
             }
             return response
         } catch (e) {
-            console.log(e);
+            // console.log(e);
             return {
                 paginated: [],
                 total_records: 0

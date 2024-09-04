@@ -172,6 +172,8 @@ class UserController {
             const limit = +req.params.limit;
             const page = +req.params.page;
             const skip = (page - 1) * limit;
+            console.log("The limit is");
+            console.log(limit);
             try {
                 const user_id = (_a = req.context) === null || _a === void 0 ? void 0 : _a.user_id;
                 console.log(user_id);

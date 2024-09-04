@@ -186,6 +186,10 @@ class UserController implements IUserController {
         const page: number = +req.params.page;
         const skip = (page - 1) * limit
 
+        console.log("The limit is");
+        console.log(limit);
+
+
 
         try {
 

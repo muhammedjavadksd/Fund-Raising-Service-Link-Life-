@@ -24,7 +24,6 @@ userRouter.get("/view/:category/:limit/:page", UserControllers.categoryFundRaise
 userRouter.get("/comment/:fund_id/:limit/:page/", UserControllers.getPaginatedComments);//test completed
 
 
-
 // POST method
 userRouter.post("/create", authMiddleware.isValidUser, UserControllers.createFundRaise); //test completed
 userRouter.post("/add_comment/:post_id", authMiddleware.isValidUser, UserControllers.addComment)

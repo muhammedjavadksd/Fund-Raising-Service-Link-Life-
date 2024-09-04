@@ -182,7 +182,7 @@ class FundRaiserService {
     getOwnerFundRaise(user_id, limit, skip) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                let fundraiser_data = yield this.FundRaiserRepo.getUserPosts(user_id, limit, skip);
+                let fundraiser_data = yield this.FundRaiserRepo.getUserPosts(user_id, skip, limit);
                 if (fundraiser_data.total_records) {
                     return {
                         msg: "Data fetched success",
