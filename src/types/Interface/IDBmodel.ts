@@ -1,6 +1,7 @@
 import mongoose, { Document } from "mongoose";
 import { FundRaiserCreatedBy, FundRaiserStatus } from "../Enums/DbEnum";
 import { FundRaiserBankAccountType, FundRaiserCategory } from "../Enums/UtilEnum";
+import { WebhookPayload } from "./Util";
 
 
 interface iFundRaiseModel extends Document, IFundRaise {
@@ -102,6 +103,24 @@ interface ICommentTemplate {
     replay_id: string,
 }
 
-interface ICommentCollection extends Document, ICommentTemplate { }
+interface IDonateHistoryTemplate {
+    fund_id: String,
+    profile_id: String,
+    amount: number,
+    receipt: String,
+    date: Date
+    hide_profile: boolean,
+    donation_id: string
+}
 
-export { IPaginatedCommente, ICommentCollection, ICommentTemplate, IWithdrawDetails, IFundRaise, IFundRaiseInitialData, iFundRaiseModel, IEditableFundRaiser }
+interface IDonateHistoryCollection extends Document, IDonateHistoryTemplate { }
+
+interface ICommentCollection extends Document, ICommentTemplate {
+}
+
+
+interface IWebhookCollection extends WebhookPayload, Document {
+    is_checked: boolean
+}
+
+export { IDonateHistoryTemplate, IDonateHistoryCollection, IWebhookCollection, IPaginatedCommente, ICommentCollection, ICommentTemplate, IWithdrawDetails, IFundRaise, IFundRaiseInitialData, iFundRaiseModel, IEditableFundRaiser }

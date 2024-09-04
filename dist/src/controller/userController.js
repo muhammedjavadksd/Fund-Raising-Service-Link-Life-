@@ -368,10 +368,10 @@ class UserController {
                 const isForce = req.query.isForce;
                 let profile;
                 if (isForce) {
-                    profile = yield this.fundRaiserRepo.getRestrictedFundRaisePost(profile_id);
+                    profile = yield this.fundRaiserRepo.findFundPostByFundId(profile_id);
                 }
                 else {
-                    profile = yield this.fundRaiserRepo.findFundPostByFundId(profile_id);
+                    profile = yield this.fundRaiserRepo.getRestrictedFundRaisePost(profile_id);
                 }
                 if (profile) {
                     res.status(200).json({ status: true, data: profile });

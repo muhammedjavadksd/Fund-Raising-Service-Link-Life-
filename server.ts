@@ -32,6 +32,7 @@ const staticPath = path.join(__dirname, 'public/images');
 console.log(`Serving static files from: ${staticPath}`);
 
 app.use("/image", express.static(staticPath))
+
 app.use("/", userRouter)
 app.use("/admin", adminRouter)
 

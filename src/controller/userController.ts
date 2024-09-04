@@ -42,9 +42,21 @@ class UserController implements IUserController {
         this.deleteComment = this.deleteComment.bind(this)
         this.categoryFundRaiserPaginated = this.categoryFundRaiserPaginated.bind(this);
         this.verifyCloseToken = this.verifyCloseToken.bind(this)
+        this.payToFundRaiser = this.payToFundRaiser.bind(this)
         this.fundRaiserService = new FundRaiserService();
         this.commentService = new CommentService();
         this.fundRaiserRepo = new FundRaiserRepo();
+    }
+
+
+    payToFundRaiser(req: Request, res: Response): Promise<void> {
+
+        const full_name = req.body.full_name;
+        const phone_number = req.body.phone_number;
+        const email_id = req.body.email_id;
+        const amount = req.body.amount;
+
+
     }
 
     async verifyCloseToken(req: Request, res: Response): Promise<void> {
@@ -396,9 +408,9 @@ class UserController implements IUserController {
             const isForce = req.query.isForce;
             let profile: iFundRaiseModel | null;
             if (isForce) {
-                profile = await this.fundRaiserRepo.getRestrictedFundRaisePost(profile_id);
-            } else {
                 profile = await this.fundRaiserRepo.findFundPostByFundId(profile_id);
+            } else {
+                profile = await this.fundRaiserRepo.getRestrictedFundRaisePost(profile_id);
             }
             if (profile) {
                 res.status(200).json({ status: true, data: profile })
