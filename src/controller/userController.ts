@@ -71,7 +71,13 @@ class UserController implements IUserController {
     async verifyPayment(req: Request, res: Response): Promise<void> {
 
         const verifyBody: IVerifyPaymentResponse = req.body
-        const verifyPayment = await this.donationService.verifyPayment(verifyBody.order_id);
+        console.log("verify body");
+
+        console.log(verifyBody);
+
+        const verifyPayment = await this.donationService.verifyPayment(verifyBody?.data?.order?.order_id);
+        console.log(verifyPayment);
+
         res.status(verifyPayment.statusCode).json({ status: verifyPayment.status, msg: verifyPayment.msg, data: verifyPayment.data })
     }
 

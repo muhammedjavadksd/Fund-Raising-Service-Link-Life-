@@ -79,6 +79,7 @@ class CommentService {
     deleteComment(comment_id) {
         return __awaiter(this, void 0, void 0, function* () {
             const deleteComment = yield this.commentsRepo.deleteComment(comment_id);
+            yield this.commentsRepo.deleteReplayComments(comment_id);
             if (deleteComment) {
                 return {
                     status: true,

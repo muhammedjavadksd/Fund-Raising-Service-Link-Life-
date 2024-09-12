@@ -13,6 +13,7 @@ class S3BucketHelper {
 
     private readonly bucketName;
     private readonly s3Config;
+    private readonly s3;
 
     constructor(bucketName: string) {
         this.bucketName = bucketName;
@@ -22,11 +23,44 @@ class S3BucketHelper {
             region: 'us-east-1',
             forcePathStyle: true,
         })
+
+        this.s3 = new AWS.S3({
+            endpoint: "http://localhost:4566",
+            accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+            secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+            region: 'us-east-1',
+            s3ForcePathStyle: true,
+        })
     }
 
     async generatePresignedUrl(key: string): Promise<string> {
         const url = await getSignedUrl(this.s3Config, new PutObjectCommand({ Bucket: this.bucketName, Key: key }), { expiresIn: 3600 })
         return url;
+    }
+
+
+    async uploadObject(key: string, docs: Buffer) {
+
+        console.log(this.bucketName);
+
+        console.log(docs);
+
+
+        await this.s3.createBucket({ Bucket: this.bucketName }).promise();
+        const save = await new AWS.S3.ManagedUpload({
+            params: {
+                Bucket: this.bucketName,
+                Key: key,
+                Body: docs,
+                ContentType: 'application/pdf',
+            }
+        }).promise()
+        console.log(save);
+        console.log("Save");
+
+        console.log(save.Location);
+
+
     }
 
     async uploadFile(file: Buffer, presigned_url: string, fileType: string, imageName: string): Promise<boolean | string> {

@@ -49,7 +49,6 @@ interface IEditableFundRaiser {
     "pincode"?: number,
     "state"?: string
     "deadline"?: Date
-    "withdraw_docs": IWithdrawDetails
 }
 
 interface IWithdrawDetails {

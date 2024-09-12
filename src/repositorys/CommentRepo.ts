@@ -7,6 +7,7 @@ interface ICommentRepo {
     findCommentByCommentId(comment_id: string): Promise<ICommentTemplate | null>
     addComment(data: ICommentTemplate): Promise<undefined | string>
     deleteComment(comment_id: string): Promise<boolean>
+    deleteReplayComments(comment_id: string): Promise<boolean>
     editComment(comment_id: string, comments: Partial<ICommentTemplate>): Promise<boolean>
     getPaginatedComments(fund_id: string, skip: number, limit: number): Promise<IPaginatedCommente>
 }
@@ -20,6 +21,11 @@ class CommentsRepo implements ICommentRepo {
 
     async deleteComment(comment_id: string): Promise<boolean> {
         const deleteComment = await CommentCollection.deleteOne({ comment_id });
+        return deleteComment.deletedCount > 0
+    }
+
+    async deleteReplayComments(comment_id: string): Promise<boolean> {
+        const deleteComment = await CommentCollection.deleteMany({ replay_id: comment_id });
         return deleteComment.deletedCount > 0
     }
 

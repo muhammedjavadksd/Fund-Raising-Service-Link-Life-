@@ -1,8 +1,6 @@
 import UserController from "../controller/userController";
 import express, { Router } from 'express'
 import AuthMiddleware from "../middleware/authMiddleware";
-import { Multer } from "multer";
-
 
 const userRouter: Router = express.Router();
 

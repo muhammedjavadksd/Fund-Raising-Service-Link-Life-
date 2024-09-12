@@ -26,6 +26,12 @@ class CommentsRepo {
             return deleteComment.deletedCount > 0;
         });
     }
+    deleteReplayComments(comment_id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const deleteComment = yield comments_1.default.deleteMany({ replay_id: comment_id });
+            return deleteComment.deletedCount > 0;
+        });
+    }
     editComment(comment_id, comments) {
         return __awaiter(this, void 0, void 0, function* () {
             const edit = yield comments_1.default.updateOne({ comment_id }, { $set: comments });

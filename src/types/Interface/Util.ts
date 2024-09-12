@@ -80,12 +80,24 @@ interface IPaymentItem {
 
 
 interface IVerifyPaymentResponse {
-    created_at: string
-    cart_details: CartDetails
-    customer_details: CustomerDetails
-    order_amount: number
-    order_id: string
-    order_status: string
+    data: {
+        created_at: string
+        cart_details: CartDetails
+        customer_details: CustomerDetails
+        order_status: string
+        order: {
+            order_id: string,
+            order_amount: number,
+            order_currency: string,
+        },
+        payment: {
+            cf_payment_id: number,
+            payment_status: string,
+            payment_amount: number,
+            payment_currency: string,
+            payment_time: string
+        }
+    }
 }
 
 interface IOrderTemplate {

@@ -20,6 +20,9 @@ userRouter.get("/view/:profile_id", UserControllers.getSingleProfile); //test co
 userRouter.get("/view/:limit/:page", UserControllers.getActiveFundRaise); //test completed
 userRouter.get("/view/:category/:limit/:page", UserControllers.categoryFundRaiserPaginated); //test completed
 userRouter.get("/comment/:fund_id/:limit/:page/", UserControllers.getPaginatedComments); //test completed
+//payemnt post
+userRouter.post("/pay/:fund_id", authMiddleware.isValidUser, UserControllers.payToFundRaiser);
+userRouter.post("/verify-payment", UserControllers.verifyPayment);
 // POST method
 userRouter.post("/create", authMiddleware.isValidUser, UserControllers.createFundRaise); //test completed
 userRouter.post("/add_comment/:post_id", authMiddleware.isValidUser, UserControllers.addComment);

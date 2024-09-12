@@ -78,6 +78,7 @@ class CommentService implements ICommentService {
 
     async deleteComment(comment_id: string): Promise<HelperFuncationResponse> {
         const deleteComment = await this.commentsRepo.deleteComment(comment_id);
+        await this.commentsRepo.deleteReplayComments(comment_id);
         if (deleteComment) {
             return {
                 status: true,

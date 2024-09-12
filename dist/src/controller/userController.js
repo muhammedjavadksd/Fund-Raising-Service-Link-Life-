@@ -21,6 +21,7 @@ const ConstData_1 = require("../types/Enums/ConstData");
 const s3Bucket_1 = __importDefault(require("../util/helper/s3Bucket"));
 const url_1 = __importDefault(require("url"));
 const CommentService_1 = __importDefault(require("../services/CommentService"));
+const DonationService_1 = __importDefault(require("../services/DonationService"));
 class UserController {
     constructor() {
         this.getUserFundRaisePost = this.getUserFundRaisePost.bind(this);
@@ -37,9 +38,42 @@ class UserController {
         this.deleteComment = this.deleteComment.bind(this);
         this.categoryFundRaiserPaginated = this.categoryFundRaiserPaginated.bind(this);
         this.verifyCloseToken = this.verifyCloseToken.bind(this);
+        this.payToFundRaiser = this.payToFundRaiser.bind(this);
+        this.verifyPayment = this.verifyPayment.bind(this);
         this.fundRaiserService = new FundRaiserService_1.default();
         this.commentService = new CommentService_1.default();
         this.fundRaiserRepo = new FundRaiserRepo_1.default();
+        this.donationService = new DonationService_1.default();
+    }
+    payToFundRaiser(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const full_name = req.body.full_name;
+            const phone_number = req.body.phone_number;
+            const email_id = req.body.email_id;
+            const amount = req.body.amount;
+            const fund_id = req.params.fund_id;
+            const context = req.context;
+            const hide_profile = req.body.hide_profile;
+            if (context && context.profile_id) {
+                const profile_id = context.profile_id;
+                const createOrder = yield this.donationService.creatOrder(profile_id, full_name, phone_number, email_id, amount, fund_id, hide_profile);
+                res.status(createOrder.statusCode).json({ status: createOrder.status, msg: createOrder.msg, data: createOrder.data });
+            }
+            else {
+                res.status(UtilEnum_1.StatusCode.UNAUTHORIZED).json({ status: false, msg: "Un authrazied access", });
+            }
+        });
+    }
+    verifyPayment(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            var _a, _b;
+            const verifyBody = req.body;
+            console.log("verify body");
+            console.log(verifyBody);
+            const verifyPayment = yield this.donationService.verifyPayment((_b = (_a = verifyBody === null || verifyBody === void 0 ? void 0 : verifyBody.data) === null || _a === void 0 ? void 0 : _a.order) === null || _b === void 0 ? void 0 : _b.order_id);
+            console.log(verifyPayment);
+            res.status(verifyPayment.statusCode).json({ status: verifyPayment.status, msg: verifyPayment.msg, data: verifyPayment.data });
+        });
     }
     verifyCloseToken(req, res) {
         return __awaiter(this, void 0, void 0, function* () {

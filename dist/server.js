@@ -25,6 +25,16 @@ app.use((0, morgan_1.default)("dev"));
 // fs.access(imagePath, fs.constants.F_OK, (err) => {
 //     console.log(`${imagePath} ${err ? 'does not exist' : 'exists'}`);
 // });
+// aws --endpoint-url=http://localhost:4566 s3 mb s3://other-images s3://fund-raiser-certificate-bucket
+// new PaymentHelper().createReceipt("Muhammed Javad", "Javad Fund Raising Campign", 500, "May 24th", "Sample ID").then((data) => {
+// })
+const SmeeClient = require('smee-client');
+const smee = new SmeeClient({
+    source: 'https://smee.io/XLWna6tXQfipghBJ',
+    target: 'http://localhost:7001/api/fund_raise/verify-payment',
+    logger: console
+});
+smee.start();
 const staticPath = path_1.default.join(__dirname, 'public/images');
 console.log(`Serving static files from: ${staticPath}`);
 app.use("/image", express_1.default.static(staticPath));

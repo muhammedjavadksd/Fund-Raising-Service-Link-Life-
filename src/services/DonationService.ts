@@ -90,10 +90,15 @@ class DonationService implements IDonationService {
     async verifyPayment(order_id: string): Promise<HelperFuncationResponse> {
 
         const verifyPayment: IVerifyPaymentResponse | false = await this.paymentHelper.verifyPayment(order_id);
+        console.log("VR", verifyPayment);
+        console.log("order_id", order_id);
+
         if (verifyPayment) {
             const findOrder = await this.orderRepo.findOne(order_id)
-            const receipt = ""
-            if (findOrder) {
+            const receipt = "re"
+            console.log("O", findOrder);
+            if (findOrder && !findOrder.status) {
+
 
                 const utilHelper = new UtilHelper();
                 let randomNumber: number = utilHelper.generateAnOTP(4)
@@ -106,7 +111,7 @@ class DonationService implements IDonationService {
                     findDonation = await this.donationHistoryRepo.findOneDonation(donationId);
                 }
                 const donationHistory: IDonateHistoryTemplate = {
-                    amount: verifyPayment.order_amount,
+                    amount: verifyPayment?.data?.order?.order_amount,
                     date: new Date(),
                     donation_id: donationId,
                     fund_id: findOrder?.fund_id,
@@ -114,6 +119,7 @@ class DonationService implements IDonationService {
                     profile_id: findOrder.profile_id,
                     receipt,
                 }
+                await this.orderRepo.updateStatus(order_id, true)
                 await this.webHookRepo.updateWebhookStatus(order_id, true)
                 await this.donationHistoryRepo.insertDonationHistory(donationHistory)
                 return {
@@ -129,6 +135,9 @@ class DonationService implements IDonationService {
             statusCode: StatusCode.BAD_REQUESR,
         }
     }
+
+
+
 
 
 }

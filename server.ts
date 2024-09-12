@@ -6,6 +6,7 @@ import fundRaiseDbConnection from './src/db/mongo_connection';
 import userRouter from './src/router/userRouter';
 import adminRouter from './src/router/adminRouter';
 import path from 'path'
+import PaymentHelper from './src/util/helper/paymentHelper';
 
 dotenv.config({ path: "./.env" });
 fundRaiseDbConnection()
@@ -27,6 +28,20 @@ app.use(morgan("dev"))
 //     console.log(`${imagePath} ${err ? 'does not exist' : 'exists'}`);
 // });
 
+// aws --endpoint-url=http://localhost:4566 s3 mb s3://other-images s3://fund-raiser-certificate-bucket
+
+// new PaymentHelper().createReceipt("Muhammed Javad", "Javad Fund Raising Campign", 500, "May 24th", "Sample ID").then((data) => {
+// })
+
+
+const SmeeClient = require('smee-client')
+
+const smee = new SmeeClient({
+    source: 'https://smee.io/XLWna6tXQfipghBJ',
+    target: 'http://localhost:7001/api/fund_raise/verify-payment',
+    logger: console
+})
+smee.start()
 
 const staticPath = path.join(__dirname, 'public/images');
 console.log(`Serving static files from: ${staticPath}`);
