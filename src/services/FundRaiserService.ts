@@ -81,6 +81,9 @@ class FundRaiserService implements IFundRaiserService {
         }
 
 
+        console.log(matchQuery);
+
+
         const findProfile: IPaginatedResponse<IFundRaise[]> = await this.FundRaiserRepo.getActiveFundRaiserPost(skip, limit, matchQuery);
         // findProfile.paginated.filter()
 

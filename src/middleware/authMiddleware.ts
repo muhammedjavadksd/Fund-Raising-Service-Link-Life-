@@ -24,6 +24,34 @@ class AuthMiddleware implements IAuthMiddleware {
     }
 
 
+    async hasUser(req: CustomRequest, res: Response, next: NextFunction): Promise<void> {
+        const headers: Request['headers'] = req.headers;
+        const auth: string = headers['authorization'] as string;
+
+        if (auth && auth.split(' ')[0] === 'Bearer') {
+            if (!req.context) {
+                req.context = {}
+            }
+
+            const token: string = auth.split(' ')[1]
+            req.context.auth_token = token;
+
+            const tokenHelper = new TokenHelper();
+
+            const checkValidity: JwtPayload | string | false = await tokenHelper.checkTokenValidity(token)
+            if (checkValidity && typeof checkValidity == "object") {
+                if (checkValidity && checkValidity.email) {
+                    req.context.email_id = checkValidity?.email;
+                    req.context.token = token;
+                    req.context.user_id = checkValidity.user_id;
+                    req.context.profile_id = checkValidity.profile_id;
+                    req.context.full_name = checkValidity.first_name + checkValidity.last_name;
+                }
+            }
+        }
+        next()
+    }
+
 
 
     async isValidUser(req: CustomRequest, res: Response, next: NextFunction): Promise<void> {
