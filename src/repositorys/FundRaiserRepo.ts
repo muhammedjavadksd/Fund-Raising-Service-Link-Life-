@@ -104,6 +104,9 @@ class FundRaiserRepo implements IFundRaiserRepo {
                 total_records: limitedData[0].total_records
             }
 
+            console.log("Limited data");
+            console.log(limitedData);
+
             return response;
         } catch (e) {
             return {

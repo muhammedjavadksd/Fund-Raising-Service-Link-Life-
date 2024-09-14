@@ -422,15 +422,21 @@ class UserController {
     }
     getSingleProfile(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
+            var _a;
             try {
-                const profile_id = req.params.profile_id;
+                const fund_id = req.params.profile_id;
+                const user_id = (_a = req.context) === null || _a === void 0 ? void 0 : _a.user_id;
                 const isForce = req.query.isForce;
                 let profile;
-                if (isForce) {
-                    profile = yield this.fundRaiserRepo.findFundPostByFundId(profile_id);
+                if (isForce && user_id) {
+                    profile = yield this.fundRaiserRepo.findFundPostByFundId(fund_id);
+                    if ((profile === null || profile === void 0 ? void 0 : profile.user_id) != user_id) {
+                        res.status(400).json({ status: false, msg: "Profile not found" });
+                        return;
+                    }
                 }
                 else {
-                    profile = yield this.fundRaiserRepo.getRestrictedFundRaisePost(profile_id);
+                    profile = yield this.fundRaiserRepo.getRestrictedFundRaisePost(fund_id);
                 }
                 if (profile) {
                     res.status(200).json({ status: true, data: profile });

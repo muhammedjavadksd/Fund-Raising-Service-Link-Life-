@@ -32,6 +32,31 @@ class AuthMiddleware {
             }
         });
     }
+    hasUser(req, res, next) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const headers = req.headers;
+            const auth = headers['authorization'];
+            if (auth && auth.split(' ')[0] === 'Bearer') {
+                if (!req.context) {
+                    req.context = {};
+                }
+                const token = auth.split(' ')[1];
+                req.context.auth_token = token;
+                const tokenHelper = new tokenHelper_1.default();
+                const checkValidity = yield tokenHelper.checkTokenValidity(token);
+                if (checkValidity && typeof checkValidity == "object") {
+                    if (checkValidity && checkValidity.email) {
+                        req.context.email_id = checkValidity === null || checkValidity === void 0 ? void 0 : checkValidity.email;
+                        req.context.token = token;
+                        req.context.user_id = checkValidity.user_id;
+                        req.context.profile_id = checkValidity.profile_id;
+                        req.context.full_name = checkValidity.first_name + checkValidity.last_name;
+                    }
+                }
+            }
+            next();
+        });
+    }
     isValidUser(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
             const headers = req.headers;

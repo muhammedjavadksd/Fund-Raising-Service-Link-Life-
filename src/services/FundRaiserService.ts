@@ -81,6 +81,7 @@ class FundRaiserService implements IFundRaiserService {
         }
 
 
+        console.log("Match query");
         console.log(matchQuery);
 
 

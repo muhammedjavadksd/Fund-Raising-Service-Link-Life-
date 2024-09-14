@@ -70,6 +70,8 @@ class FundRaiserService {
                     $lte: new Date(date.setDate(date.getDate() + 10))
                 };
             }
+            console.log("Match query");
+            console.log(matchQuery);
             const findProfile = yield this.FundRaiserRepo.getActiveFundRaiserPost(skip, limit, matchQuery);
             // findProfile.paginated.filter()
             if (findProfile.total_records) {

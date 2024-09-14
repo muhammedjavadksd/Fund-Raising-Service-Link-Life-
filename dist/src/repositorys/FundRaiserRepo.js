@@ -99,6 +99,8 @@ class FundRaiserRepo {
                     paginated: limitedData[0].paginated,
                     total_records: limitedData[0].total_records
                 };
+                console.log("Limited data");
+                console.log(limitedData);
                 return response;
             }
             catch (e) {
