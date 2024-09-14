@@ -6,7 +6,7 @@ import qrcode from 'qrcode'
 import { Base64Encode } from 'base64-stream'
 import S3BucketHelper from "./s3Bucket";
 import { PassThrough } from 'stream';
-
+import blobStream from 'blob-stream'
 
 interface IPaymentHelper {
     verifyPayment(order_id: string): Promise<IVerifyPaymentResponse | false>
@@ -103,8 +103,12 @@ class PaymentHelper implements IPaymentHelper {
     createReceipt(name: string, title: string, amount: number, date: string, qrtext: string) {
         return new Promise(async (resolve, reject) => {
 
+            console.log('Bucket name');
+            console.log(process.env.FUND_RAISER_CERTIFICATE_BUCKET);
+
+
             const s3Helper = new S3BucketHelper(process.env.FUND_RAISER_CERTIFICATE_BUCKET || "");
-            const fileName = "payment-certificate" + new Date().toString() + ".jpeg"
+            const fileName = `payment_certificate_.pdf`
             const presignedUrl = await s3Helper.generatePresignedUrl(fileName)
 
             console.log("Started");
@@ -347,37 +351,17 @@ class PaymentHelper implements IPaymentHelper {
             });
 
 
-            const stream = doc.pipe(new Base64Encode());
-
-            let base64Value = '';
-            stream.on('data', chunk => {
-                base64Value += chunk;
-            });
-            const pass = new PassThrough();
-            doc.pipe(pass);
-
+            const passThroughStream = new PassThrough();
+            doc.pipe(passThroughStream);
+            const chunks: Buffer[] = [];
+            passThroughStream.on('data', chunk => chunks.push(chunk));
+            passThroughStream.on('end', async () => {
+                console.log("Ended");
+                console.log(await s3Helper.uploadFile(Buffer.concat(chunks), presignedUrl, "application/pdf", fileName));
+                // await s3Helper.uploadObject(fileName, Buffer.concat(chunks), "application/pdf");
+            })
+            passThroughStream.on('error', reject);
             doc.end()
-
-            const buffer = await new Promise<Buffer>((resolve, reject) => {
-                const chunks: Buffer[] = [];
-                pass.on('data', chunk => chunks.push(chunk));
-                pass.on('end', () => {
-                    console.log("End");
-                    resolve(Buffer.concat(chunks))
-                });
-                pass.on('error', reject);
-            });
-            console.log(await s3Helper.uploadObject(fileName, buffer));
-            ;
-            fs.writeFile("ss", buffer, () => { });
-
-
-
-            stream.on('end', async () => {
-                console.log("Worked");
-                resolve(base64Value);
-            });
-            doc.end();
         })
     }
 }

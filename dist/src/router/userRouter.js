@@ -15,11 +15,13 @@ const multerStorage = multer({ storage: multerDisk });
 userRouter.get("/generate_presigned_url", UserControllers.getPresignedUrl); //test completed
 userRouter.put("/upload_image_presigned", multerStorage.single("file"), UserControllers.uploadImageIntoS3); //test completed
 //Get method
-userRouter.get("/view/self/:limit/:page", authMiddleware.isValidUser, UserControllers.getUserFundRaisePost); //test completed
+userRouter.get("/view/self/:limit/:page/:status?", authMiddleware.isValidUser, UserControllers.getUserFundRaisePost); //test completed
 userRouter.get("/view/:profile_id", UserControllers.getSingleProfile); //test completed
 userRouter.get("/view/:limit/:page", UserControllers.getActiveFundRaise); //test completed
 userRouter.get("/view/:category/:limit/:page", UserControllers.categoryFundRaiserPaginated); //test completed
 userRouter.get("/comment/:fund_id/:limit/:page/", UserControllers.getPaginatedComments); //test completed
+userRouter.get("/donation-history/:fund_id/:limit/:page", UserControllers.donationHistory); //test completed
+userRouter.get("/my-donation-history/:limit/:page", authMiddleware.isValidUser, UserControllers.myDonationHistory); //test completed
 //payemnt post
 userRouter.post("/pay/:fund_id", authMiddleware.isValidUser, UserControllers.payToFundRaiser);
 userRouter.post("/verify-payment", UserControllers.verifyPayment);

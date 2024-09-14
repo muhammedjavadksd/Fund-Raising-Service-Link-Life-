@@ -29,6 +29,10 @@ const DonateHistoryScheme = new mongoose_1.Schema({
     hide_profile: {
         type: Boolean,
         required: true
+    },
+    name: {
+        type: String,
+        required: true
     }
 });
 const DonateHistoryCollection = (0, mongoose_1.model)("donate-history", DonateHistoryScheme, "donate-history");

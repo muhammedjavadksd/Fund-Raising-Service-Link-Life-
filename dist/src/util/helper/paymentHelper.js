@@ -16,7 +16,6 @@ const axios_1 = __importDefault(require("axios"));
 const pdfkit_1 = __importDefault(require("pdfkit"));
 const fs_1 = __importDefault(require("fs"));
 const qrcode_1 = __importDefault(require("qrcode"));
-const base64_stream_1 = require("base64-stream");
 const s3Bucket_1 = __importDefault(require("./s3Bucket"));
 const stream_1 = require("stream");
 class PaymentHelper {
@@ -104,8 +103,10 @@ class PaymentHelper {
     }
     createReceipt(name, title, amount, date, qrtext) {
         return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
+            console.log('Bucket name');
+            console.log(process.env.FUND_RAISER_CERTIFICATE_BUCKET);
             const s3Helper = new s3Bucket_1.default(process.env.FUND_RAISER_CERTIFICATE_BUCKET || "");
-            const fileName = "payment-certificate" + new Date().toString() + ".jpeg";
+            const fileName = `payment_certificate_.pdf`;
             const presignedUrl = yield s3Helper.generatePresignedUrl(fileName);
             console.log("Started");
             const qr = yield qrcode_1.default.toDataURL(qrtext);
@@ -288,30 +289,16 @@ class PaymentHelper {
                 fit: [maxWidth - 70, maxHeight],
                 align: 'center',
             });
-            const stream = doc.pipe(new base64_stream_1.Base64Encode());
-            let base64Value = '';
-            stream.on('data', chunk => {
-                base64Value += chunk;
-            });
-            const pass = new stream_1.PassThrough();
-            doc.pipe(pass);
-            doc.end();
-            const buffer = yield new Promise((resolve, reject) => {
-                const chunks = [];
-                pass.on('data', chunk => chunks.push(chunk));
-                pass.on('end', () => {
-                    console.log("End");
-                    resolve(Buffer.concat(chunks));
-                });
-                pass.on('error', reject);
-            });
-            console.log(yield s3Helper.uploadObject(fileName, buffer));
-            ;
-            fs_1.default.writeFile("ss", buffer, () => { });
-            stream.on('end', () => __awaiter(this, void 0, void 0, function* () {
-                console.log("Worked");
-                resolve(base64Value);
+            const passThroughStream = new stream_1.PassThrough();
+            doc.pipe(passThroughStream);
+            const chunks = [];
+            passThroughStream.on('data', chunk => chunks.push(chunk));
+            passThroughStream.on('end', () => __awaiter(this, void 0, void 0, function* () {
+                console.log("Ended");
+                console.log(yield s3Helper.uploadFile(Buffer.concat(chunks), presignedUrl, "application/pdf", fileName));
+                // await s3Helper.uploadObject(fileName, Buffer.concat(chunks), "application/pdf");
             }));
+            passThroughStream.on('error', reject);
             doc.end();
         }));
     }

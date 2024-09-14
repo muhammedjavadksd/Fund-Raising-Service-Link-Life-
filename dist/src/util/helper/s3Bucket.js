@@ -23,15 +23,15 @@ class S3BucketHelper {
         this.s3Config = new client_s3_1.S3Client({
             endpoint: "http://localhost:4566",
             credentials: (0, credential_provider_env_1.fromEnv)(),
-            region: 'us-east-1',
+            region: 'us-west-1',
             forcePathStyle: true,
         });
         this.s3 = new aws_sdk_1.default.S3({
             endpoint: "http://localhost:4566",
-            accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-            secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-            region: 'us-east-1',
-            s3ForcePathStyle: true,
+            accessKeyId: process.env.x_client_id,
+            secretAccessKey: process.env.x_client_secret,
+            region: "us-east-1", // specify the region
+            s3ForcePathStyle: true // use path-style URL, necessary for LocalStack
         });
     }
     generatePresignedUrl(key) {
@@ -40,18 +40,18 @@ class S3BucketHelper {
             return url;
         });
     }
-    uploadObject(key, docs) {
+    uploadObject(key, docs, ftype) {
         return __awaiter(this, void 0, void 0, function* () {
             console.log(this.bucketName);
             console.log(docs);
-            yield this.s3.createBucket({ Bucket: this.bucketName }).promise();
-            const save = yield new aws_sdk_1.default.S3.ManagedUpload({
-                params: {
-                    Bucket: this.bucketName,
-                    Key: key,
-                    Body: docs,
-                    ContentType: 'application/pdf',
-                }
+            // await this.s3.createBucket({ Bucket: this.bucketName }).promise();
+            const save = yield this.s3.upload({
+                Bucket: this.bucketName,
+                Key: key,
+                Body: docs,
+                ACL: 'public-read',
+                // ContentEncoding: fEncoding,
+                ContentType: "application/pdf"
             }).promise();
             console.log(save);
             console.log("Save");

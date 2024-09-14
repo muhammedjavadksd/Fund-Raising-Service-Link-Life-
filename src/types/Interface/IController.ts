@@ -19,6 +19,8 @@ interface IUserController {
     verifyCloseToken(req: Request, res: Response): Promise<void>
     payToFundRaiser(req: Request, res: Response): Promise<void>
     verifyPayment(req: Request, res: Response): Promise<void>
+    donationHistory(req: Request, res: Response): Promise<void>
+    myDonationHistory(req: Request, res: Response): Promise<void>
 }
 
 interface IAdminController {

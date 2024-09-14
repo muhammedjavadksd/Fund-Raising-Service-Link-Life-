@@ -49,6 +49,7 @@ interface IEditableFundRaiser {
     "pincode"?: number,
     "state"?: string
     "deadline"?: Date
+    "description"?: string
 }
 
 interface IWithdrawDetails {
@@ -59,6 +60,7 @@ interface IWithdrawDetails {
 }
 
 interface IFundRaise {
+    "close_token"?: string
     "fund_id": string,
     "amount": number,
     "category": FundRaiserCategory,
@@ -105,6 +107,7 @@ interface ICommentTemplate {
 interface IDonateHistoryTemplate {
     fund_id: String,
     profile_id: String,
+    name: String,
     amount: number,
     receipt: String,
     date: Date
@@ -114,6 +117,7 @@ interface IDonateHistoryTemplate {
 
 
 interface IPaymentOrder {
+    name: string,
     order_id: string,
     fund_id: string,
     date: Date,
@@ -123,6 +127,17 @@ interface IPaymentOrder {
     profile_id: string
 }
 
+
+interface IMetaData {
+    filename: string,
+    contentType: string,
+    length: number,
+    uploadDate: Date,
+    metadata: Map<any, any>
+}
+
+
+interface IMetaDataCollection extends Document, IMetaData { }
 interface IDonateHistoryCollection extends Document, IDonateHistoryTemplate { }
 interface IPaymentOrderCollection extends IPaymentOrder, Document { }
 
@@ -135,4 +150,5 @@ interface IWebhookCollection extends WebhookPayload, Document {
 
 }
 
+export { IMetaData, IMetaDataCollection }
 export { IPaymentOrderCollection, IPaymentOrder, IDonateHistoryTemplate, IDonateHistoryCollection, IWebhookCollection, IPaginatedCommente, ICommentCollection, ICommentTemplate, IWithdrawDetails, IFundRaise, IFundRaiseInitialData, iFundRaiseModel, IEditableFundRaiser }

@@ -26,6 +26,51 @@ class DonationService {
         this.fundRepo = new FundRaiserRepo_1.default();
         this.webHookRepo = new PaymentWebHookRepo_1.default();
         this.donationHistoryRepo = new DonationRepo_1.default();
+        this.findPrivateProfileHistoryPaginated = this.findPrivateProfileHistoryPaginated.bind(this);
+        this.findMyDonationHistory = this.findMyDonationHistory.bind(this);
+    }
+    findMyDonationHistory(profile_id, limit, page) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const skip = (page - 1) * limit;
+            const findHistory = yield this.donationHistoryRepo.findUserDonationHistory(profile_id, limit, skip);
+            console.log(findHistory);
+            if (findHistory.total_records) {
+                return {
+                    msg: "Histroy found",
+                    status: true,
+                    statusCode: UtilEnum_1.StatusCode.OK,
+                    data: findHistory
+                };
+            }
+            else {
+                return {
+                    msg: "No data found",
+                    status: false,
+                    statusCode: UtilEnum_1.StatusCode.NOT_FOUND
+                };
+            }
+        });
+    }
+    findPrivateProfileHistoryPaginated(profile_id, limit, page) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const skip = (page - 1) * limit;
+            const findHistory = yield this.donationHistoryRepo.findPrivateProfilePaginedtHistory(profile_id, limit, skip);
+            if (findHistory.total_records) {
+                return {
+                    msg: "Histroy found",
+                    status: true,
+                    statusCode: UtilEnum_1.StatusCode.OK,
+                    data: findHistory
+                };
+            }
+            else {
+                return {
+                    msg: "No data found",
+                    status: false,
+                    statusCode: UtilEnum_1.StatusCode.NOT_FOUND
+                };
+            }
+        });
     }
     creatOrder(profile_id, name, phone_number, email_address, amount, fund_id, hide_profile) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -56,7 +101,8 @@ class DonationService {
                     order_id,
                     status: false,
                     hide_profile,
-                    profile_id
+                    profile_id,
+                    name,
                 };
                 yield this.orderRepo.insertOne(paymentOrder);
                 if (createOrder) {
@@ -81,8 +127,6 @@ class DonationService {
         return __awaiter(this, void 0, void 0, function* () {
             var _a, _b;
             const verifyPayment = yield this.paymentHelper.verifyPayment(order_id);
-            console.log("VR", verifyPayment);
-            console.log("order_id", order_id);
             if (verifyPayment) {
                 const findOrder = yield this.orderRepo.findOne(order_id);
                 const receipt = "re";
@@ -101,11 +145,12 @@ class DonationService {
                     const donationHistory = {
                         amount: (_b = (_a = verifyPayment === null || verifyPayment === void 0 ? void 0 : verifyPayment.data) === null || _a === void 0 ? void 0 : _a.order) === null || _b === void 0 ? void 0 : _b.order_amount,
                         date: new Date(),
-                        donation_id: donationId,
+                        donation_id: donationId.toUpperCase(),
                         fund_id: findOrder === null || findOrder === void 0 ? void 0 : findOrder.fund_id,
                         hide_profile: findOrder.hide_profile,
                         profile_id: findOrder.profile_id,
                         receipt,
+                        name: findOrder.name
                     };
                     yield this.orderRepo.updateStatus(order_id, true);
                     yield this.webHookRepo.updateWebhookStatus(order_id, true);

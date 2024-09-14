@@ -44,6 +44,8 @@ class FundRaiserService implements IFundRaiserService {
             const fund_id = verifyToken?.fund_id
             const type = verifyToken?.type;
             if (fund_id && type == JwtType.CloseFundRaise) {
+                console.log(fund_id);
+
                 await this.FundRaiserRepo.closeFundRaiser(fund_id)
                 return {
                     status: true,
@@ -195,9 +197,9 @@ class FundRaiserService implements IFundRaiserService {
         }
     }
 
-    async getOwnerFundRaise(user_id: string, limit: number, skip: number): Promise<HelperFuncationResponse> {
+    async getOwnerFundRaise(user_id: string, limit: number, skip: number, status: FundRaiserStatus): Promise<HelperFuncationResponse> {
         try {
-            let fundraiser_data: IPaginatedResponse<iFundRaiseModel[]> = await this.FundRaiserRepo.getUserPosts(user_id, skip, limit);
+            let fundraiser_data: IPaginatedResponse<iFundRaiseModel[]> = await this.FundRaiserRepo.getUserPosts(user_id, skip, limit, status);
 
             if (fundraiser_data.total_records) {
                 return {
@@ -249,12 +251,21 @@ class FundRaiserService implements IFundRaiserService {
                         full_name: currentFund.full_name,
                         collected_amount: currentFund.collected
                     })
-                    // currentFund.closed = true;
-                    // await this.FundRaiserRepo.updateFundRaiserByModel(currentFund);
-                    return {
-                        msg: "A verification email has been sent to the registered email address.",
-                        status: true,
-                        statusCode: StatusCode.OK
+                    if (token) {
+                        currentFund.close_token = token;
+                        // currentFund.closed = true;
+                        await this.FundRaiserRepo.updateFundRaiserByModel(currentFund);
+                        return {
+                            msg: "A verification email has been sent to the registered email address.",
+                            status: true,
+                            statusCode: StatusCode.OK
+                        }
+                    } else {
+                        return {
+                            msg: "Something went wrong",
+                            status: false,
+                            statusCode: StatusCode.BAD_REQUESR
+                        }
                     }
                 }
             } else {

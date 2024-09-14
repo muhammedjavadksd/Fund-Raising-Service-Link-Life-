@@ -42,6 +42,7 @@ class FundRaiserService {
                 const fund_id = verifyToken === null || verifyToken === void 0 ? void 0 : verifyToken.fund_id;
                 const type = verifyToken === null || verifyToken === void 0 ? void 0 : verifyToken.type;
                 if (fund_id && type == UtilEnum_1.JwtType.CloseFundRaise) {
+                    console.log(fund_id);
                     yield this.FundRaiserRepo.closeFundRaiser(fund_id);
                     return {
                         status: true,
@@ -179,10 +180,10 @@ class FundRaiserService {
             }
         });
     }
-    getOwnerFundRaise(user_id, limit, skip) {
+    getOwnerFundRaise(user_id, limit, skip, status) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                let fundraiser_data = yield this.FundRaiserRepo.getUserPosts(user_id, skip, limit);
+                let fundraiser_data = yield this.FundRaiserRepo.getUserPosts(user_id, skip, limit, status);
                 if (fundraiser_data.total_records) {
                     return {
                         msg: "Data fetched success",
@@ -236,13 +237,23 @@ class FundRaiserService {
                             full_name: currentFund.full_name,
                             collected_amount: currentFund.collected
                         });
-                        // currentFund.closed = true;
-                        // await this.FundRaiserRepo.updateFundRaiserByModel(currentFund);
-                        return {
-                            msg: "A verification email has been sent to the registered email address.",
-                            status: true,
-                            statusCode: UtilEnum_1.StatusCode.OK
-                        };
+                        if (token) {
+                            currentFund.close_token = token;
+                            // currentFund.closed = true;
+                            yield this.FundRaiserRepo.updateFundRaiserByModel(currentFund);
+                            return {
+                                msg: "A verification email has been sent to the registered email address.",
+                                status: true,
+                                statusCode: UtilEnum_1.StatusCode.OK
+                            };
+                        }
+                        else {
+                            return {
+                                msg: "Something went wrong",
+                                status: false,
+                                statusCode: UtilEnum_1.StatusCode.BAD_REQUESR
+                            };
+                        }
                     }
                 }
                 else {

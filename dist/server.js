@@ -15,7 +15,7 @@ dotenv_1.default.config({ path: "./.env" });
 (0, mongo_connection_1.default)();
 const app = (0, express_1.default)();
 const PORT = process.env.PORT || 7005;
-app.use(express_1.default.json({}));
+app.use(express_1.default.json());
 app.use(express_1.default.urlencoded({ extended: true }));
 // console.log("Path : ", path.join(__dirname, "public"));
 // app.use(fileUpload({ createParentPath: true }))
@@ -26,8 +26,7 @@ app.use((0, morgan_1.default)("dev"));
 //     console.log(`${imagePath} ${err ? 'does not exist' : 'exists'}`);
 // });
 // aws --endpoint-url=http://localhost:4566 s3 mb s3://other-images s3://fund-raiser-certificate-bucket
-// new PaymentHelper().createReceipt("Muhammed Javad", "Javad Fund Raising Campign", 500, "May 24th", "Sample ID").then((data) => {
-// })
+// new PaymentHelper().createReceipt("Muhammed Javad", "Javad Fund Raising Campign", 500, "May 24th", "Sample ID").then((data) => { })
 const SmeeClient = require('smee-client');
 const smee = new SmeeClient({
     source: 'https://smee.io/XLWna6tXQfipghBJ',

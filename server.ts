@@ -9,12 +9,13 @@ import path from 'path'
 import PaymentHelper from './src/util/helper/paymentHelper';
 
 dotenv.config({ path: "./.env" });
+
 fundRaiseDbConnection()
 
 const app: Express = express();
 const PORT = process.env.PORT || 7005
 
-app.use(express.json({}))
+app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 // console.log("Path : ", path.join(__dirname, "public"));
 
@@ -30,8 +31,7 @@ app.use(morgan("dev"))
 
 // aws --endpoint-url=http://localhost:4566 s3 mb s3://other-images s3://fund-raiser-certificate-bucket
 
-// new PaymentHelper().createReceipt("Muhammed Javad", "Javad Fund Raising Campign", 500, "May 24th", "Sample ID").then((data) => {
-// })
+// new PaymentHelper().createReceipt("Muhammed Javad", "Javad Fund Raising Campign", 500, "May 24th", "Sample ID").then((data) => { })
 
 
 const SmeeClient = require('smee-client')

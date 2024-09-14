@@ -31,6 +31,10 @@ const DonateHistoryScheme = new Schema<IDonateHistoryCollection>({
     hide_profile: {
         type: Boolean,
         required: true
+    },
+    name: {
+        type: String,
+        required: true
     }
 })
 

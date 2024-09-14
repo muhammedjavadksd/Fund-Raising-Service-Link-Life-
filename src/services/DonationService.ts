@@ -12,6 +12,8 @@ import UtilHelper from "../util/helper/utilHelper"
 interface IDonationService {
     creatOrder(profile_id: string, name: string, phone_number: number, email_address: string, amount: number, fund_id: string, hide_profile: boolean): Promise<HelperFuncationResponse>
     verifyPayment(order_id: string): Promise<HelperFuncationResponse>
+    findPrivateProfileHistoryPaginated(profile_id: string, limit: number, page: number): Promise<HelperFuncationResponse>
+    findMyDonationHistory(profile_id: string, limit: number, page: number): Promise<HelperFuncationResponse>
 }
 
 
@@ -29,7 +31,50 @@ class DonationService implements IDonationService {
         this.fundRepo = new FundRaiserRepo()
         this.webHookRepo = new PaymentWebHookRepo()
         this.donationHistoryRepo = new DonationRepo()
+        this.findPrivateProfileHistoryPaginated = this.findPrivateProfileHistoryPaginated.bind(this)
+        this.findMyDonationHistory = this.findMyDonationHistory.bind(this)
+    }
 
+
+    async findMyDonationHistory(profile_id: string, limit: number, page: number): Promise<HelperFuncationResponse> {
+        const skip: number = (page - 1) * limit
+        const findHistory = await this.donationHistoryRepo.findUserDonationHistory(profile_id, limit, skip);
+        console.log(findHistory);
+
+        if (findHistory.total_records) {
+            return {
+                msg: "Histroy found",
+                status: true,
+                statusCode: StatusCode.OK,
+                data: findHistory
+            }
+        } else {
+            return {
+                msg: "No data found",
+                status: false,
+                statusCode: StatusCode.NOT_FOUND
+            }
+        }
+    }
+
+
+    async findPrivateProfileHistoryPaginated(profile_id: string, limit: number, page: number): Promise<HelperFuncationResponse> {
+        const skip: number = (page - 1) * limit
+        const findHistory = await this.donationHistoryRepo.findPrivateProfilePaginedtHistory(profile_id, limit, skip);
+        if (findHistory.total_records) {
+            return {
+                msg: "Histroy found",
+                status: true,
+                statusCode: StatusCode.OK,
+                data: findHistory
+            }
+        } else {
+            return {
+                msg: "No data found",
+                status: false,
+                statusCode: StatusCode.NOT_FOUND
+            }
+        }
     }
 
     async creatOrder(profile_id: string, name: string, phone_number: number, email_address: string, amount: number, fund_id: string, hide_profile: boolean): Promise<HelperFuncationResponse> {
@@ -63,7 +108,8 @@ class DonationService implements IDonationService {
                 order_id,
                 status: false,
                 hide_profile,
-                profile_id
+                profile_id,
+                name,
             }
             await this.orderRepo.insertOne(paymentOrder)
             if (createOrder) {
@@ -90,8 +136,7 @@ class DonationService implements IDonationService {
     async verifyPayment(order_id: string): Promise<HelperFuncationResponse> {
 
         const verifyPayment: IVerifyPaymentResponse | false = await this.paymentHelper.verifyPayment(order_id);
-        console.log("VR", verifyPayment);
-        console.log("order_id", order_id);
+
 
         if (verifyPayment) {
             const findOrder = await this.orderRepo.findOne(order_id)
@@ -113,11 +158,12 @@ class DonationService implements IDonationService {
                 const donationHistory: IDonateHistoryTemplate = {
                     amount: verifyPayment?.data?.order?.order_amount,
                     date: new Date(),
-                    donation_id: donationId,
+                    donation_id: donationId.toUpperCase(),
                     fund_id: findOrder?.fund_id,
                     hide_profile: findOrder.hide_profile,
                     profile_id: findOrder.profile_id,
                     receipt,
+                    name: findOrder.name
                 }
                 await this.orderRepo.updateStatus(order_id, true)
                 await this.webHookRepo.updateWebhookStatus(order_id, true)

@@ -41,10 +41,35 @@ class UserController implements IUserController {
         this.verifyCloseToken = this.verifyCloseToken.bind(this)
         this.payToFundRaiser = this.payToFundRaiser.bind(this)
         this.verifyPayment = this.verifyPayment.bind(this)
+        this.donationHistory = this.donationHistory.bind(this)
+        this.myDonationHistory = this.myDonationHistory.bind(this)
         this.fundRaiserService = new FundRaiserService();
         this.commentService = new CommentService();
         this.fundRaiserRepo = new FundRaiserRepo();
         this.donationService = new DonationService()
+    }
+
+
+    async myDonationHistory(req: CustomRequest, res: Response): Promise<void> {
+        const page: number = +req.params.page
+        const limit: number = +req.params.limit
+        const profile_id: string = req.context?.profile_id
+        if (profile_id) {
+            const findProfile = await this.donationService.findMyDonationHistory(profile_id, limit, page);
+            res.status(findProfile.statusCode).json({ status: findProfile.status, msg: findProfile.msg, data: findProfile.data })
+        } else {
+            res.status(StatusCode.UNAUTHORIZED).json({ status: false, msg: "Un Authraized access", })
+        }
+    }
+
+
+    async donationHistory(req: Request, res: Response): Promise<void> {
+        const profile_id: string = req.params.fund_id;
+        const limit: number = +req.params.limit;
+        const page: number = +req.params.page;
+
+        const findProfile = await this.donationService.findPrivateProfileHistoryPaginated(profile_id, limit, page);
+        res.status(findProfile.statusCode).json({ status: findProfile.status, msg: findProfile.msg, data: findProfile.data })
     }
 
 
@@ -71,9 +96,6 @@ class UserController implements IUserController {
     async verifyPayment(req: Request, res: Response): Promise<void> {
 
         const verifyBody: IVerifyPaymentResponse = req.body
-        console.log("verify body");
-
-        console.log(verifyBody);
 
         const verifyPayment = await this.donationService.verifyPayment(verifyBody?.data?.order?.order_id);
         console.log(verifyPayment);
@@ -218,6 +240,7 @@ class UserController implements IUserController {
 
         const limit: number = +req.params.limit;
         const page: number = +req.params.page;
+        const status: FundRaiserStatus = req.params.status as FundRaiserStatus;
         const skip = (page - 1) * limit
 
         console.log("The limit is");
@@ -231,7 +254,7 @@ class UserController implements IUserController {
             console.log(user_id);
 
             if (user_id) {
-                const getMyFundRaisePost: HelperFuncationResponse = await this.fundRaiserService.getOwnerFundRaise(user_id, limit, skip);
+                const getMyFundRaisePost: HelperFuncationResponse = await this.fundRaiserService.getOwnerFundRaise(user_id, limit, skip, status);
                 if (getMyFundRaisePost.status) {
                     const data: iFundRaiseModel = getMyFundRaisePost.data;
                     res.status(getMyFundRaisePost.statusCode).json({ status: true, data })
@@ -329,7 +352,7 @@ class UserController implements IUserController {
             const body: IEditableFundRaiser = req.body;
             console.log("the body");
 
-            console.log(body);
+            console.log(req);
 
 
             const editResponse: boolean = await this.fundRaiserRepo.updateFundRaiser(edit_id, body);
@@ -367,7 +390,7 @@ class UserController implements IUserController {
                         otp: otpNumber,
                         otp_expired: otpExpire
                     },
-                    created_date: todayDate,
+                    created_date: new Date(),
                     created_by: FundRaiserCreatedBy.USER,
                     user_id,
                     fund_id,

@@ -40,10 +40,36 @@ class UserController {
         this.verifyCloseToken = this.verifyCloseToken.bind(this);
         this.payToFundRaiser = this.payToFundRaiser.bind(this);
         this.verifyPayment = this.verifyPayment.bind(this);
+        this.donationHistory = this.donationHistory.bind(this);
+        this.myDonationHistory = this.myDonationHistory.bind(this);
         this.fundRaiserService = new FundRaiserService_1.default();
         this.commentService = new CommentService_1.default();
         this.fundRaiserRepo = new FundRaiserRepo_1.default();
         this.donationService = new DonationService_1.default();
+    }
+    myDonationHistory(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            var _a;
+            const page = +req.params.page;
+            const limit = +req.params.limit;
+            const profile_id = (_a = req.context) === null || _a === void 0 ? void 0 : _a.profile_id;
+            if (profile_id) {
+                const findProfile = yield this.donationService.findMyDonationHistory(profile_id, limit, page);
+                res.status(findProfile.statusCode).json({ status: findProfile.status, msg: findProfile.msg, data: findProfile.data });
+            }
+            else {
+                res.status(UtilEnum_1.StatusCode.UNAUTHORIZED).json({ status: false, msg: "Un Authraized access", });
+            }
+        });
+    }
+    donationHistory(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const profile_id = req.params.fund_id;
+            const limit = +req.params.limit;
+            const page = +req.params.page;
+            const findProfile = yield this.donationService.findPrivateProfileHistoryPaginated(profile_id, limit, page);
+            res.status(findProfile.statusCode).json({ status: findProfile.status, msg: findProfile.msg, data: findProfile.data });
+        });
     }
     payToFundRaiser(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -68,8 +94,6 @@ class UserController {
         return __awaiter(this, void 0, void 0, function* () {
             var _a, _b;
             const verifyBody = req.body;
-            console.log("verify body");
-            console.log(verifyBody);
             const verifyPayment = yield this.donationService.verifyPayment((_b = (_a = verifyBody === null || verifyBody === void 0 ? void 0 : verifyBody.data) === null || _a === void 0 ? void 0 : _a.order) === null || _b === void 0 ? void 0 : _b.order_id);
             console.log(verifyPayment);
             res.status(verifyPayment.statusCode).json({ status: verifyPayment.status, msg: verifyPayment.msg, data: verifyPayment.data });
@@ -205,6 +229,7 @@ class UserController {
             var _a;
             const limit = +req.params.limit;
             const page = +req.params.page;
+            const status = req.params.status;
             const skip = (page - 1) * limit;
             console.log("The limit is");
             console.log(limit);
@@ -212,7 +237,7 @@ class UserController {
                 const user_id = (_a = req.context) === null || _a === void 0 ? void 0 : _a.user_id;
                 console.log(user_id);
                 if (user_id) {
-                    const getMyFundRaisePost = yield this.fundRaiserService.getOwnerFundRaise(user_id, limit, skip);
+                    const getMyFundRaisePost = yield this.fundRaiserService.getOwnerFundRaise(user_id, limit, skip, status);
                     if (getMyFundRaisePost.status) {
                         const data = getMyFundRaisePost.data;
                         res.status(getMyFundRaisePost.statusCode).json({ status: true, data });
@@ -304,7 +329,7 @@ class UserController {
                 const edit_id = req.params.edit_id;
                 const body = req.body;
                 console.log("the body");
-                console.log(body);
+                console.log(req);
                 const editResponse = yield this.fundRaiserRepo.updateFundRaiser(edit_id, body);
                 if (editResponse) {
                     res.status(200).json({ status: true, msg: "Updated success" });
@@ -340,7 +365,7 @@ class UserController {
                             otp: otpNumber,
                             otp_expired: otpExpire
                         },
-                        created_date: todayDate,
+                        created_date: new Date(),
                         created_by: DbEnum_1.FundRaiserCreatedBy.USER,
                         user_id,
                         fund_id,

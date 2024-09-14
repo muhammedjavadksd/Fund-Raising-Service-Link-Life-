@@ -20,17 +20,19 @@ class S3BucketHelper {
         this.s3Config = new S3Client({
             endpoint: "http://localhost:4566",
             credentials: fromEnv(),
-            region: 'us-east-1',
+            region: 'us-west-1',
             forcePathStyle: true,
         })
 
         this.s3 = new AWS.S3({
             endpoint: "http://localhost:4566",
-            accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-            secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-            region: 'us-east-1',
-            s3ForcePathStyle: true,
-        })
+            accessKeyId: process.env.x_client_id,
+            secretAccessKey: process.env.x_client_secret,
+            region: "us-east-1",  // specify the region
+            s3ForcePathStyle: true // use path-style URL, necessary for LocalStack
+        });
+
+
     }
 
     async generatePresignedUrl(key: string): Promise<string> {
@@ -39,32 +41,31 @@ class S3BucketHelper {
     }
 
 
-    async uploadObject(key: string, docs: Buffer) {
+    async uploadObject(key: string, docs: Buffer, ftype: string) {
 
         console.log(this.bucketName);
 
         console.log(docs);
 
-
-        await this.s3.createBucket({ Bucket: this.bucketName }).promise();
-        const save = await new AWS.S3.ManagedUpload({
-            params: {
-                Bucket: this.bucketName,
-                Key: key,
-                Body: docs,
-                ContentType: 'application/pdf',
-            }
-        }).promise()
+        // await this.s3.createBucket({ Bucket: this.bucketName }).promise();
+        const save = await this.s3.upload({
+            Bucket: this.bucketName,
+            Key: key,
+            Body: docs,
+            ACL: 'public-read',
+            // ContentEncoding: fEncoding,
+            ContentType: "application/pdf"
+        }
+        ).promise()
         console.log(save);
+
         console.log("Save");
-
         console.log(save.Location);
-
-
     }
 
     async uploadFile(file: Buffer, presigned_url: string, fileType: string, imageName: string): Promise<boolean | string> {
         try {
+
             await axios.put(presigned_url, file, { headers: { "Content-Type": fileType, } })
             const imageUrl = `http://localhost:4566/${this.bucketName}/${imageName}`
             return imageUrl

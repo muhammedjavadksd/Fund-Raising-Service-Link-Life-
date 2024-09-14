@@ -34,7 +34,7 @@ class FundRaiserRepo {
     }
     closeFundRaiser(fund_id) {
         return __awaiter(this, void 0, void 0, function* () {
-            const findUpdate = yield this.FundRaiserModel.findOneAndUpdate({ fund_id }, { closed: true });
+            const findUpdate = yield this.FundRaiserModel.findOneAndUpdate({ fund_id }, { closed: true, status: DbEnum_1.FundRaiserStatus.CLOSED });
             return !!(findUpdate === null || findUpdate === void 0 ? void 0 : findUpdate.isModified());
         });
     }
@@ -133,17 +133,18 @@ class FundRaiserRepo {
             }
         });
     }
-    getUserPosts(user_id, skip, limit) {
+    getUserPosts(user_id, skip, limit, status) {
         return __awaiter(this, void 0, void 0, function* () {
-            console.log(user_id);
-            console.log("The limit is");
-            console.log(user_id);
+            const filtter = {
+                user_id: new mongoose_1.default.Types.ObjectId(user_id)
+            };
+            if (status) {
+                filtter['status'] = status;
+            }
             try {
                 const fundRaisePost = yield this.FundRaiserModel.aggregate([
                     {
-                        $match: {
-                            user_id: new mongoose_1.default.Types.ObjectId(user_id)
-                        }
+                        $match: filtter
                     },
                     {
                         $facet: {

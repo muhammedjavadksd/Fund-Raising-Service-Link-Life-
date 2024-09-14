@@ -9,7 +9,7 @@ interface IFundRaiserService {
 
     deleteImage(fund_id: string, type: FundRaiserFileType, image: string): Promise<boolean>
     createFundRaisePost(data: IFundRaiseInitialData): Promise<HelperFuncationResponse>
-    getOwnerFundRaise(owner_id: string, limit: number, skip: number): Promise<HelperFuncationResponse>
+    getOwnerFundRaise(owner_id: string, limit: number, skip: number, status: FundRaiserStatus): Promise<HelperFuncationResponse>
     closeFundRaiser(fund_id: string): Promise<HelperFuncationResponse>
     closeFundRaiserVerification(token: string): Promise<HelperFuncationResponse>
     updateStatus(fund_id: string, newStatus: FundRaiserStatus): Promise<HelperFuncationResponse>

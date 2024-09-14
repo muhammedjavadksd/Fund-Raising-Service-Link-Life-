@@ -31,7 +31,7 @@ class FundRaiserRepo implements IFundRaiserRepo {
     }
 
     async closeFundRaiser(fund_id: string): Promise<boolean> {
-        const findUpdate = await this.FundRaiserModel.findOneAndUpdate({ fund_id }, { closed: true })
+        const findUpdate = await this.FundRaiserModel.findOneAndUpdate({ fund_id }, { closed: true, status: FundRaiserStatus.CLOSED })
         return !!findUpdate?.isModified()
     }
 
@@ -133,20 +133,20 @@ class FundRaiserRepo implements IFundRaiserRepo {
         }
     }
 
-    async getUserPosts(user_id: string, skip: number, limit: number): Promise<IPaginatedResponse<iFundRaiseModel>> {
-        console.log(user_id);
+    async getUserPosts(user_id: string, skip: number, limit: number, status: FundRaiserStatus): Promise<IPaginatedResponse<iFundRaiseModel>> {
 
+        const filtter: Record<string, any> = {
+            user_id: new mongoose.Types.ObjectId(user_id)
+        }
 
-        console.log("The limit is");
-        console.log(user_id);
-
+        if (status) {
+            filtter['status'] = status
+        }
 
         try {
             const fundRaisePost = await this.FundRaiserModel.aggregate([
                 {
-                    $match: {
-                        user_id: new mongoose.Types.ObjectId(user_id)
-                    }
+                    $match: filtter
                 },
                 {
                     $facet: {
