@@ -1,4 +1,5 @@
 import { FundRaiserCreatedBy } from "../../types/Enums/DbEnum";
+import { IFundRaise } from "../../types/Interface/IDBmodel";
 import { IUtilHelper } from "../../types/Interface/IHelper";
 import url from 'url'
 
@@ -39,19 +40,44 @@ class UtilHelper implements IUtilHelper {
         return result;
     }
 
-    extractImageNameFromPresignedUrl(presigned_url: string): string | boolean {
-        const newUrl = url.parse(presigned_url, true)
-        const urlPath = newUrl.pathname;
-        const splitPath = urlPath?.split("/");
-        if (splitPath && splitPath?.length >= 2) {
-            const imageName = splitPath[2];
-            return imageName
+    extractImageNameFromPresignedUrl(presigned_url: string): string | false {
+        try {
+            const newUrl = url.parse(presigned_url, true)
+            console.log("Presigned url");
+            console.log(presigned_url);
+
+            if (newUrl.pathname) {
+                const pathName = newUrl.pathname.split("/")
+                const path = `${pathName[1]}/${pathName[2]}`
+                return path
+            } else {
+                return false
+            }
+        } catch (e) {
+            return false
         }
-        return false
+    }
+
+    generateFundRaiserTitle(profile: IFundRaise): string {
+        return `${profile.full_name}'s Fund Raiser for ${profile.category} in ${profile.district}`
+    }
+
+    formatDateToMonthNameAndDate(date: Date): string {
+        const months = [
+            'January', 'February', 'March', 'April', 'May', 'June',
+            'July', 'August', 'September', 'October', 'November', 'December'
+        ];
+        const d = new Date(date);
+        const monthName = months[d.getMonth()];
+        const day = d.getDate();
+        const year = d.getFullYear();
+        return `${monthName} ${day} ${year} `;
     }
 
 
-
+    convertFundIdToBeneficiaryId(fund_id: string) {
+        return fund_id.replaceAll("-", "_")
+    }
 }
 
 

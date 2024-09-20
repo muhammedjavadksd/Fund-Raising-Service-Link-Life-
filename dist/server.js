@@ -11,7 +11,10 @@ const mongo_connection_1 = __importDefault(require("./src/db/mongo_connection"))
 const userRouter_1 = __importDefault(require("./src/router/userRouter"));
 const adminRouter_1 = __importDefault(require("./src/router/adminRouter"));
 const path_1 = __importDefault(require("path"));
-dotenv_1.default.config({ path: "./.env" });
+const FundRaiserService_1 = __importDefault(require("./src/services/FundRaiserService"));
+const envPath = path_1.default.resolve(__dirname, "../.env");
+console.log(envPath);
+dotenv_1.default.config({ path: envPath });
 (0, mongo_connection_1.default)();
 const app = (0, express_1.default)();
 const PORT = process.env.PORT || 7005;
@@ -20,6 +23,8 @@ app.use(express_1.default.urlencoded({ extended: true }));
 // console.log("Path : ", path.join(__dirname, "public"));
 // app.use(fileUpload({ createParentPath: true }))
 app.use((0, morgan_1.default)("dev"));
+const fund = new FundRaiserService_1.default();
+// fund.addBeneficiary("1234", "Javad", "muhammedjavad@gmail.com", "9744727684", "18910100014554", "FDRL0001891", "EROL ")
 // import fs from 'fs';
 // const imagePath = path.join(__dirname, 'public/images/fund_raiser_image/a.jpg');
 // fs.access(imagePath, fs.constants.F_OK, (err) => {

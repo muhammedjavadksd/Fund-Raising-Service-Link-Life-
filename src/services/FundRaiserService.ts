@@ -7,12 +7,13 @@ import { HelperFuncationResponse, ICloseFundRaiseJwtToken, IPaginatedResponse } 
 import fs from 'fs'
 import { UploadedFile } from 'express-fileupload'
 import S3BucketHelper from "../util/helper/s3Bucket";
-import { BucketsOnS3, const_data } from "../types/Enums/ConstData";
+import { S3Folder, const_data } from "../types/Enums/ConstData";
 import UtilHelper from "../util/helper/utilHelper";
 import axios from "axios";
 import TokenHelper from "../util/helper/tokenHelper";
 import FundRaiserProvider from "../communication/provider";
-
+import { config } from 'dotenv';
+import cashfreedocsNew from '../apis/cashfreedocs-new';
 
 
 class FundRaiserService implements IFundRaiserService {
@@ -32,9 +33,108 @@ class FundRaiserService implements IFundRaiserService {
         this.paginatedFundRaiserByCategory = this.paginatedFundRaiserByCategory.bind(this);
         this.closeFundRaiserVerification = this.closeFundRaiserVerification.bind(this);
 
+        config()
         this.FundRaiserRepo = new FundRaiserRepo();
-        this.fundRaiserPictureBucket = new S3BucketHelper(BucketsOnS3.FundRaiserPicture);
-        this.fundRaiserDocumentBucket = new S3BucketHelper(BucketsOnS3.FundRaiserDocument);
+        console.log("Main bucket  name");
+        console.log(process.env.FUND_RAISER_BUCKET);
+
+        this.fundRaiserPictureBucket = new S3BucketHelper(process.env.FUND_RAISER_BUCKET || "", S3Folder.FundRaiserPicture);
+        this.fundRaiserDocumentBucket = new S3BucketHelper(process.env.FUND_RAISER_BUCKET || "", S3Folder.FundRaiserDocument);
+    }
+
+
+    // async editFundRaiser(editId: string, editData: IEditableFundRaiser): Promise<HelperFuncationResponse> {
+    //     const editResponse: boolean = await this.FundRaiserRepo.updateFundRaiser(editId, editData);
+    //     if (editResponse) {
+    //         return {
+    //             msg: "Update success",
+    //             status: true,
+    //             statusCode: StatusCode.OK
+    //         }
+    //     } else {
+    //         return {
+    //             msg: "Update failed",
+    //             status: false,
+    //             statusCode: StatusCode.BAD_REQUESR
+    //         }
+    //     }
+
+    // }
+
+
+    async addBeneficiary(fund_id: string, name: string, email: string, phone: string, accountNumber: string, ifsc: string, address: string): Promise<HelperFuncationResponse> {
+
+
+        try {
+            const utilHelper = new UtilHelper();
+            const benfId = utilHelper.convertFundIdToBeneficiaryId(fund_id);
+            cashfreedocsNew.auth(process.env.CASHFREE_PAYOUT_KEY || "");
+            cashfreedocsNew.auth(process.env.CASHFREE_PAYOUT_SECRET || "");
+            const authOptions = {
+                method: 'POST',
+                url: 'https://payout-gamma.cashfree.com/payout/v1/authorize',
+                headers: {
+                    accept: 'application/json',
+                    'x-client-id': process.env.CASHFREE_PAYOUT_KEY,
+                    'x-client-secret': process.env.CASHFREE_PAYOUT_SECRET
+                }
+            };
+
+            const { data: responseData } = (await axios.request(authOptions)).data
+            const { token } = responseData;
+
+            if (token) {
+                const options = {
+                    method: 'POST',
+                    url: 'https://payout-gamma.cashfree.com/payout/v1/addBeneficiary',
+                    headers: {
+                        accept: 'application/json',
+                        'content-type': 'application/json',
+                        Authorization: `Bearer ${token}`
+                    },
+                    data: {
+                        beneId: benfId,
+                        name: name,
+                        email: email,
+                        phone: phone,
+                        address1: address,
+                        bankAccount: accountNumber,
+                        ifsc: ifsc,
+                    }
+                };
+
+                console.log(options);
+
+
+
+                const addBeneficiary = await (await axios.request(options)).data
+                if (addBeneficiary.status == "SUCCESS") {
+                    return {
+                        msg: "Beneficiary added success",
+                        status: true,
+                        statusCode: StatusCode.OK
+                    }
+                } else {
+                    return {
+                        msg: addBeneficiary.message,
+                        status: false,
+                        statusCode: StatusCode.BAD_REQUESR
+                    }
+                }
+            } else {
+                return {
+                    msg: "Something went wrong",
+                    status: false,
+                    statusCode: StatusCode.SERVER_ERROR
+                }
+            }
+        } catch (e) {
+            return {
+                msg: "Something went wrong",
+                status: false,
+                statusCode: StatusCode.SERVER_ERROR
+            }
+        }
     }
 
     async closeFundRaiserVerification(token: string): Promise<HelperFuncationResponse> {
@@ -193,6 +293,7 @@ class FundRaiserService implements IFundRaiserService {
                 statusCode: createFundRaise.statusCode
             }
         } catch (e) {
+            console.log(e);
             return {
                 status: false,
                 msg: "Internal server error",
@@ -328,6 +429,33 @@ class FundRaiserService implements IFundRaiserService {
     async editFundRaiser(fund_id: string, edit_data: IEditableFundRaiser): Promise<HelperFuncationResponse> {
         try {
 
+            if (edit_data?.withdraw_docs?.account_number) {
+                const findProfile = await this.FundRaiserRepo.findFundPostByFundId(fund_id);
+                if (findProfile) {
+                    const addBeneficiary = await this.addBeneficiary(fund_id, findProfile.full_name, findProfile.email_id, findProfile.phone_number.toString(), edit_data?.withdraw_docs?.account_number, edit_data?.withdraw_docs?.ifsc_code, findProfile.full_address);
+                    console.log("Add Benificiary details");
+
+                    console.log(addBeneficiary);
+
+                    if (addBeneficiary.status) {
+                        const utilHelper = new UtilHelper();
+                        const benfId = utilHelper.convertFundIdToBeneficiaryId(fund_id);
+                        edit_data.benf_id = benfId;
+                    } else {
+                        return {
+                            msg: addBeneficiary.msg,
+                            status: false,
+                            statusCode: StatusCode.BAD_REQUESR
+                        }
+                    }
+                } else {
+                    return {
+                        status: false,
+                        msg: "We couldn't find the profile",
+                        statusCode: StatusCode.BAD_REQUESR
+                    }
+                }
+            }
             const updateFundRaiserData = await this.FundRaiserRepo.updateFundRaiser(fund_id, edit_data);
             if (updateFundRaiserData) {
                 return {
@@ -358,14 +486,16 @@ class FundRaiserService implements IFundRaiserService {
             const newImages: string[] = [];
             const field: 'picture' | 'documents' = document_type == FundRaiserFileType.Document ? "documents" : "picture"
             console.log("Field type :" + document_type);
+            console.log(images);
 
             const imageLength = images.length
 
             const utilHelper = new UtilHelper();
             for (let fileIndex = 0; fileIndex < imageLength; fileIndex++) {
-                // axios.put(images[fileIndex])
-                const imageName: string | boolean = `${document_type == FundRaiserFileType.Document ? BucketsOnS3.FundRaiserDocument : BucketsOnS3.FundRaiserPicture}/${utilHelper.extractImageNameFromPresignedUrl(images[fileIndex])}`
-                if (imageName) {
+                const bucketName = process.env.FUND_RAISER_BUCKET //document_type == FundRaiserFileType.Document ? BucketsOnS3.FundRaiserDocument : BucketsOnS3.FundRaiserPicture;
+                const imageKey: string | false = utilHelper.extractImageNameFromPresignedUrl(images[fileIndex])
+                if (imageKey) {
+                    const imageName: string | boolean = `https://${bucketName}.s3.amazonaws.com/${imageKey}`
                     newImages.push(imageName.toString())
                 }
             }

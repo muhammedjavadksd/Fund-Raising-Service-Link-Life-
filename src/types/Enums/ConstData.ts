@@ -8,9 +8,10 @@ enum const_data {
 };
 
 
-enum BucketsOnS3 {
+enum S3Folder {
     FundRaiserPicture = "fund-raiser-pictures",
-    FundRaiserDocument = "fund-raiser-documents"
+    FundRaiserDocument = "fund-raiser-documents",
+    FundRaiserCertificate = "fund-raiser-certificate"
 }
 
 const FundRaiseDetails: { [key in FundRaiserCategory]: string[] } = {
@@ -227,4 +228,4 @@ const FundRaiseDetails: { [key in FundRaiserCategory]: string[] } = {
 };
 
 
-export { const_data, FundRaiseDetails, BucketsOnS3 }
+export { const_data, FundRaiseDetails, S3Folder }

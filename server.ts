@@ -7,8 +7,13 @@ import userRouter from './src/router/userRouter';
 import adminRouter from './src/router/adminRouter';
 import path from 'path'
 import PaymentHelper from './src/util/helper/paymentHelper';
+import FundRaiserService from './src/services/FundRaiserService';
 
-dotenv.config({ path: "./.env" });
+const envPath = path.resolve(__dirname, "../.env")
+console.log(envPath);
+dotenv.config({ path: envPath });
+
+
 
 fundRaiseDbConnection()
 
@@ -21,6 +26,11 @@ app.use(express.urlencoded({ extended: true }))
 
 // app.use(fileUpload({ createParentPath: true }))
 app.use(morgan("dev"))
+
+const fund = new FundRaiserService();
+
+
+// fund.addBeneficiary("1234", "Javad", "muhammedjavad@gmail.com", "9744727684", "18910100014554", "FDRL0001891", "EROL ")
 
 // import fs from 'fs';
 
@@ -50,6 +60,7 @@ app.use("/image", express.static(staticPath))
 
 app.use("/", userRouter)
 app.use("/admin", adminRouter)
+
 
 app.listen(PORT, () => {
     console.log("Fund Raising started at Port : " + PORT)

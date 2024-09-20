@@ -4,7 +4,15 @@ import { IDonateHistoryCollection } from "../../types/Interface/IDBmodel";
 
 
 const DonateHistoryScheme = new Schema<IDonateHistoryCollection>({
+    is_settled: {
+        type: Boolean,
+        required: true
+    },
     donation_id: {
+        type: String,
+        required: true
+    },
+    order_id: {
         type: String,
         required: true
     },

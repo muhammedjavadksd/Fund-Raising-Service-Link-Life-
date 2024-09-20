@@ -12,46 +12,41 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const client_s3_1 = require("@aws-sdk/client-s3");
-const credential_provider_env_1 = require("@aws-sdk/credential-provider-env");
-const s3_request_presigner_1 = require("@aws-sdk/s3-request-presigner");
 const aws_sdk_1 = __importDefault(require("aws-sdk"));
 const axios_1 = __importDefault(require("axios"));
+const utilHelper_1 = __importDefault(require("./utilHelper"));
 class S3BucketHelper {
-    constructor(bucketName) {
+    constructor(bucketName, folderName) {
         this.bucketName = bucketName;
-        this.s3Config = new client_s3_1.S3Client({
-            endpoint: "http://localhost:4566",
-            credentials: (0, credential_provider_env_1.fromEnv)(),
-            region: 'us-west-1',
-            forcePathStyle: true,
-        });
+        this.folderName = folderName;
         this.s3 = new aws_sdk_1.default.S3({
-            endpoint: "http://localhost:4566",
-            accessKeyId: process.env.x_client_id,
-            secretAccessKey: process.env.x_client_secret,
-            region: "us-east-1", // specify the region
-            s3ForcePathStyle: true // use path-style URL, necessary for LocalStack
+            accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+            secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+            signatureVersion: 'v4',
         });
     }
     generatePresignedUrl(key) {
         return __awaiter(this, void 0, void 0, function* () {
-            const url = yield (0, s3_request_presigner_1.getSignedUrl)(this.s3Config, new client_s3_1.PutObjectCommand({ Bucket: this.bucketName, Key: key }), { expiresIn: 3600 });
+            const signedUrlExpireSeconds = 60 * 5;
+            const filePath = this.folderName ? `${this.folderName}/${key}` : key;
+            console.log("Bucket name");
+            console.log(this.bucketName);
+            const url = this.s3.getSignedUrl("putObject", {
+                Bucket: this.bucketName,
+                Key: filePath,
+                Expires: signedUrlExpireSeconds
+            });
             return url;
         });
     }
     uploadObject(key, docs, ftype) {
         return __awaiter(this, void 0, void 0, function* () {
-            console.log(this.bucketName);
-            console.log(docs);
-            // await this.s3.createBucket({ Bucket: this.bucketName }).promise();
             const save = yield this.s3.upload({
                 Bucket: this.bucketName,
                 Key: key,
                 Body: docs,
                 ACL: 'public-read',
-                // ContentEncoding: fEncoding,
-                ContentType: "application/pdf"
+                ContentType: ftype
             }).promise();
             console.log(save);
             console.log("Save");
@@ -61,8 +56,12 @@ class S3BucketHelper {
     uploadFile(file, presigned_url, fileType, imageName) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                yield axios_1.default.put(presigned_url, file, { headers: { "Content-Type": fileType, } });
-                const imageUrl = `http://localhost:4566/${this.bucketName}/${imageName}`;
+                const utlHelper = new utilHelper_1.default();
+                const folderPath = utlHelper.extractImageNameFromPresignedUrl(presigned_url);
+                yield axios_1.default.put(presigned_url, file, {
+                    headers: { "Content-Type": fileType, }
+                });
+                const imageUrl = `http://${this.bucketName}.s3.amazonaws.com/${folderPath}`;
                 return imageUrl;
             }
             catch (e) {

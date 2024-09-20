@@ -12,10 +12,42 @@ interface IDonationRepo {
     findProfilePaginedtHistory(profile_id: string, limit: number, skip: number): Promise<IPaginatedResponse<IDonateHistoryCollection[]>>
     findPrivateProfilePaginedtHistory(profile_id: string, limit: number, skip: number): Promise<IPaginatedResponse<IDonateHistoryCollection[]>>
     findUserDonationHistory(profile_id: string, limit: number, skip: number): Promise<IPaginatedResponse<IDonateHistoryCollection[]>>
+    findOrder(order_id: string): Promise<null | IDonateHistoryCollection>
 }
 
 
 class DonationRepo implements IDonationRepo {
+
+
+    async findOrder(order_id: string): Promise<null | IDonateHistoryCollection> {
+        try {
+            const payment = await DonateHistoryCollection.aggregate([
+                {
+                    $match: {
+                        order_id
+                    }
+                },
+                {
+                    $lookup: {
+                        from: "init_fund_raising",
+                        as: "profile",
+                        foreignField: "fund_id",
+                        localField: "fund_id"
+                    }
+                },
+                {
+                    $unwind: "$profile"
+                }
+            ])
+            console.log("Payment");
+            console.log(payment);
+
+            return payment[0]
+        } catch (e) {
+            console.log(e);
+            return null
+        }
+    }
 
     async findUserDonationHistory(profile_id: string, limit: number, skip: number): Promise<IPaginatedResponse<IDonateHistoryCollection[]>> {
         try {
@@ -33,6 +65,17 @@ class DonationRepo implements IDonationRepo {
                             },
                             {
                                 $limit: limit
+                            },
+                            {
+                                $lookup: {
+                                    from: "init_fund_raising",
+                                    as: "fund_profile",
+                                    foreignField: "fund_id",
+                                    localField: "fund_id"
+                                }
+                            },
+                            {
+                                $unwind: "$fund_profile"
                             }
                         ],
                         total_records: [

@@ -3,6 +3,7 @@ import { Request, Response } from "express";
 import { CustomRequest } from "../DataType/Objects";
 
 interface IUserController {
+    findPaymentOrder(req: CustomRequest, res: Response): Promise<void>
     getUserFundRaisePost(req: CustomRequest, res: Response): Promise<void>
     deleteImage(req: Request, res: Response): Promise<void>
     closeFundRaise(req: CustomRequest, res: Response): Promise<void>

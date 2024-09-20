@@ -7,7 +7,7 @@ import { IEditableFundRaiser, IFundRaise, IFundRaiseInitialData, iFundRaiseModel
 import { FundRaiserFileType, JwtTimer, JwtType, StatusCode } from "../types/Enums/UtilEnum";
 import FundRaiserRepo from "../repositorys/FundRaiserRepo";
 import UtilHelper from "../util/helper/utilHelper";
-import { BucketsOnS3, const_data } from "../types/Enums/ConstData";
+import { const_data } from "../types/Enums/ConstData";
 import { IUserController } from "../types/Interface/IController";
 import { UploadedFile } from "express-fileupload";
 import S3BucketHelper from "../util/helper/s3Bucket";
@@ -43,12 +43,26 @@ class UserController implements IUserController {
         this.verifyPayment = this.verifyPayment.bind(this)
         this.donationHistory = this.donationHistory.bind(this)
         this.myDonationHistory = this.myDonationHistory.bind(this)
+        this.findPaymentOrder = this.findPaymentOrder.bind(this)
         this.fundRaiserService = new FundRaiserService();
         this.commentService = new CommentService();
         this.fundRaiserRepo = new FundRaiserRepo();
         this.donationService = new DonationService()
     }
 
+
+    async findPaymentOrder(req: CustomRequest, res: Response): Promise<void> {
+
+        const order_id: string = req.params.order_id;
+        const profile_id: string = req.context?.profile_id
+
+        if (profile_id) {
+            const findOrder = await this.donationService.findDonationByOrderId(order_id, profile_id);
+            res.status(findOrder.statusCode).json({ status: findOrder.status, msg: findOrder.msg, data: findOrder.data })
+        } else {
+            res.status(StatusCode.UNAUTHORIZED).json({ status: false, msg: "Un Authraized access", })
+        }
+    }
 
     async myDonationHistory(req: CustomRequest, res: Response): Promise<void> {
         const page: number = +req.params.page
@@ -199,43 +213,43 @@ class UserController implements IUserController {
     async uploadImageIntoS3(req: Request, res: Response) {
         const pre_url = req.body.presigned_url;
 
-        const file: Express.Multer.File | undefined = req.file;
-        if (file) {
-            const presignedUrl = url.parse(pre_url, true).pathname //.parse(url, true)
-            if (presignedUrl) {
-                const extractPath = presignedUrl.split("/");
-                const imageName = extractPath[2];
-                if (imageName) {
-                    console.log(presignedUrl);
+        // const file: Express.Multer.File | undefined = req.file;
+        // if (file) {
+        //     const presignedUrl = url.parse(pre_url, true).pathname //.parse(url, true)
+        //     if (presignedUrl) {
+        //         const extractPath = presignedUrl.split("/");
+        //         const imageName = extractPath[2];
+        //         if (imageName) {
+        //             console.log(presignedUrl);
 
-                    const s3Bucket = new S3BucketHelper("file-bucket");
-                    const buffer = file.buffer;
-                    const uploadImage = await s3Bucket.uploadFile(buffer, pre_url, file.mimetype, imageName)
-                    if (uploadImage) {
-                        res.status(200).json({ status: true, msg: "Image uploaded success", image_name: uploadImage })
-                    } else {
-                        res.status(400).json({ status: false, msg: "Image uploaded failed" })
-                    }
-                } else {
-                    res.status(500).json({ status: false, msg: "No image found" })
-                }
-            }
-        } else {
-            res.status(400).json({ status: false, msg: "Please upload valid image" })
-        }
+        //             const s3Bucket = new S3BucketHelper("file-bucket");
+        //             const buffer = file.buffer;
+        //             const uploadImage = await s3Bucket.uploadFile(buffer, pre_url, file.mimetype, imageName)
+        //             if (uploadImage) {
+        //                 res.status(200).json({ status: true, msg: "Image uploaded success", image_name: uploadImage })
+        //             } else {
+        //                 res.status(400).json({ status: false, msg: "Image uploaded failed" })
+        //             }
+        //         } else {
+        //             res.status(500).json({ status: false, msg: "No image found" })
+        //         }
+        //     }
+        // } else {
+        // }
+        res.status(400).json({ status: false, msg: "Please upload valid image" })
 
     }
 
 
     async getPresignedUrl(req: Request, res: Response) {
-        const util = new UtilHelper();
-        const key = util.createRandomText(10) + ".jpeg"
-        const s3Helper = new S3BucketHelper("file-bucket");
-        const url = await s3Helper.generatePresignedUrl(key);
-        console.log("The url is : ", url);
-        console.log("token is ;", key);
+        // const util = new UtilHelper();
+        // const key = util.createRandomText(10) + ".jpeg"
+        // const s3Helper = new S3BucketHelper(process.env.FUND_RAISER_BUCKET_NAME || "");
+        // const url = await s3Helper.generatePresignedUrl(key);
+        // console.log("The url is : ", url);
+        // console.log("token is ;", key);
 
-        res.status(200).json({ status: true, msg: "Signed url createed", data: { url } })
+        res.status(200).json({ status: true, msg: "Signed url createed" })
     }
 
     async getUserFundRaisePost(req: CustomRequest, res: Response): Promise<void> {
@@ -275,9 +289,7 @@ class UserController implements IUserController {
 
         const type: FundRaiserFileType = req.params.type as FundRaiserFileType;
         const edit_id: string = req.params.edit_id;
-        const image_id: string = req.params.image_id;
-        const bucketName: string = req.params.bucket_name;
-        const imageName = `${bucketName}/${image_id}`
+        const imageName: string = req.query.image_id?.toString() || "";
 
         try {
             const deleteImage: boolean = await this.fundRaiserService.deleteImage(edit_id, type, imageName)
@@ -348,24 +360,13 @@ class UserController implements IUserController {
     }
 
     async editFundRaise(req: Request, res: Response): Promise<void> {
-        try {
+        const edit_id: string = req.params.edit_id;
+        const body: IEditableFundRaiser = req.body;
 
-            const edit_id: string = req.params.edit_id;
-            const body: IEditableFundRaiser = req.body;
-            console.log("the body");
+        const editResponse: HelperFuncationResponse = await this.fundRaiserService.editFundRaiser(edit_id, body);
+        console.log(editResponse);
 
-            console.log(req);
-
-
-            const editResponse: boolean = await this.fundRaiserRepo.updateFundRaiser(edit_id, body);
-            if (editResponse) {
-                res.status(200).json({ status: true, msg: "Updated success" })
-            } else {
-                res.status(500).json({ status: false, msg: "Internal server error" })
-            }
-        } catch (e) {
-            res.status(500).json({ status: true, msg: "Internal server error" })
-        }
+        res.status(editResponse.statusCode).json({ status: editResponse.status, msg: editResponse.msg })
     }
 
     async createFundRaise(req: CustomRequest, res: Response): Promise<void> {
@@ -454,18 +455,19 @@ class UserController implements IUserController {
             const fund_id: string = req.params.profile_id;
             const user_id: string = req.context?.user_id;
             const isForce = req.query.isForce;
-            let profile: iFundRaiseModel | null;
+            const profile: iFundRaiseModel | null = await this.fundRaiserRepo.findFundPostByFundId(fund_id);
             if (isForce && user_id) {
-                profile = await this.fundRaiserRepo.findFundPostByFundId(fund_id);
                 if (profile?.user_id != user_id) {
                     res.status(400).json({ status: false, msg: "Profile not found" })
                     return;
                 }
-            } else {
-                profile = await this.fundRaiserRepo.getRestrictedFundRaisePost(fund_id);
             }
             if (profile) {
-                res.status(200).json({ status: true, data: profile })
+                if (profile.closed || profile.status != FundRaiserStatus.APPROVED) {
+                    res.status(StatusCode.FORBIDDEN).json({ status: false, msg: "This profile no longer requires contributions" })
+                } else {
+                    res.status(200).json({ status: true, data: profile })
+                }
             } else {
                 res.status(400).json({ status: false, msg: "Profile not found" })
             }

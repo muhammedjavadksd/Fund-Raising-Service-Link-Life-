@@ -11,7 +11,7 @@ interface IFundRaiserRepo {
     getOrganizationPosts(organization_id: string, skip: number, limit: number): Promise<iFundRaiseModel[]>
     getUserPosts(user_id: string, skip: number, limit: number, status: FundRaiserStatus): Promise<IPaginatedResponse<iFundRaiseModel>>
     getRestrictedFundRaisePost(fund_id: string): Promise<iFundRaiseModel | null>
-    getAllFundRaiserPost(page: number, limit: number): Promise<iFundRaiseModel[]>
+    getAllFundRaiserPost(page: number, limit: number, status: FundRaiserStatus): Promise<IPaginatedResponse<IFundRaise>>
     getActiveFundRaiserPost(page: number, limit: number, query: Record<string, any>): Promise<IPaginatedResponse<IFundRaise[]>>
     fundRaiserPaginatedByCategory(category: string, skip: number, limit: number): Promise<iFundRaiseModel[]>
     closeFundRaiser(fund_id: string): Promise<boolean>

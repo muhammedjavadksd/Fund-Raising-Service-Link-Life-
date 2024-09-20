@@ -18,8 +18,6 @@ const UtilEnum_1 = require("../types/Enums/UtilEnum");
 const FundRaiserRepo_1 = __importDefault(require("../repositorys/FundRaiserRepo"));
 const utilHelper_1 = __importDefault(require("../util/helper/utilHelper"));
 const ConstData_1 = require("../types/Enums/ConstData");
-const s3Bucket_1 = __importDefault(require("../util/helper/s3Bucket"));
-const url_1 = __importDefault(require("url"));
 const CommentService_1 = __importDefault(require("../services/CommentService"));
 const DonationService_1 = __importDefault(require("../services/DonationService"));
 class UserController {
@@ -42,10 +40,25 @@ class UserController {
         this.verifyPayment = this.verifyPayment.bind(this);
         this.donationHistory = this.donationHistory.bind(this);
         this.myDonationHistory = this.myDonationHistory.bind(this);
+        this.findPaymentOrder = this.findPaymentOrder.bind(this);
         this.fundRaiserService = new FundRaiserService_1.default();
         this.commentService = new CommentService_1.default();
         this.fundRaiserRepo = new FundRaiserRepo_1.default();
         this.donationService = new DonationService_1.default();
+    }
+    findPaymentOrder(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            var _a;
+            const order_id = req.params.order_id;
+            const profile_id = (_a = req.context) === null || _a === void 0 ? void 0 : _a.profile_id;
+            if (profile_id) {
+                const findOrder = yield this.donationService.findDonationByOrderId(order_id, profile_id);
+                res.status(findOrder.statusCode).json({ status: findOrder.status, msg: findOrder.msg, data: findOrder.data });
+            }
+            else {
+                res.status(UtilEnum_1.StatusCode.UNAUTHORIZED).json({ status: false, msg: "Un Authraized access", });
+            }
+        });
     }
     myDonationHistory(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -185,43 +198,40 @@ class UserController {
     uploadImageIntoS3(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const pre_url = req.body.presigned_url;
-            const file = req.file;
-            if (file) {
-                const presignedUrl = url_1.default.parse(pre_url, true).pathname; //.parse(url, true)
-                if (presignedUrl) {
-                    const extractPath = presignedUrl.split("/");
-                    const imageName = extractPath[2];
-                    if (imageName) {
-                        console.log(presignedUrl);
-                        const s3Bucket = new s3Bucket_1.default("file-bucket");
-                        const buffer = file.buffer;
-                        const uploadImage = yield s3Bucket.uploadFile(buffer, pre_url, file.mimetype, imageName);
-                        if (uploadImage) {
-                            res.status(200).json({ status: true, msg: "Image uploaded success", image_name: uploadImage });
-                        }
-                        else {
-                            res.status(400).json({ status: false, msg: "Image uploaded failed" });
-                        }
-                    }
-                    else {
-                        res.status(500).json({ status: false, msg: "No image found" });
-                    }
-                }
-            }
-            else {
-                res.status(400).json({ status: false, msg: "Please upload valid image" });
-            }
+            // const file: Express.Multer.File | undefined = req.file;
+            // if (file) {
+            //     const presignedUrl = url.parse(pre_url, true).pathname //.parse(url, true)
+            //     if (presignedUrl) {
+            //         const extractPath = presignedUrl.split("/");
+            //         const imageName = extractPath[2];
+            //         if (imageName) {
+            //             console.log(presignedUrl);
+            //             const s3Bucket = new S3BucketHelper("file-bucket");
+            //             const buffer = file.buffer;
+            //             const uploadImage = await s3Bucket.uploadFile(buffer, pre_url, file.mimetype, imageName)
+            //             if (uploadImage) {
+            //                 res.status(200).json({ status: true, msg: "Image uploaded success", image_name: uploadImage })
+            //             } else {
+            //                 res.status(400).json({ status: false, msg: "Image uploaded failed" })
+            //             }
+            //         } else {
+            //             res.status(500).json({ status: false, msg: "No image found" })
+            //         }
+            //     }
+            // } else {
+            // }
+            res.status(400).json({ status: false, msg: "Please upload valid image" });
         });
     }
     getPresignedUrl(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            const util = new utilHelper_1.default();
-            const key = util.createRandomText(10) + ".jpeg";
-            const s3Helper = new s3Bucket_1.default("file-bucket");
-            const url = yield s3Helper.generatePresignedUrl(key);
-            console.log("The url is : ", url);
-            console.log("token is ;", key);
-            res.status(200).json({ status: true, msg: "Signed url createed", data: { url } });
+            // const util = new UtilHelper();
+            // const key = util.createRandomText(10) + ".jpeg"
+            // const s3Helper = new S3BucketHelper(process.env.FUND_RAISER_BUCKET_NAME || "");
+            // const url = await s3Helper.generatePresignedUrl(key);
+            // console.log("The url is : ", url);
+            // console.log("token is ;", key);
+            res.status(200).json({ status: true, msg: "Signed url createed" });
         });
     }
     getUserFundRaisePost(req, res) {
@@ -257,11 +267,10 @@ class UserController {
     }
     deleteImage(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
+            var _a;
             const type = req.params.type;
             const edit_id = req.params.edit_id;
-            const image_id = req.params.image_id;
-            const bucketName = req.params.bucket_name;
-            const imageName = `${bucketName}/${image_id}`;
+            const imageName = ((_a = req.query.image_id) === null || _a === void 0 ? void 0 : _a.toString()) || "";
             try {
                 const deleteImage = yield this.fundRaiserService.deleteImage(edit_id, type, imageName);
                 if (deleteImage) {
@@ -325,22 +334,11 @@ class UserController {
     }
     editFundRaise(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            try {
-                const edit_id = req.params.edit_id;
-                const body = req.body;
-                console.log("the body");
-                console.log(req);
-                const editResponse = yield this.fundRaiserRepo.updateFundRaiser(edit_id, body);
-                if (editResponse) {
-                    res.status(200).json({ status: true, msg: "Updated success" });
-                }
-                else {
-                    res.status(500).json({ status: false, msg: "Internal server error" });
-                }
-            }
-            catch (e) {
-                res.status(500).json({ status: true, msg: "Internal server error" });
-            }
+            const edit_id = req.params.edit_id;
+            const body = req.body;
+            const editResponse = yield this.fundRaiserService.editFundRaiser(edit_id, body);
+            console.log(editResponse);
+            res.status(editResponse.statusCode).json({ status: editResponse.status, msg: editResponse.msg });
         });
     }
     createFundRaise(req, res) {
@@ -427,19 +425,20 @@ class UserController {
                 const fund_id = req.params.profile_id;
                 const user_id = (_a = req.context) === null || _a === void 0 ? void 0 : _a.user_id;
                 const isForce = req.query.isForce;
-                let profile;
+                const profile = yield this.fundRaiserRepo.findFundPostByFundId(fund_id);
                 if (isForce && user_id) {
-                    profile = yield this.fundRaiserRepo.findFundPostByFundId(fund_id);
                     if ((profile === null || profile === void 0 ? void 0 : profile.user_id) != user_id) {
                         res.status(400).json({ status: false, msg: "Profile not found" });
                         return;
                     }
                 }
-                else {
-                    profile = yield this.fundRaiserRepo.getRestrictedFundRaisePost(fund_id);
-                }
                 if (profile) {
-                    res.status(200).json({ status: true, data: profile });
+                    if (profile.closed || profile.status != DbEnum_1.FundRaiserStatus.APPROVED) {
+                        res.status(UtilEnum_1.StatusCode.FORBIDDEN).json({ status: false, msg: "This profile no longer requires contributions" });
+                    }
+                    else {
+                        res.status(200).json({ status: true, data: profile });
+                    }
                 }
                 else {
                     res.status(400).json({ status: false, msg: "Profile not found" });

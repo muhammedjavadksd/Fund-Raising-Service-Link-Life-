@@ -8,6 +8,9 @@ import { FundRaiserBankAccountType, FundRaiserCategory } from "../../types/Enums
 
 
 const schemeFundRaise = new mongoose.Schema<iFundRaiseModel>({
+    benf_id: {
+        type: String
+    },
     close_token: {
         type: String,
         required: false

@@ -14,6 +14,37 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const DonationHistory_1 = __importDefault(require("../db/model/DonationHistory"));
 class DonationRepo {
+    findOrder(order_id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const payment = yield DonationHistory_1.default.aggregate([
+                    {
+                        $match: {
+                            order_id
+                        }
+                    },
+                    {
+                        $lookup: {
+                            from: "init_fund_raising",
+                            as: "profile",
+                            foreignField: "fund_id",
+                            localField: "fund_id"
+                        }
+                    },
+                    {
+                        $unwind: "$profile"
+                    }
+                ]);
+                console.log("Payment");
+                console.log(payment);
+                return payment[0];
+            }
+            catch (e) {
+                console.log(e);
+                return null;
+            }
+        });
+    }
     findUserDonationHistory(profile_id, limit, skip) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
@@ -31,6 +62,17 @@ class DonationRepo {
                                 },
                                 {
                                     $limit: limit
+                                },
+                                {
+                                    $lookup: {
+                                        from: "init_fund_raising",
+                                        as: "fund_profile",
+                                        foreignField: "fund_id",
+                                        localField: "fund_id"
+                                    }
+                                },
+                                {
+                                    $unwind: "$fund_profile"
                                 }
                             ],
                             total_records: [

@@ -127,6 +127,12 @@ class AdminController {
             const fundID = utilHelper.createFundRaiseID(DbEnum_1.FundRaiserCreatedBy.ADMIN).toUpperCase();
             const createdDate = new Date();
             const fundRaiserData = {
+                withdraw_docs: {
+                    accont_type: UtilEnum_1.FundRaiserBankAccountType.Savings,
+                    account_number: '',
+                    holder_name: "",
+                    ifsc_code: ""
+                },
                 "fund_id": fundID,
                 "amount": amount,
                 "category": category,

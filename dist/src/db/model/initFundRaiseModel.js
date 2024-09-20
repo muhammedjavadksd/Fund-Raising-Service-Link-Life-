@@ -28,6 +28,9 @@ const DbEnum_1 = require("../../types/Enums/DbEnum");
 const UtilEnum_1 = require("../../types/Enums/UtilEnum");
 // FundRaiserCategory
 const schemeFundRaise = new mongoose_1.default.Schema({
+    benf_id: {
+        type: String
+    },
     close_token: {
         type: String,
         required: false

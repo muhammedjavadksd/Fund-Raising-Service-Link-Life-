@@ -12,8 +12,8 @@ const authMiddleware = new authMiddleware_1.default();
 const multer = require("multer");
 const multerDisk = multer.memoryStorage();
 const multerStorage = multer({ storage: multerDisk });
-userRouter.get("/generate_presigned_url", UserControllers.getPresignedUrl); //test completed
-userRouter.put("/upload_image_presigned", multerStorage.single("file"), UserControllers.uploadImageIntoS3); //test completed
+// userRouter.get("/generate_presigned_url", UserControllers.getPresignedUrl); //test completed
+// userRouter.put("/upload_image_presigned", multerStorage.single("file"), UserControllers.uploadImageIntoS3); //test completed
 //Get method
 userRouter.get("/view/self/:limit/:page/:status?", authMiddleware.isValidUser, UserControllers.getUserFundRaisePost); //test completed
 userRouter.get("/view/:category/:limit/:page", UserControllers.categoryFundRaiserPaginated); //test completed
@@ -22,6 +22,7 @@ userRouter.get("/view/:limit/:page", UserControllers.getActiveFundRaise); //test
 userRouter.get("/comment/:fund_id/:limit/:page/", UserControllers.getPaginatedComments); //test completed
 userRouter.get("/donation-history/:fund_id/:limit/:page", UserControllers.donationHistory); //test completed
 userRouter.get("/my-donation-history/:limit/:page", authMiddleware.isValidUser, UserControllers.myDonationHistory); //test completed
+userRouter.get("/find-payment-order/:order_id", authMiddleware.isValidUser, UserControllers.findPaymentOrder); //test completed
 //payemnt post
 userRouter.post("/pay/:fund_id", authMiddleware.isValidUser, UserControllers.payToFundRaiser);
 userRouter.post("/verify-payment", UserControllers.verifyPayment);
@@ -35,6 +36,6 @@ userRouter.patch("/upload_images/:edit_id", authMiddleware.isValidUser, authMidd
 userRouter.patch("/close/:edit_id", authMiddleware.isValidUser, authMiddleware.isFundRaiseRequestValid, UserControllers.closeFundRaise); // test completed
 userRouter.patch("/edit_comment/:comment_id", authMiddleware.isValidUser, authMiddleware.isValidCommentOwner, UserControllers.editComment);
 //delete method
-userRouter.delete("/delete_image/:type/:edit_id/:bucket_name/:image_id", authMiddleware.isValidUser, authMiddleware.isFundRaiseRequestValid, UserControllers.deleteImage); //test completed
+userRouter.delete("/delete_image/:type/:edit_id", authMiddleware.isValidUser, authMiddleware.isFundRaiseRequestValid, UserControllers.deleteImage); //test completed
 userRouter.delete("/delete_comment/:comment_id", authMiddleware.isValidUser, authMiddleware.isValidCommentOwner, UserControllers.deleteComment);
 exports.default = userRouter;

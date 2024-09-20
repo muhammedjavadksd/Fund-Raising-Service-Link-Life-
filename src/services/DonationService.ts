@@ -1,3 +1,4 @@
+import axios from "axios"
 import DonationRepo from "../repositorys/DonationRepo"
 import FundRaiserRepo from "../repositorys/FundRaiserRepo"
 import PaymentOrderRepo from "../repositorys/PaymentOrderRepo"
@@ -10,10 +11,12 @@ import UtilHelper from "../util/helper/utilHelper"
 
 
 interface IDonationService {
+    transferAmountToBenf(amount: number, fundId: string, donation_id: string): Promise<HelperFuncationResponse>
     creatOrder(profile_id: string, name: string, phone_number: number, email_address: string, amount: number, fund_id: string, hide_profile: boolean): Promise<HelperFuncationResponse>
     verifyPayment(order_id: string): Promise<HelperFuncationResponse>
     findPrivateProfileHistoryPaginated(profile_id: string, limit: number, page: number): Promise<HelperFuncationResponse>
     findMyDonationHistory(profile_id: string, limit: number, page: number): Promise<HelperFuncationResponse>
+    findDonationByOrderId(order_id: string, profile_id: string): Promise<HelperFuncationResponse>
 }
 
 
@@ -33,6 +36,94 @@ class DonationService implements IDonationService {
         this.donationHistoryRepo = new DonationRepo()
         this.findPrivateProfileHistoryPaginated = this.findPrivateProfileHistoryPaginated.bind(this)
         this.findMyDonationHistory = this.findMyDonationHistory.bind(this)
+        this.findDonationByOrderId = this.findDonationByOrderId.bind(this)
+    }
+
+    async findDonationByOrderId(order_id: string, profile_id: string): Promise<HelperFuncationResponse> {
+        const profile = await this.donationHistoryRepo.findOrder(order_id);
+        if (profile) {
+            if (profile.profile_id == profile_id) {
+                return {
+                    status: true,
+                    msg: "Order found",
+                    statusCode: StatusCode.OK,
+                    data: profile
+                }
+            } else {
+                return {
+                    status: true,
+                    msg: "Un authrazied access",
+                    statusCode: StatusCode.UNAUTHORIZED,
+                    data: profile
+                }
+            }
+        } else {
+            return {
+                status: false,
+                msg: "No data found",
+                statusCode: StatusCode.NOT_FOUND
+            }
+        }
+    }
+
+    async transferAmountToBenf(amount: number, fundId: string, donation_id: string): Promise<HelperFuncationResponse> {
+        try {
+            const findProfile = await this.fundRepo.findFundPostByFundId(fundId);
+            if (findProfile) {
+                const options = {
+                    method: 'POST',
+                    url: 'https://sandbox.cashfree.com/payout/transfers',
+                    headers: {
+                        accept: 'application/json',
+                        'x-api-version': '2024-01-01',
+                        'content-type': 'application/json',
+                        'x-client-id': process.env.CASHFREE_PAYOUT_KEY,
+                        'x-client-secret': process.env.CASHFREE_PAYOUT_SECRET
+                    },
+                    data: {
+                        beneficiary_details: {
+                            beneficiary_instrument_details: {
+                                bank_account_number: findProfile.withdraw_docs.account_number,
+                                bank_ifsc: findProfile.withdraw_docs.ifsc_code
+                            },
+                            beneficiary_id: findProfile.benf_id,
+                            beneficiary_name: findProfile.withdraw_docs.holder_name
+                        },
+                        transfer_id: donation_id,
+                        transfer_amount: amount,
+                        transfer_currency: 'INR',
+                        transfer_mode: 'banktransfer'
+                    }
+                };
+
+                const transfer = (await axios.request(options)).data
+                if (transfer && transfer.status && transfer.status == "RECEIVED") {
+                    return {
+                        status: true,
+                        msg: "Payment transfer scheduled",
+                        statusCode: StatusCode.OK
+                    }
+                } else {
+                    return {
+                        status: false,
+                        msg: "Something went wrong",
+                        statusCode: StatusCode.BAD_REQUESR
+                    }
+                }
+            } else {
+                return {
+                    status: false,
+                    msg: "Something went wrong",
+                    statusCode: StatusCode.BAD_REQUESR
+                }
+            }
+        } catch (e) {
+            return {
+                status: false,
+                msg: "Something went wrong",
+                statusCode: StatusCode.SERVER_ERROR
+            }
+        }
     }
 
 
@@ -112,6 +203,8 @@ class DonationService implements IDonationService {
                 name,
             }
             await this.orderRepo.insertOne(paymentOrder)
+            console.log(createOrder);
+
             if (createOrder) {
 
                 return {
@@ -133,45 +226,84 @@ class DonationService implements IDonationService {
 
     }
 
+
+
     async verifyPayment(order_id: string): Promise<HelperFuncationResponse> {
 
         const verifyPayment: IVerifyPaymentResponse | false = await this.paymentHelper.verifyPayment(order_id);
 
+        let receipt: string = '';
 
+
+        const utilHelper = new UtilHelper();
         if (verifyPayment) {
             const findOrder = await this.orderRepo.findOne(order_id)
-            const receipt = "re"
-            console.log("O", findOrder);
             if (findOrder && !findOrder.status) {
+                const fundRaise = await this.fundRepo.findFundPostByFundId(findOrder.fund_id);
+                if (fundRaise) {
+                    const campignTitle = utilHelper.generateFundRaiserTitle(fundRaise)
+                    try {
+                        const donatedDate = utilHelper.formatDateToMonthNameAndDate(findOrder.date)
+                        const certificateName: string = await this.paymentHelper.createReceipt(findOrder.name, campignTitle, findOrder.amount, donatedDate, findOrder.order_id)
+                        if (certificateName) {
+                            receipt = certificateName;
+                        }
+                    } catch (e) {
+                        console.log("Certification creation failed");
+                    }
 
+                    let randomNumber: number = utilHelper.generateAnOTP(4)
+                    let randomText: string = utilHelper.createRandomText(4)
+                    let donationId = randomText + randomNumber;
+                    let findDonation = await this.donationHistoryRepo.findOneDonation(donationId);
+                    while (findDonation) {
+                        randomNumber++
+                        donationId = randomText + randomNumber;
+                        findDonation = await this.donationHistoryRepo.findOneDonation(donationId);
+                    }
+                    let isSettled = false
+                    const transferAmount = await this.transferAmountToBenf(verifyPayment?.data?.order?.order_amount, findOrder.fund_id, donationId);
+                    if (transferAmount.status) {
+                        isSettled = true
+                    }
+                    const donationHistory: IDonateHistoryTemplate = {
+                        order_id,
+                        is_settled: isSettled,
+                        amount: verifyPayment?.data?.order?.order_amount,
+                        date: new Date(),
+                        donation_id: donationId.toUpperCase(),
+                        fund_id: findOrder?.fund_id,
+                        hide_profile: findOrder.hide_profile,
+                        profile_id: findOrder.profile_id,
+                        receipt,
+                        name: findOrder.name
+                    }
+                    console.log("Donation history");
+                    console.log(donationHistory)
+                    fundRaise.collected += verifyPayment?.data?.order?.order_amount
+                    await this.fundRepo.updateFundRaiserByModel(fundRaise)
+                    await this.orderRepo.updateStatus(order_id, true)
+                    await this.webHookRepo.updateWebhookStatus(order_id, true)
+                    const insertHistory = await this.donationHistoryRepo.insertDonationHistory(donationHistory)
+                    console.log(insertHistory);
 
-                const utilHelper = new UtilHelper();
-                let randomNumber: number = utilHelper.generateAnOTP(4)
-                let randomText: string = utilHelper.createRandomText(4)
-                let donationId = randomText + randomNumber;
-                let findDonation = await this.donationHistoryRepo.findOneDonation(donationId);
-                while (findDonation) {
-                    randomNumber++
-                    donationId = randomText + randomNumber;
-                    findDonation = await this.donationHistoryRepo.findOneDonation(donationId);
+                    return {
+                        status: true,
+                        msg: "Payment success",
+                        statusCode: StatusCode.OK,
+                    }
+                } else {
+                    return {
+                        status: false,
+                        msg: "Order not found",
+                        statusCode: StatusCode.NOT_FOUND,
+                    }
                 }
-                const donationHistory: IDonateHistoryTemplate = {
-                    amount: verifyPayment?.data?.order?.order_amount,
-                    date: new Date(),
-                    donation_id: donationId.toUpperCase(),
-                    fund_id: findOrder?.fund_id,
-                    hide_profile: findOrder.hide_profile,
-                    profile_id: findOrder.profile_id,
-                    receipt,
-                    name: findOrder.name
-                }
-                await this.orderRepo.updateStatus(order_id, true)
-                await this.webHookRepo.updateWebhookStatus(order_id, true)
-                await this.donationHistoryRepo.insertDonationHistory(donationHistory)
+            } else {
                 return {
-                    status: true,
-                    msg: "Payment success",
-                    statusCode: StatusCode.OK,
+                    status: false,
+                    msg: "Order not found",
+                    statusCode: StatusCode.NOT_FOUND,
                 }
             }
         }

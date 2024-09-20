@@ -11,7 +11,7 @@ const AdminControllers = new adminController_1.AdminController();
 const authMiddleware = new authMiddleware_1.default();
 //Get method
 adminRouter.get("/view/:profile_id", authMiddleware.isValidAdmin, AdminControllers.getSingleProfile); //test completed
-adminRouter.get("/view/:limit/:page", authMiddleware.isValidAdmin, AdminControllers.getAllFundRaise); //test completed
+adminRouter.get("/view/:limit/:page/:statusx", authMiddleware.isValidAdmin, AdminControllers.getAllFundRaise); //test completed
 //Post Method
 adminRouter.post("/create", AdminControllers.addFundRaiser); // test completed
 //patch method

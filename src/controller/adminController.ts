@@ -2,11 +2,11 @@ import { Request, Response } from "express";
 import { IEditableFundRaiser, IFundRaise, IFundRaiseInitialData, iFundRaiseModel } from "../types/Interface/IDBmodel";
 import { FundRaiserCreatedBy, FundRaiserStatus } from "../types/Enums/DbEnum";
 import FundRaiserRepo from "../repositorys/FundRaiserRepo";
-import { HelperFuncationResponse } from "../types/Interface/Util";
+import { HelperFuncationResponse, IPaginatedResponse } from "../types/Interface/Util";
 import FundRaiserService from "../services/FundRaiserService";
 import UtilHelper from "../util/helper/utilHelper";
 import { IAdminController } from "../types/Interface/IController";
-import { FundRaiserCategory, FundRaiserFileType, StatusCode } from "../types/Enums/UtilEnum";
+import { FundRaiserBankAccountType, FundRaiserCategory, FundRaiserFileType, StatusCode } from "../types/Enums/UtilEnum";
 import { File } from "node:buffer";
 
 class AdminController implements IAdminController {
@@ -34,26 +34,19 @@ class AdminController implements IAdminController {
 
             const limit: number = Number(req.params.limit);
             const page: number = Number(req.params.page);
-            const fundRaisersPost: iFundRaiseModel[] = await this.fundRaiserRepo.getAllFundRaiserPost(page, limit)
-            const countDocuments: number = await this.fundRaiserRepo.countRecords()
+            const status: FundRaiserStatus = req.params.status as FundRaiserStatus;
+            const fundRaisersPost: IPaginatedResponse<iFundRaiseModel> = await this.fundRaiserRepo.getAllFundRaiserPost(page, limit, status)
 
-            if (fundRaisersPost?.length) {
-                res.status(200).json({
+            if (fundRaisersPost?.paginated.length) {
+                res.status(StatusCode.OK).json({
                     status: true,
-                    data: {
-                        profiles: fundRaisersPost,
-                        pagination: {
-                            total_records: countDocuments,
-                            current_page: page,
-                            total_pages: Math.ceil(countDocuments / limit)
-                        }
-                    }
+                    data: fundRaisersPost
                 })
             } else {
-                res.status(204).json({ status: false, msg: "No data found" })
+                res.status(StatusCode.NOT_FOUND).json({ status: false, msg: "No data found" })
             }
         } catch (e) {
-            res.status(500).json({ status: false, msg: "Internal Server Error" })
+            res.status(StatusCode.SERVER_ERROR).json({ status: false, msg: "Internal Server Error" })
         }
     }
 
@@ -140,6 +133,12 @@ class AdminController implements IAdminController {
             const fundID: string = utilHelper.createFundRaiseID(FundRaiserCreatedBy.ADMIN).toUpperCase()
             const createdDate: Date = new Date()
             const fundRaiserData: IFundRaise = {
+                withdraw_docs: {
+                    accont_type: FundRaiserBankAccountType.Savings,
+                    account_number: '',
+                    holder_name: "",
+                    ifsc_code: ""
+                },
                 "fund_id": fundID,
                 "amount": amount,
                 "category": category,

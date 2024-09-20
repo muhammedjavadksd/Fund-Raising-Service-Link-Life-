@@ -1,6 +1,7 @@
 import jwt from "jsonwebtoken"
 import { FundRaiserCreatedBy } from "../Enums/DbEnum"
 import { JwtTimer } from "../Enums/UtilEnum"
+import { IFundRaise } from "./IDBmodel"
 
 
 interface ITokenHelper {
@@ -14,6 +15,8 @@ interface IUtilHelper {
     generateAnOTP(length: number): number
     createRandomText(length: number): string
     extractImageNameFromPresignedUrl(url: string): string | boolean
+    generateFundRaiserTitle(profile: IFundRaise): string
+    formatDateToMonthNameAndDate(date: Date): string
 }
 
 export { ITokenHelper, IUtilHelper }

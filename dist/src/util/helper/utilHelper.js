@@ -32,14 +32,39 @@ class UtilHelper {
         return result;
     }
     extractImageNameFromPresignedUrl(presigned_url) {
-        const newUrl = url_1.default.parse(presigned_url, true);
-        const urlPath = newUrl.pathname;
-        const splitPath = urlPath === null || urlPath === void 0 ? void 0 : urlPath.split("/");
-        if (splitPath && (splitPath === null || splitPath === void 0 ? void 0 : splitPath.length) >= 2) {
-            const imageName = splitPath[2];
-            return imageName;
+        try {
+            const newUrl = url_1.default.parse(presigned_url, true);
+            console.log("Presigned url");
+            console.log(presigned_url);
+            if (newUrl.pathname) {
+                const pathName = newUrl.pathname.split("/");
+                const path = `${pathName[1]}/${pathName[2]}`;
+                return path;
+            }
+            else {
+                return false;
+            }
         }
-        return false;
+        catch (e) {
+            return false;
+        }
+    }
+    generateFundRaiserTitle(profile) {
+        return `${profile.full_name}'s Fund Raiser for ${profile.category} in ${profile.district}`;
+    }
+    formatDateToMonthNameAndDate(date) {
+        const months = [
+            'January', 'February', 'March', 'April', 'May', 'June',
+            'July', 'August', 'September', 'October', 'November', 'December'
+        ];
+        const d = new Date(date);
+        const monthName = months[d.getMonth()];
+        const day = d.getDate();
+        const year = d.getFullYear();
+        return `${monthName} ${day} ${year} `;
+    }
+    convertFundIdToBeneficiaryId(fund_id) {
+        return fund_id.replaceAll("-", "_");
     }
 }
 exports.default = UtilHelper;

@@ -32,10 +32,12 @@ interface IFundRaiseInitialData {
     phone_number: number
     email_id: string,
     status: FundRaiserStatus
+
 }
 
 
 interface IEditableFundRaiser {
+    "benf_id"?: string
     "amount"?: number,
     "category"?: string,
     "sub_category"?: string,
@@ -50,6 +52,7 @@ interface IEditableFundRaiser {
     "state"?: string
     "deadline"?: Date
     "description"?: string
+    "withdraw_docs": IWithdrawDetails
 }
 
 interface IWithdrawDetails {
@@ -60,6 +63,7 @@ interface IWithdrawDetails {
 }
 
 interface IFundRaise {
+    "benf_id"?: string
     "close_token"?: string
     "fund_id": string,
     "amount": number,
@@ -105,6 +109,8 @@ interface ICommentTemplate {
 }
 
 interface IDonateHistoryTemplate {
+    is_settled: boolean
+    order_id: string
     fund_id: String,
     profile_id: String,
     name: String,

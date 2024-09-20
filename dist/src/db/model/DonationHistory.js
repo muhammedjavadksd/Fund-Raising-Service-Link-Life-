@@ -2,7 +2,15 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = require("mongoose");
 const DonateHistoryScheme = new mongoose_1.Schema({
+    is_settled: {
+        type: Boolean,
+        required: true
+    },
     donation_id: {
+        type: String,
+        required: true
+    },
+    order_id: {
         type: String,
         required: true
     },

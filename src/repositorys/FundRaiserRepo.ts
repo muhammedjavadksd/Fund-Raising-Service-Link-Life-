@@ -116,13 +116,55 @@ class FundRaiserRepo implements IFundRaiserRepo {
         }
     }
 
-    async getAllFundRaiserPost(page: number, limit: number): Promise<iFundRaiseModel[]> {
+    async getAllFundRaiserPost(page: number, limit: number, status: FundRaiserStatus): Promise<IPaginatedResponse<IFundRaise>> {
         try {
             const skip = (page - 1) * limit;
-            const limitedData = await this.FundRaiserModel.find({}).skip(skip).limit(limit);
-            return limitedData;
+            const fundRaisePost = await this.FundRaiserModel.aggregate([
+                {
+                    $match: {
+                        status
+                    }
+                },
+                {
+                    $facet: {
+                        paginated: [
+                            {
+                                $skip: skip
+                            },
+                            {
+                                $limit: limit
+                            }
+                        ],
+                        total_records: [
+                            {
+                                $count: "total_records"
+                            }
+                        ]
+                    }
+                },
+                {
+                    $unwind: "$total_records"
+                },
+                {
+                    $project: {
+                        paginated: 1,
+                        total_records: "$total_records.total_records"
+                    }
+                }
+            ])
+
+
+
+            const response: IPaginatedResponse<iFundRaiseModel> = {
+                paginated: fundRaisePost[0].paginated,
+                total_records: fundRaisePost[0].total_records,
+            }
+            return response
         } catch (e) {
-            return []
+            return {
+                paginated: [],
+                total_records: 0
+            }
         }
     }
 
@@ -233,6 +275,7 @@ class FundRaiserRepo implements IFundRaiserRepo {
         console.log(edit_data);
 
         try {
+
             await this.FundRaiserModel.updateOne({ fund_id }, { $set: edit_data });
             return true
         } catch (e) {
