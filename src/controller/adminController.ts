@@ -8,11 +8,14 @@ import UtilHelper from "../util/helper/utilHelper";
 import { IAdminController } from "../types/Interface/IController";
 import { FundRaiserBankAccountType, FundRaiserCategory, FundRaiserFileType, StatusCode } from "../types/Enums/UtilEnum";
 import { File } from "node:buffer";
+import DonationService from "../services/DonationService";
 
 class AdminController implements IAdminController {
 
     private readonly fundRaiserRepo;
     private readonly fundRaiserService;
+    private readonly donationService;
+
 
     constructor() {
         this.getAllFundRaise = this.getAllFundRaise.bind(this)
@@ -24,6 +27,18 @@ class AdminController implements IAdminController {
 
         this.fundRaiserRepo = new FundRaiserRepo();
         this.fundRaiserService = new FundRaiserService();
+        this.donationService = new DonationService()
+    }
+
+
+    async viewDonationHistory(req: Request, res: Response): Promise<void> {
+
+        const profile_id: string = req.params.profile_id;
+        const page: number = +req.params.page;
+        const limit: number = +req.params.limit;
+
+        const donationHistory = await this.donationService.findPrivateProfileHistoryPaginated(profile_id, limit, page);
+        res.status(donationHistory.statusCode).json({ status: donationHistory.status, msg: donationHistory.msg, data: donationHistory.data });
     }
 
     async getAllFundRaise(req: Request, res: Response): Promise<void> {

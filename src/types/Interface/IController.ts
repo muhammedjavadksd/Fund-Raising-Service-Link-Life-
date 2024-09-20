@@ -31,6 +31,7 @@ interface IAdminController {
     addFundRaiser(req: Request, res: Response): void
     updateStatus(req: Request, res: Response): Promise<void>
     closeFundRaiser(req: Request, res: Response): Promise<void>
+    viewDonationHistory(req: Request, res: Response): Promise<void>
 }
 
 
