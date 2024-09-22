@@ -18,6 +18,7 @@ const FundRaiserRepo_1 = __importDefault(require("../repositorys/FundRaiserRepo"
 const FundRaiserService_1 = __importDefault(require("../services/FundRaiserService"));
 const utilHelper_1 = __importDefault(require("../util/helper/utilHelper"));
 const UtilEnum_1 = require("../types/Enums/UtilEnum");
+const DonationService_1 = __importDefault(require("../services/DonationService"));
 class AdminController {
     constructor() {
         this.getAllFundRaise = this.getAllFundRaise.bind(this);
@@ -26,8 +27,25 @@ class AdminController {
         this.addFundRaiser = this.addFundRaiser.bind(this);
         this.updateStatus = this.updateStatus.bind(this);
         this.closeFundRaiser = this.closeFundRaiser.bind(this);
+        this.getStatitics = this.getStatitics.bind(this);
         this.fundRaiserRepo = new FundRaiserRepo_1.default();
         this.fundRaiserService = new FundRaiserService_1.default();
+        this.donationService = new DonationService_1.default();
+    }
+    getStatitics(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const findStatitics = yield this.donationService.getStatitics();
+            res.status(findStatitics.statusCode).json({ status: findStatitics.status, msg: findStatitics.msg, data: findStatitics.data });
+        });
+    }
+    viewDonationHistory(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const profile_id = req.params.profile_id;
+            const page = +req.params.page;
+            const limit = +req.params.limit;
+            const donationHistory = yield this.donationService.findPrivateProfileHistoryPaginated(profile_id, limit, page);
+            res.status(donationHistory.statusCode).json({ status: donationHistory.status, msg: donationHistory.msg, data: donationHistory.data });
+        });
     }
     getAllFundRaise(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -35,40 +53,30 @@ class AdminController {
             try {
                 const limit = Number(req.params.limit);
                 const page = Number(req.params.page);
-                const fundRaisersPost = yield this.fundRaiserRepo.getAllFundRaiserPost(page, limit);
-                const countDocuments = yield this.fundRaiserRepo.countRecords();
-                if (fundRaisersPost === null || fundRaisersPost === void 0 ? void 0 : fundRaisersPost.length) {
-                    res.status(200).json({
+                const status = req.params.status;
+                const fundRaisersPost = yield this.fundRaiserRepo.getAllFundRaiserPost(page, limit, status);
+                if (fundRaisersPost === null || fundRaisersPost === void 0 ? void 0 : fundRaisersPost.paginated.length) {
+                    res.status(UtilEnum_1.StatusCode.OK).json({
                         status: true,
-                        data: {
-                            profiles: fundRaisersPost,
-                            pagination: {
-                                total_records: countDocuments,
-                                current_page: page,
-                                total_pages: Math.ceil(countDocuments / limit)
-                            }
-                        }
+                        data: fundRaisersPost
                     });
                 }
                 else {
-                    res.status(204).json({ status: false, msg: "No data found" });
+                    res.status(UtilEnum_1.StatusCode.NOT_FOUND).json({ status: false, msg: "No data found" });
                 }
             }
             catch (e) {
-                res.status(500).json({ status: false, msg: "Internal Server Error" });
+                res.status(UtilEnum_1.StatusCode.SERVER_ERROR).json({ status: false, msg: "Internal Server Error" });
             }
         });
     }
     getSingleProfile(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            console.log("REACHED HERE");
             try {
                 const profile_id = req.params.profile_id;
                 const profile = yield this.fundRaiserRepo.findFundPostByFundId(profile_id);
-                console.log("Profile");
-                console.log(profile);
                 if (profile) {
-                    res.status(UtilEnum_1.StatusCode.OK).json({ status: true, data: profile });
+                    res.status(UtilEnum_1.StatusCode.OK).json({ status: true, msg: "Profile found", data: profile });
                 }
                 else {
                     res.status(UtilEnum_1.StatusCode.NOT_FOUND).json({ status: false, msg: "Profile not found" });

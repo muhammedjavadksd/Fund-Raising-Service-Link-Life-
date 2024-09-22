@@ -4,6 +4,7 @@ import { IPaginatedResponse } from "../types/Interface/Util";
 
 
 interface IDonationRepo {
+    getStatitics(): Promise<Record<string, any>>
     insertDonationHistory(data: IDonateHistoryTemplate): Promise<string | null | undefined>
     findOneDonation(donation_id: string): Promise<IDonateHistoryCollection | null>
     findManyUserDonation(user_id: string): Promise<IDonateHistoryCollection[]>
@@ -17,6 +18,23 @@ interface IDonationRepo {
 
 
 class DonationRepo implements IDonationRepo {
+
+
+    async getStatitics(): Promise<Record<string, any>> {
+
+        const result = await DonateHistoryCollection.aggregate([
+            {
+                $group: {
+                    _id: null,
+                    totalAmount: { $sum: "$amount" }
+                }
+            }
+        ]);
+
+        return {
+            total_donation: result[0]?.totalAmount || 0
+        }
+    }
 
 
     async findOrder(order_id: string): Promise<null | IDonateHistoryCollection> {

@@ -14,6 +14,22 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const DonationHistory_1 = __importDefault(require("../db/model/DonationHistory"));
 class DonationRepo {
+    getStatitics() {
+        return __awaiter(this, void 0, void 0, function* () {
+            var _a;
+            const result = yield DonationHistory_1.default.aggregate([
+                {
+                    $group: {
+                        _id: null,
+                        totalAmount: { $sum: "$amount" }
+                    }
+                }
+            ]);
+            return {
+                total_donation: ((_a = result[0]) === null || _a === void 0 ? void 0 : _a.totalAmount) || 0
+            };
+        });
+    }
     findOrder(order_id) {
         return __awaiter(this, void 0, void 0, function* () {
             try {

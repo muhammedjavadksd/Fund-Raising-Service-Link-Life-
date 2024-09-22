@@ -3,6 +3,7 @@ import { IEditableFundRaiser, IFundRaise, iFundRaiseModel } from "./IDBmodel"
 import { HelperFuncationResponse, IPaginatedResponse } from "./Util"
 
 interface IFundRaiserRepo {
+    getStatitics(): Promise<Record<string, any>>
     getSingleFundRaiseOfUser(user_id: string, fund_id: string): Promise<iFundRaiseModel | null>
     findFundPostByFundId(fund_id: string): Promise<iFundRaiseModel | null>
     updateFundRaiserByModel(model: iFundRaiseModel): Promise<boolean>

@@ -9,6 +9,7 @@ const authMiddleware = new AuthMiddleware()
 
 
 //Get method
+adminRouter.get("/statitics", authMiddleware.isValidAdmin, AdminControllers.getStatitics); //test completed
 adminRouter.get("/view/:profile_id", authMiddleware.isValidAdmin, AdminControllers.getSingleProfile); //test completed
 adminRouter.get("/view/:limit/:page/:status", authMiddleware.isValidAdmin, AdminControllers.getAllFundRaise); //test completed
 adminRouter.get("/donation-history/:profile_id/:limit/:page/", authMiddleware.isValidAdmin, AdminControllers.getAllFundRaise); //test completed

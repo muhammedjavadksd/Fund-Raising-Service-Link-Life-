@@ -17,6 +17,7 @@ interface IDonationService {
     findPrivateProfileHistoryPaginated(profile_id: string, limit: number, page: number): Promise<HelperFuncationResponse>
     findMyDonationHistory(profile_id: string, limit: number, page: number): Promise<HelperFuncationResponse>
     findDonationByOrderId(order_id: string, profile_id: string): Promise<HelperFuncationResponse>
+    getStatitics(): Promise<HelperFuncationResponse>
 }
 
 
@@ -37,6 +38,23 @@ class DonationService implements IDonationService {
         this.findPrivateProfileHistoryPaginated = this.findPrivateProfileHistoryPaginated.bind(this)
         this.findMyDonationHistory = this.findMyDonationHistory.bind(this)
         this.findDonationByOrderId = this.findDonationByOrderId.bind(this)
+    }
+
+
+    async getStatitics(): Promise<HelperFuncationResponse> {
+
+        const fundRaiser = await this.fundRepo.getStatitics();
+        const donation = await this.donationHistoryRepo.getStatitics();
+
+        return {
+            status: true,
+            msg: "Items found",
+            statusCode: StatusCode.OK,
+            data: {
+                fund_raiser: fundRaiser,
+                donation: donation
+            }
+        }
     }
 
     async findDonationByOrderId(order_id: string, profile_id: string): Promise<HelperFuncationResponse> {

@@ -24,11 +24,19 @@ class AdminController implements IAdminController {
         this.addFundRaiser = this.addFundRaiser.bind(this)
         this.updateStatus = this.updateStatus.bind(this)
         this.closeFundRaiser = this.closeFundRaiser.bind(this)
+        this.getStatitics = this.getStatitics.bind(this)
 
         this.fundRaiserRepo = new FundRaiserRepo();
         this.fundRaiserService = new FundRaiserService();
         this.donationService = new DonationService()
     }
+
+
+    async getStatitics(req: Request, res: Response): Promise<void> {
+        const findStatitics = await this.donationService.getStatitics()
+        res.status(findStatitics.statusCode).json({ status: findStatitics.status, msg: findStatitics.msg, data: findStatitics.data });
+    }
+
 
 
     async viewDonationHistory(req: Request, res: Response): Promise<void> {

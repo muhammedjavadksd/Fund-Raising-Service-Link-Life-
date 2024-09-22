@@ -31,6 +31,21 @@ class DonationService {
         this.findMyDonationHistory = this.findMyDonationHistory.bind(this);
         this.findDonationByOrderId = this.findDonationByOrderId.bind(this);
     }
+    getStatitics() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const fundRaiser = yield this.fundRepo.getStatitics();
+            const donation = yield this.donationHistoryRepo.getStatitics();
+            return {
+                status: true,
+                msg: "Items found",
+                statusCode: UtilEnum_1.StatusCode.OK,
+                data: {
+                    fund_raiser: fundRaiser,
+                    donation: donation
+                }
+            };
+        });
+    }
     findDonationByOrderId(order_id, profile_id) {
         return __awaiter(this, void 0, void 0, function* () {
             const profile = yield this.donationHistoryRepo.findOrder(order_id);

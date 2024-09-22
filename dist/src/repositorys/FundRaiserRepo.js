@@ -32,6 +32,40 @@ class FundRaiserRepo {
         this.closeFundRaiser = this.closeFundRaiser.bind(this);
         this.FundRaiserModel = initFundRaiseModel_1.default;
     }
+    getStatitics() {
+        return __awaiter(this, void 0, void 0, function* () {
+            var _a, _b, _c, _d;
+            const result = yield this.FundRaiserModel.aggregate([
+                {
+                    $facet: {
+                        totalFundRaise: [{ $count: "count" }],
+                        activeFundRaise: [
+                            { $match: { is_closed: false, status: DbEnum_1.FundRaiserStatus.APPROVED } },
+                            { $count: "count" }
+                        ],
+                        closedFundRaise: [
+                            { $match: { is_closed: false, status: DbEnum_1.FundRaiserStatus.CLOSED } },
+                            { $count: "count" }
+                        ],
+                        pendingFundRaiser: [
+                            { $match: { is_closed: false, status: { $in: [DbEnum_1.FundRaiserStatus.INITIATED, DbEnum_1.FundRaiserStatus.CREATED] } } },
+                            { $count: "count" }
+                        ]
+                    }
+                }
+            ]);
+            const totalFundRaise = ((_a = result[0].totalFundRaise[0]) === null || _a === void 0 ? void 0 : _a.count) || 0;
+            const activeFundRaise = ((_b = result[0].activeFundRaise[0]) === null || _b === void 0 ? void 0 : _b.count) || 0;
+            const closedFundRaise = ((_c = result[0].closedFundRaise[0]) === null || _c === void 0 ? void 0 : _c.count) || 0;
+            const pendingFundRaiser = ((_d = result[0].pendingFundRaiser[0]) === null || _d === void 0 ? void 0 : _d.count) || 0;
+            return {
+                total_fund_raiser: totalFundRaise,
+                activeFundRaise,
+                closedFundRaise,
+                pendingFundRaiser
+            };
+        });
+    }
     closeFundRaiser(fund_id) {
         return __awaiter(this, void 0, void 0, function* () {
             const findUpdate = yield this.FundRaiserModel.findOneAndUpdate({ fund_id }, { closed: true, status: DbEnum_1.FundRaiserStatus.CLOSED });
@@ -111,15 +145,54 @@ class FundRaiserRepo {
             }
         });
     }
-    getAllFundRaiserPost(page, limit) {
+    getAllFundRaiserPost(page, limit, status) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const skip = (page - 1) * limit;
-                const limitedData = yield this.FundRaiserModel.find({}).skip(skip).limit(limit);
-                return limitedData;
+                const fundRaisePost = yield this.FundRaiserModel.aggregate([
+                    {
+                        $match: {
+                            status
+                        }
+                    },
+                    {
+                        $facet: {
+                            paginated: [
+                                {
+                                    $skip: skip
+                                },
+                                {
+                                    $limit: limit
+                                }
+                            ],
+                            total_records: [
+                                {
+                                    $count: "total_records"
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        $unwind: "$total_records"
+                    },
+                    {
+                        $project: {
+                            paginated: 1,
+                            total_records: "$total_records.total_records"
+                        }
+                    }
+                ]);
+                const response = {
+                    paginated: fundRaisePost[0].paginated,
+                    total_records: fundRaisePost[0].total_records,
+                };
+                return response;
             }
             catch (e) {
-                return [];
+                return {
+                    paginated: [],
+                    total_records: 0
+                };
             }
         });
     }

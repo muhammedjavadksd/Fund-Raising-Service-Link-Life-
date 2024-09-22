@@ -30,6 +30,43 @@ class FundRaiserRepo implements IFundRaiserRepo {
         this.FundRaiserModel = InitFundRaisingModel
     }
 
+
+    async getStatitics(): Promise<Record<string, any>> {
+        const result = await this.FundRaiserModel.aggregate([
+            {
+                $facet: {
+                    totalFundRaise: [{ $count: "count" }],
+                    activeFundRaise: [
+                        { $match: { is_closed: false, status: FundRaiserStatus.APPROVED } },
+                        { $count: "count" }
+                    ],
+                    closedFundRaise: [
+                        { $match: { is_closed: false, status: FundRaiserStatus.CLOSED } },
+                        { $count: "count" }
+                    ],
+                    pendingFundRaiser: [
+                        { $match: { is_closed: false, status: { $in: [FundRaiserStatus.INITIATED, FundRaiserStatus.CREATED] } } },
+                        { $count: "count" }
+                    ]
+                }
+            }
+        ]);
+
+        const totalFundRaise = result[0].totalFundRaise[0]?.count || 0;
+        const activeFundRaise = result[0].activeFundRaise[0]?.count || 0;
+        const closedFundRaise = result[0].closedFundRaise[0]?.count || 0;
+        const pendingFundRaiser = result[0].pendingFundRaiser[0]?.count || 0;
+        return {
+            total_fund_raiser: totalFundRaise,
+            activeFundRaise,
+            closedFundRaise,
+            pendingFundRaiser
+        }
+    }
+
+
+
+
     async closeFundRaiser(fund_id: string): Promise<boolean> {
         const findUpdate = await this.FundRaiserModel.findOneAndUpdate({ fund_id }, { closed: true, status: FundRaiserStatus.CLOSED })
         return !!findUpdate?.isModified()
