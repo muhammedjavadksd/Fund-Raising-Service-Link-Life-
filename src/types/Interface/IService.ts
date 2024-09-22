@@ -7,6 +7,7 @@ import { HelperFuncationResponse } from "./Util";
 
 interface IFundRaiserService {
 
+    createPresignedUrl(type: FundRaiserFileType): Promise<HelperFuncationResponse>
     deleteImage(fund_id: string, type: FundRaiserFileType, image: string): Promise<boolean>
     createFundRaisePost(data: IFundRaiseInitialData): Promise<HelperFuncationResponse>
     getOwnerFundRaise(owner_id: string, limit: number, skip: number, status: FundRaiserStatus): Promise<HelperFuncationResponse>

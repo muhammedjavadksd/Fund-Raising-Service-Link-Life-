@@ -23,11 +23,11 @@ userRouter.get("/comment/:fund_id/:limit/:page/", UserControllers.getPaginatedCo
 userRouter.get("/donation-history/:fund_id/:limit/:page", UserControllers.donationHistory);//test completed
 userRouter.get("/my-donation-history/:limit/:page", authMiddleware.isValidUser, UserControllers.myDonationHistory);//test completed
 userRouter.get("/find-payment-order/:order_id", authMiddleware.isValidUser, UserControllers.findPaymentOrder);//test completed
+userRouter.get("/presigned-url", authMiddleware.isValidUser, UserControllers.getPresignedUrl);//test completed
 
 //payemnt post
 userRouter.post("/pay/:fund_id", authMiddleware.isValidUser, UserControllers.payToFundRaiser)
 userRouter.post("/verify-payment", UserControllers.verifyPayment)
-
 
 // POST method
 userRouter.post("/create", authMiddleware.isValidUser, UserControllers.createFundRaise); //test completed

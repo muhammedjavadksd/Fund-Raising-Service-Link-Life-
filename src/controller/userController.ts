@@ -44,11 +44,14 @@ class UserController implements IUserController {
         this.donationHistory = this.donationHistory.bind(this)
         this.myDonationHistory = this.myDonationHistory.bind(this)
         this.findPaymentOrder = this.findPaymentOrder.bind(this)
+        this.getPresignedUrl = this.getPresignedUrl.bind(this)
         this.fundRaiserService = new FundRaiserService();
         this.commentService = new CommentService();
         this.fundRaiserRepo = new FundRaiserRepo();
         this.donationService = new DonationService()
     }
+
+
 
 
     async findPaymentOrder(req: CustomRequest, res: Response): Promise<void> {
@@ -242,14 +245,9 @@ class UserController implements IUserController {
 
 
     async getPresignedUrl(req: Request, res: Response) {
-        // const util = new UtilHelper();
-        // const key = util.createRandomText(10) + ".jpeg"
-        // const s3Helper = new S3BucketHelper(process.env.FUND_RAISER_BUCKET_NAME || "");
-        // const url = await s3Helper.generatePresignedUrl(key);
-        // console.log("The url is : ", url);
-        // console.log("token is ;", key);
-
-        res.status(200).json({ status: true, msg: "Signed url createed" })
+        const type: FundRaiserFileType = req.query.type as FundRaiserFileType;
+        const image = await this.fundRaiserService.createPresignedUrl(type);
+        res.status(image.statusCode).json({ status: image.status, msg: image.msg, data: image.data })
     }
 
     async getUserFundRaisePost(req: CustomRequest, res: Response): Promise<void> {
@@ -320,14 +318,10 @@ class UserController implements IUserController {
         try {
 
 
-            console.log(req.body);
-
 
             let imagesPresignedUrl: string[] = req.body.presigned_url;
             const fundRaiserID: string = req.params.edit_id;
 
-
-            console.log(imagesPresignedUrl);
 
 
             if (imagesPresignedUrl.length) {
@@ -456,17 +450,30 @@ class UserController implements IUserController {
             const user_id: string = req.context?.user_id;
             const isForce = req.query.isForce;
             const profile: iFundRaiseModel | null = await this.fundRaiserRepo.findFundPostByFundId(fund_id);
-            if (isForce && user_id) {
-                if (profile?.user_id != user_id) {
-                    res.status(400).json({ status: false, msg: "Profile not found" })
-                    return;
-                }
-            }
+
+
+
             if (profile) {
-                if (profile.closed || profile.status != FundRaiserStatus.APPROVED) {
-                    res.status(StatusCode.FORBIDDEN).json({ status: false, msg: "This profile no longer requires contributions" })
+
+
+                console.log("Profile");
+                console.log(isForce, user_id);
+
+                if (isForce && user_id) {
+                    if (profile?.user_id != user_id) {
+                        res.status(400).json({ status: false, msg: "Profile not found" })
+                        return;
+                    } else {
+                        res.status(200).json({ status: true, data: profile })
+                        return
+                    }
                 } else {
-                    res.status(200).json({ status: true, data: profile })
+                    if (profile.closed || profile.status != FundRaiserStatus.APPROVED) {
+                        res.status(StatusCode.FORBIDDEN).json({ status: false, msg: "This profile no longer requires contributions" })
+                        return
+                    } else {
+                        res.status(200).json({ status: true, data: profile })
+                    }
                 }
             } else {
                 res.status(400).json({ status: false, msg: "Profile not found" })

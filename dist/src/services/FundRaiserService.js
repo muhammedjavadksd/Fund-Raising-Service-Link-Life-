@@ -33,12 +33,60 @@ class FundRaiserService {
         this.uploadImage = this.uploadImage.bind(this);
         this.paginatedFundRaiserByCategory = this.paginatedFundRaiserByCategory.bind(this);
         this.closeFundRaiserVerification = this.closeFundRaiserVerification.bind(this);
+        this.createPresignedUrl = this.createPresignedUrl.bind(this);
         (0, dotenv_1.config)();
         this.FundRaiserRepo = new FundRaiserRepo_1.default();
         console.log("Main bucket  name");
         console.log(process.env.FUND_RAISER_BUCKET);
         this.fundRaiserPictureBucket = new s3Bucket_1.default(process.env.FUND_RAISER_BUCKET || "", ConstData_1.S3Folder.FundRaiserPicture);
         this.fundRaiserDocumentBucket = new s3Bucket_1.default(process.env.FUND_RAISER_BUCKET || "", ConstData_1.S3Folder.FundRaiserDocument);
+    }
+    createPresignedUrl(type) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const utilHelper = new utilHelper_1.default();
+            try {
+                if (type == UtilEnum_1.FundRaiserFileType.Pictures) {
+                    const key = `${utilHelper.createRandomText(4)}-${utilHelper.generateAnOTP(4)}-pic.jpeg`;
+                    const url = yield this.fundRaiserPictureBucket.generatePresignedUrl(key);
+                    if (url) {
+                        return {
+                            status: true,
+                            msg: "Presigne url created",
+                            statusCode: UtilEnum_1.StatusCode.CREATED,
+                            data: {
+                                url
+                            }
+                        };
+                    }
+                }
+                else {
+                    const key = `${utilHelper.createRandomText(4)}-${utilHelper.generateAnOTP(4)}-doc.jpeg`;
+                    const url = yield this.fundRaiserDocumentBucket.generatePresignedUrl(key);
+                    if (url) {
+                        return {
+                            status: true,
+                            msg: "Presigne url created",
+                            statusCode: UtilEnum_1.StatusCode.CREATED,
+                            data: {
+                                url
+                            }
+                        };
+                    }
+                }
+                return {
+                    status: false,
+                    msg: "Presigned url creation failed",
+                    statusCode: UtilEnum_1.StatusCode.BAD_REQUESR
+                };
+            }
+            catch (e) {
+                return {
+                    status: false,
+                    msg: "Something went wrong",
+                    statusCode: UtilEnum_1.StatusCode.SERVER_ERROR
+                };
+            }
+        });
     }
     // async editFundRaiser(editId: string, editData: IEditableFundRaiser): Promise<HelperFuncationResponse> {
     //     const editResponse: boolean = await this.FundRaiserRepo.updateFundRaiser(editId, editData);
@@ -72,7 +120,9 @@ class FundRaiserService {
                         'x-client-secret': process.env.CASHFREE_PAYOUT_SECRET
                     }
                 };
-                const { data: responseData } = (yield axios_1.default.request(authOptions)).data;
+                const request = yield axios_1.default.request(authOptions);
+                const responseData = request.data.data;
+                console.log(responseData);
                 const { token } = responseData;
                 if (token) {
                     const options = {
@@ -119,6 +169,7 @@ class FundRaiserService {
                 }
             }
             catch (e) {
+                console.log(e);
                 return {
                     msg: "Something went wrong",
                     status: false,
@@ -242,26 +293,26 @@ class FundRaiserService {
                 const createFundRaise = yield this.FundRaiserRepo.createFundRaiserPost(data); //this.createFundRaisePost(data);
                 console.log(createFundRaise);
                 console.log("this");
-                const picturesPreisgnedUrl = [];
-                const DocumentsPreisgnedUrl = [];
-                const utlHelper = new utilHelper_1.default();
-                for (let index = 0; index < ConstData_1.const_data.FUND_RAISER_DOCUMENTS_LENGTH; index++) {
-                    const randomImageName = `${utlHelper.createRandomText(5)}${new Date().getMilliseconds()}.jpeg`;
-                    const picPresignedUrl = yield this.fundRaiserPictureBucket.generatePresignedUrl(`pics_${randomImageName}`);
-                    const docsPresignedUrl = yield this.fundRaiserDocumentBucket.generatePresignedUrl(`docs_${randomImageName}`);
-                    picturesPreisgnedUrl.push(picPresignedUrl);
-                    DocumentsPreisgnedUrl.push(docsPresignedUrl);
-                }
+                // const picturesPreisgnedUrl = []
+                // const DocumentsPreisgnedUrl = []
+                // const utlHelper = new UtilHelper()
+                // for (let index = 0; index < const_data.FUND_RAISER_DOCUMENTS_LENGTH; index++) {
+                //     const randomImageName = `${utlHelper.createRandomText(5)}${new Date().getMilliseconds()}.jpeg`
+                //     const picPresignedUrl = await this.fundRaiserPictureBucket.generatePresignedUrl(`pics_${randomImageName}`)
+                //     const docsPresignedUrl = await this.fundRaiserDocumentBucket.generatePresignedUrl(`docs_${randomImageName}`)
+                //     picturesPreisgnedUrl.push(picPresignedUrl)
+                //     DocumentsPreisgnedUrl.push(docsPresignedUrl)
+                // }
                 return {
                     status: createFundRaise.status,
                     msg: createFundRaise.msg,
                     data: {
                         id: (_a = createFundRaise.data) === null || _a === void 0 ? void 0 : _a.id,
                         fund_id: (_b = createFundRaise.data) === null || _b === void 0 ? void 0 : _b.fund_id,
-                        upload_images: {
-                            pictures: picturesPreisgnedUrl,
-                            documents: DocumentsPreisgnedUrl
-                        }
+                        // upload_images: {
+                        //     pictures: picturesPreisgnedUrl,
+                        //     documents: DocumentsPreisgnedUrl
+                        // }
                     },
                     statusCode: createFundRaise.statusCode
                 };
@@ -478,8 +529,11 @@ class FundRaiserService {
                     const bucketName = process.env.FUND_RAISER_BUCKET; //document_type == FundRaiserFileType.Document ? BucketsOnS3.FundRaiserDocument : BucketsOnS3.FundRaiserPicture;
                     const imageKey = utilHelper.extractImageNameFromPresignedUrl(images[fileIndex]);
                     if (imageKey) {
-                        const imageName = `https://${bucketName}.s3.amazonaws.com/${imageKey}`;
-                        newImages.push(imageName.toString());
+                        const findFile = yield this.fundRaiserDocumentBucket.findFile(imageKey);
+                        if (findFile) {
+                            const imageName = `https://${bucketName}.s3.amazonaws.com/${imageKey}`;
+                            newImages.push(imageName.toString());
+                        }
                     }
                 }
                 const initFundRaise = yield this.FundRaiserRepo.findFundPostByFundId(fundRaiserID);

@@ -76,6 +76,23 @@ class S3BucketHelper {
         }
     }
 
+    async findFile(fileName: string): Promise<boolean> {
+        try {
+            const params = {
+                Bucket: this.bucketName,
+                Key: fileName,
+            };
+            const headData = await this.s3.headObject(params).promise();
+            if (headData) {
+                return true
+            }
+            return false
+        } catch (e) {
+            return false
+        }
+    }
+
+
 }
 
 export default S3BucketHelper

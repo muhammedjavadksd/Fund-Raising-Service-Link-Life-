@@ -32,7 +32,7 @@ class FundRaiserService implements IFundRaiserService {
         this.uploadImage = this.uploadImage.bind(this)
         this.paginatedFundRaiserByCategory = this.paginatedFundRaiserByCategory.bind(this);
         this.closeFundRaiserVerification = this.closeFundRaiserVerification.bind(this);
-
+        this.createPresignedUrl = this.createPresignedUrl.bind(this)
         config()
         this.FundRaiserRepo = new FundRaiserRepo();
         console.log("Main bucket  name");
@@ -40,6 +40,52 @@ class FundRaiserService implements IFundRaiserService {
 
         this.fundRaiserPictureBucket = new S3BucketHelper(process.env.FUND_RAISER_BUCKET || "", S3Folder.FundRaiserPicture);
         this.fundRaiserDocumentBucket = new S3BucketHelper(process.env.FUND_RAISER_BUCKET || "", S3Folder.FundRaiserDocument);
+    }
+
+
+    async createPresignedUrl(type: FundRaiserFileType): Promise<HelperFuncationResponse> {
+        const utilHelper = new UtilHelper()
+        try {
+            if (type == FundRaiserFileType.Pictures) {
+                const key = `${utilHelper.createRandomText(4)}-${utilHelper.generateAnOTP(4)}-pic.jpeg`;
+                const url = await this.fundRaiserPictureBucket.generatePresignedUrl(key);
+                if (url) {
+                    return {
+                        status: true,
+                        msg: "Presigne url created",
+                        statusCode: StatusCode.CREATED,
+                        data: {
+                            url
+                        }
+                    }
+                }
+            } else {
+                const key = `${utilHelper.createRandomText(4)}-${utilHelper.generateAnOTP(4)}-doc.jpeg`;
+                const url = await this.fundRaiserDocumentBucket.generatePresignedUrl(key);
+                if (url) {
+                    return {
+                        status: true,
+                        msg: "Presigne url created",
+                        statusCode: StatusCode.CREATED,
+                        data: {
+                            url
+                        }
+                    }
+                }
+            }
+
+            return {
+                status: false,
+                msg: "Presigned url creation failed",
+                statusCode: StatusCode.BAD_REQUESR
+            }
+        } catch (e) {
+            return {
+                status: false,
+                msg: "Something went wrong",
+                statusCode: StatusCode.SERVER_ERROR
+            }
+        }
     }
 
 
@@ -80,7 +126,10 @@ class FundRaiserService implements IFundRaiserService {
                 }
             };
 
-            const { data: responseData } = (await axios.request(authOptions)).data
+            const request = await axios.request(authOptions)
+            const responseData = request.data.data
+            console.log(responseData);
+
             const { token } = responseData;
 
             if (token) {
@@ -129,6 +178,7 @@ class FundRaiserService implements IFundRaiserService {
                 }
             }
         } catch (e) {
+            console.log(e);
             return {
                 msg: "Something went wrong",
                 status: false,
@@ -268,16 +318,16 @@ class FundRaiserService implements IFundRaiserService {
             console.log("this");
 
 
-            const picturesPreisgnedUrl = []
-            const DocumentsPreisgnedUrl = []
-            const utlHelper = new UtilHelper()
-            for (let index = 0; index < const_data.FUND_RAISER_DOCUMENTS_LENGTH; index++) {
-                const randomImageName = `${utlHelper.createRandomText(5)}${new Date().getMilliseconds()}.jpeg`
-                const picPresignedUrl = await this.fundRaiserPictureBucket.generatePresignedUrl(`pics_${randomImageName}`)
-                const docsPresignedUrl = await this.fundRaiserDocumentBucket.generatePresignedUrl(`docs_${randomImageName}`)
-                picturesPreisgnedUrl.push(picPresignedUrl)
-                DocumentsPreisgnedUrl.push(docsPresignedUrl)
-            }
+            // const picturesPreisgnedUrl = []
+            // const DocumentsPreisgnedUrl = []
+            // const utlHelper = new UtilHelper()
+            // for (let index = 0; index < const_data.FUND_RAISER_DOCUMENTS_LENGTH; index++) {
+            //     const randomImageName = `${utlHelper.createRandomText(5)}${new Date().getMilliseconds()}.jpeg`
+            //     const picPresignedUrl = await this.fundRaiserPictureBucket.generatePresignedUrl(`pics_${randomImageName}`)
+            //     const docsPresignedUrl = await this.fundRaiserDocumentBucket.generatePresignedUrl(`docs_${randomImageName}`)
+            //     picturesPreisgnedUrl.push(picPresignedUrl)
+            //     DocumentsPreisgnedUrl.push(docsPresignedUrl)
+            // }
 
             return {
                 status: createFundRaise.status,
@@ -285,10 +335,10 @@ class FundRaiserService implements IFundRaiserService {
                 data: {
                     id: createFundRaise.data?.id,
                     fund_id: createFundRaise.data?.fund_id,
-                    upload_images: {
-                        pictures: picturesPreisgnedUrl,
-                        documents: DocumentsPreisgnedUrl
-                    }
+                    // upload_images: {
+                    //     pictures: picturesPreisgnedUrl,
+                    //     documents: DocumentsPreisgnedUrl
+                    // }
                 },
                 statusCode: createFundRaise.statusCode
             }
@@ -495,8 +545,11 @@ class FundRaiserService implements IFundRaiserService {
                 const bucketName = process.env.FUND_RAISER_BUCKET //document_type == FundRaiserFileType.Document ? BucketsOnS3.FundRaiserDocument : BucketsOnS3.FundRaiserPicture;
                 const imageKey: string | false = utilHelper.extractImageNameFromPresignedUrl(images[fileIndex])
                 if (imageKey) {
-                    const imageName: string | boolean = `https://${bucketName}.s3.amazonaws.com/${imageKey}`
-                    newImages.push(imageName.toString())
+                    const findFile = await this.fundRaiserDocumentBucket.findFile(imageKey)
+                    if (findFile) {
+                        const imageName: string | boolean = `https://${bucketName}.s3.amazonaws.com/${imageKey}`
+                        newImages.push(imageName.toString())
+                    }
                 }
             }
 

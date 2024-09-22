@@ -5,6 +5,11 @@ enum FundRaiserFileType {
     Pictures = "Pictures"
 }
 
+enum PresignedType {
+    Document = "Document",
+    Pictures = "Pictures"
+}
+
 enum JwtTimer {
     _15Min = "15m",
     _7Days = "7d",
@@ -71,4 +76,4 @@ enum StatusCode {
 
 
 
-export { JwtTimer, FundRaiserBankAccountType, JwtType, FundRaiserFileType, FundRaiserCategory, StatusCode }
+export { PresignedType, JwtTimer, FundRaiserBankAccountType, JwtType, FundRaiserFileType, FundRaiserCategory, StatusCode }
