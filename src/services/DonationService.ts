@@ -259,6 +259,7 @@ class DonationService implements IDonationService {
             if (findOrder && !findOrder.status) {
                 const fundRaise = await this.fundRepo.findFundPostByFundId(findOrder.fund_id);
                 if (fundRaise) {
+                    await this.orderRepo.updateStatus(order_id, true)
                     const campignTitle = utilHelper.generateFundRaiserTitle(fundRaise)
                     try {
                         const donatedDate = utilHelper.formatDateToMonthNameAndDate(findOrder.date)
@@ -300,7 +301,6 @@ class DonationService implements IDonationService {
                     console.log(donationHistory)
                     fundRaise.collected += verifyPayment?.data?.order?.order_amount
                     await this.fundRepo.updateFundRaiserByModel(fundRaise)
-                    await this.orderRepo.updateStatus(order_id, true)
                     await this.webHookRepo.updateWebhookStatus(order_id, true)
                     const insertHistory = await this.donationHistoryRepo.insertDonationHistory(donationHistory)
                     console.log(insertHistory);

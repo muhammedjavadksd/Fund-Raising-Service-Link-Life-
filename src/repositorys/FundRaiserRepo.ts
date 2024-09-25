@@ -2,7 +2,7 @@ import { skip } from "node:test";
 import InitFundRaisingModel from "../db/model/initFundRaiseModel";
 import { FundRaiserCreatedBy, FundRaiserStatus } from "../types/Enums/DbEnum";
 import { StatusCode } from "../types/Enums/UtilEnum";
-import { IEditableFundRaiser, IFundRaise, IFundRaiseInitialData, iFundRaiseModel } from "../types/Interface/IDBmodel";
+import { IAdminAddFundRaiser, IEditableFundRaiser, IFundRaise, IFundRaiseInitialData, iFundRaiseModel } from "../types/Interface/IDBmodel";
 import { IFundRaiserRepo } from "../types/Interface/IRepo";
 import { HelperFuncationResponse, IPaginatedResponse } from "../types/Interface/Util";
 import mongoose, { Schema } from "mongoose";
@@ -153,14 +153,19 @@ class FundRaiserRepo implements IFundRaiserRepo {
         }
     }
 
-    async getAllFundRaiserPost(page: number, limit: number, status: FundRaiserStatus): Promise<IPaginatedResponse<IFundRaise>> {
+    async getAllFundRaiserPost(page: number, limit: number, status: FundRaiserStatus, filter: Record<string, any>): Promise<IPaginatedResponse<IFundRaise>> {
         try {
             const skip = (page - 1) * limit;
+            const match: Record<string, any> = filter;
+            if (status) {
+                match['status'] = status
+            }
+
+            console.log(match);
+
             const fundRaisePost = await this.FundRaiserModel.aggregate([
                 {
-                    $match: {
-                        status
-                    }
+                    $match: match
                 },
                 {
                     $facet: {
@@ -189,6 +194,10 @@ class FundRaiserRepo implements IFundRaiserRepo {
                     }
                 }
             ])
+
+            console.log(fundRaisePost);
+            console.log(match);
+
 
 
 
@@ -284,7 +293,7 @@ class FundRaiserRepo implements IFundRaiserRepo {
         }
     }
 
-    async createFundRaiserPost(initialData: IFundRaise | IFundRaiseInitialData): Promise<HelperFuncationResponse> {
+    async createFundRaiserPost(initialData: IAdminAddFundRaiser | IFundRaiseInitialData): Promise<HelperFuncationResponse> {
 
         try {
             const newFundRaiser = new this.FundRaiserModel(initialData);

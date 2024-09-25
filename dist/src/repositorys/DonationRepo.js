@@ -13,6 +13,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const DonationHistory_1 = __importDefault(require("../db/model/DonationHistory"));
+const PaymentOrder_1 = __importDefault(require("../db/model/PaymentOrder"));
 class DonationRepo {
     getStatitics() {
         return __awaiter(this, void 0, void 0, function* () {
@@ -32,8 +33,10 @@ class DonationRepo {
     }
     findOrder(order_id) {
         return __awaiter(this, void 0, void 0, function* () {
+            console.log("Oderid");
+            console.log(order_id);
             try {
-                const payment = yield DonationHistory_1.default.aggregate([
+                const payment = yield PaymentOrder_1.default.aggregate([
                     {
                         $match: {
                             order_id

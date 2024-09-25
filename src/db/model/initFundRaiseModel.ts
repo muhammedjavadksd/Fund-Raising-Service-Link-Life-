@@ -72,7 +72,6 @@ const schemeFundRaise = new mongoose.Schema<iFundRaiseModel>({
     },
     user_id: {
         type: Schema.Types.ObjectId,
-        required: true
     },
     age: {
         type: Number,

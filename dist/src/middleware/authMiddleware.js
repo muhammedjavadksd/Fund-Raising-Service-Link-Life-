@@ -161,6 +161,7 @@ class AuthMiddleware {
                 req.context.auth_token = token;
                 if (checkValidity && typeof checkValidity == "object") {
                     if ((checkValidity === null || checkValidity === void 0 ? void 0 : checkValidity.email) && checkValidity.role == "admin") {
+                        console.log(checkValidity);
                         req.context.email_id = checkValidity === null || checkValidity === void 0 ? void 0 : checkValidity.email;
                         req.context.token = token;
                         req.context.user_id = checkValidity.id;

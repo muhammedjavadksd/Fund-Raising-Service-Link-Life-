@@ -121,6 +121,8 @@ class FundRaiserService {
                     }
                 };
                 const request = yield axios_1.default.request(authOptions);
+                console.log("fund-raising");
+                console.log(request);
                 const responseData = request.data.data;
                 console.log(responseData);
                 const { token } = responseData;
@@ -293,26 +295,12 @@ class FundRaiserService {
                 const createFundRaise = yield this.FundRaiserRepo.createFundRaiserPost(data); //this.createFundRaisePost(data);
                 console.log(createFundRaise);
                 console.log("this");
-                // const picturesPreisgnedUrl = []
-                // const DocumentsPreisgnedUrl = []
-                // const utlHelper = new UtilHelper()
-                // for (let index = 0; index < const_data.FUND_RAISER_DOCUMENTS_LENGTH; index++) {
-                //     const randomImageName = `${utlHelper.createRandomText(5)}${new Date().getMilliseconds()}.jpeg`
-                //     const picPresignedUrl = await this.fundRaiserPictureBucket.generatePresignedUrl(`pics_${randomImageName}`)
-                //     const docsPresignedUrl = await this.fundRaiserDocumentBucket.generatePresignedUrl(`docs_${randomImageName}`)
-                //     picturesPreisgnedUrl.push(picPresignedUrl)
-                //     DocumentsPreisgnedUrl.push(docsPresignedUrl)
-                // }
                 return {
                     status: createFundRaise.status,
                     msg: createFundRaise.msg,
                     data: {
                         id: (_a = createFundRaise.data) === null || _a === void 0 ? void 0 : _a.id,
                         fund_id: (_b = createFundRaise.data) === null || _b === void 0 ? void 0 : _b.fund_id,
-                        // upload_images: {
-                        //     pictures: picturesPreisgnedUrl,
-                        //     documents: DocumentsPreisgnedUrl
-                        // }
                     },
                     statusCode: createFundRaise.statusCode
                 };
@@ -538,6 +526,7 @@ class FundRaiserService {
                 }
                 const initFundRaise = yield this.FundRaiserRepo.findFundPostByFundId(fundRaiserID);
                 ;
+                console.log(initFundRaise);
                 if (initFundRaise) {
                     const replaceImage = initFundRaise[field]; //initFundRaise[field] as string[]
                     initFundRaise[field] = [...replaceImage, ...newImages];

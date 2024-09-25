@@ -1,4 +1,5 @@
 import DonateHistoryCollection from "../db/model/DonationHistory";
+import PaymentOrderCollection from "../db/model/PaymentOrder";
 import { IDonateHistoryCollection, IDonateHistoryTemplate } from "../types/Interface/IDBmodel";
 import { IPaginatedResponse } from "../types/Interface/Util";
 
@@ -38,8 +39,13 @@ class DonationRepo implements IDonationRepo {
 
 
     async findOrder(order_id: string): Promise<null | IDonateHistoryCollection> {
+
+        console.log("Oderid");
+
+        console.log(order_id);
+
         try {
-            const payment = await DonateHistoryCollection.aggregate([
+            const payment = await PaymentOrderCollection.aggregate([
                 {
                     $match: {
                         order_id

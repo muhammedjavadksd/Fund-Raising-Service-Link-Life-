@@ -9,6 +9,7 @@ const openapi_json_1 = __importDefault(require("./openapi.json"));
 class SDK {
     constructor() {
         this.spec = oas_1.default.init(openapi_json_1.default);
+        //@ts-ignore
         this.core = new core_1.default(this.spec, 'cashfreedocs-new/2023-10-26 (api/6.1.2)');
     }
     /**

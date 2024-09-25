@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { IEditableFundRaiser, IFundRaise, IFundRaiseInitialData, iFundRaiseModel } from "../types/Interface/IDBmodel";
+import { IAdminAddFundRaiser, IEditableFundRaiser, IFundRaise, IFundRaiseInitialData, iFundRaiseModel } from "../types/Interface/IDBmodel";
 import { FundRaiserCreatedBy, FundRaiserStatus } from "../types/Enums/DbEnum";
 import FundRaiserRepo from "../repositorys/FundRaiserRepo";
 import { HelperFuncationResponse, IPaginatedResponse } from "../types/Interface/Util";
@@ -9,6 +9,7 @@ import { IAdminController } from "../types/Interface/IController";
 import { FundRaiserBankAccountType, FundRaiserCategory, FundRaiserFileType, StatusCode } from "../types/Enums/UtilEnum";
 import { File } from "node:buffer";
 import DonationService from "../services/DonationService";
+import { CustomRequest } from "../types/DataType/Objects";
 
 class AdminController implements IAdminController {
 
@@ -25,6 +26,8 @@ class AdminController implements IAdminController {
         this.updateStatus = this.updateStatus.bind(this)
         this.closeFundRaiser = this.closeFundRaiser.bind(this)
         this.getStatitics = this.getStatitics.bind(this)
+        this.presignedUrl = this.presignedUrl.bind(this)
+        this.uploadImages = this.uploadImages.bind(this)
 
         this.fundRaiserRepo = new FundRaiserRepo();
         this.fundRaiserService = new FundRaiserService();
@@ -49,6 +52,28 @@ class AdminController implements IAdminController {
         res.status(donationHistory.statusCode).json({ status: donationHistory.status, msg: donationHistory.msg, data: donationHistory.data });
     }
 
+    async presignedUrl(req: Request, res: Response): Promise<void> {
+
+        const type: FundRaiserFileType = req.query.type as FundRaiserFileType;
+        const presignedUrl = await this.fundRaiserService.createPresignedUrl(type)
+        res.status(presignedUrl.statusCode).json({ status: presignedUrl.status, msg: presignedUrl.msg, data: presignedUrl.data });
+    }
+
+    async uploadImages(req: Request, res: Response): Promise<void> {
+
+        const image: string[] = req.body.image
+        const fund_id: string = req.params.edit_id
+        const type: FundRaiserFileType = req.body.type
+
+        console.log("The images");
+
+        console.log(image);
+
+
+        const uploadImage = await this.fundRaiserService.uploadImage(image, fund_id, type);
+        res.status(uploadImage.statusCode).json({ status: uploadImage.status, msg: uploadImage.msg, data: uploadImage.data });
+    }
+
     async getAllFundRaise(req: Request, res: Response): Promise<void> {
         console.log("Reached here");
 
@@ -58,7 +83,32 @@ class AdminController implements IAdminController {
             const limit: number = Number(req.params.limit);
             const page: number = Number(req.params.page);
             const status: FundRaiserStatus = req.params.status as FundRaiserStatus;
-            const fundRaisersPost: IPaginatedResponse<iFundRaiseModel> = await this.fundRaiserRepo.getAllFundRaiserPost(page, limit, status)
+            let filter: Record<string, any> = {};
+
+            if (req.query.sub_category) {
+                filter['sub_category'] = req.query.sub_category
+            }
+            if (req.query.category) {
+                filter['category'] = req.query.category
+            }
+            if (req.query.urgency) {
+                filter['urgency'] = req.query.urgency == "urgent"
+            }
+            if (req.query.state) {
+                filter['state'] = req.query.state
+            }
+            if (req.query.min || req.query.max) {
+                filter['amount'] = {};
+
+                if (req.query.min) {
+                    filter['amount'].$gte = +req.query.min;
+                }
+
+                if (req.query.max) {
+                    filter['amount'].$lte = +req.query.max;
+                }
+            }
+            const fundRaisersPost: IPaginatedResponse<iFundRaiseModel> = await this.fundRaiserRepo.getAllFundRaiserPost(page, limit, status, filter)
 
             if (fundRaisersPost?.paginated.length) {
                 res.status(StatusCode.OK).json({
@@ -100,6 +150,8 @@ class AdminController implements IAdminController {
 
 
             const updateFundRaiser: HelperFuncationResponse = await this.fundRaiserService.editFundRaiser(fund_id, edit_data);
+            console.log("This worked");
+
             res.status(updateFundRaiser.statusCode).json({
                 status: updateFundRaiser.status,
                 msg: updateFundRaiser.msg
@@ -114,7 +166,7 @@ class AdminController implements IAdminController {
         }
     }
 
-    addFundRaiser(req: Request, res: Response): void {
+    addFundRaiser(req: CustomRequest, res: Response): void {
         try {
 
             const amount: number = req.body.amount;
@@ -122,73 +174,51 @@ class AdminController implements IAdminController {
             const sub_category: string = req.body.sub_category;
             const phone_number: number = req.body.phone_number;
             const email_id: string = req.body.email_id;
-            const age: number = req.body.age;
             const about: string = req.body.about;
-            const description: string = req.body.description;
             const benificiary_relation: string = req.body.benificiary_relation;
-            const full_name: string = req.body.full_name;
             const city: string = req.body.city;
+            const deadline: Date = req.body.deadline;
+            const description: string = req.body.description;
             const district: string = req.body.district;
-            const full_address: string = req.body.full_address;
-            const pincode: number = req.body.pin_code;
-            const state: string = req.body.state
-            const documents: number = req.body.documents
-            const pictures: number = req.body.pictures
-
-            console.log(req.body);
-            console.log("body");
-
-            console.log("Reached here");
+            const fullAddress: string = req.body.fullAddress;
+            const pinCode: string = req.body.pinCode;
+            const raiser_age: number = req.body.raiser_age;
+            const raiser_name: string = req.body.raiser_name;
+            const state: string = req.body.state;
 
 
-            console.log(documents);
-            console.log(pictures);
+            console.log("User ID");
 
+            console.log(req.context?.user_id);
 
             const utilHelper = new UtilHelper();
 
             const fundID: string = utilHelper.createFundRaiseID(FundRaiserCreatedBy.ADMIN).toUpperCase()
             const createdDate: Date = new Date()
-            const fundRaiserData: IFundRaise = {
-                withdraw_docs: {
-                    accont_type: FundRaiserBankAccountType.Savings,
-                    account_number: '',
-                    holder_name: "",
-                    ifsc_code: ""
-                },
-                "fund_id": fundID,
-                "amount": amount,
-                "category": category,
-                "sub_category": sub_category,
-                "phone_number": phone_number,
-                "email_id": email_id,
-                "description": description,
-                "created_date": createdDate,
-                "created_by": FundRaiserCreatedBy.ADMIN,
-                "user_id": "667868f8e5922a99a6e87d95",
-                "closed": false,
-                "status": FundRaiserStatus.INITIATED,
-                "about": about,
-                "age": age,
-                "benificiary_relation": benificiary_relation,
-                "full_name": full_name,
-                "city": city,
-                "district": district,
-                "full_address": full_address,
-                "pincode": pincode,
-                "state": state
+            const fundRaiserData: IAdminAddFundRaiser = {
+                created_by: FundRaiserCreatedBy.ADMIN,
+                created_date: createdDate,
+                about,
+                amount,
+                benificiary_relation,
+                category,
+                city,
+                deadline,
+                description,
+                district,
+                email_id,
+                full_address: fullAddress,
+                fund_id: fundID,
+                phone_number: phone_number.toString(),
+                pincode: pinCode,
+                age: raiser_age,
+                full_name: raiser_name,
+                state,
+                status: FundRaiserStatus.INITIATED,
+                sub_category
             }
 
-            console.log("Thsi data will svae");
-
-            console.log(fundRaiserData);
-
             this.fundRaiserService.createFundRaisePost(fundRaiserData).then(async (data) => {
-                let picturesUrl = data.data?.upload_images?.pictures.slice(0, pictures)
-                let documentsUrl = data.data?.upload_images?.pictures.slice(0, documents)
-
-                await this.fundRaiserService.uploadImage(picturesUrl, fundID, FundRaiserFileType.Pictures)
-                await this.fundRaiserService.uploadImage(documentsUrl, fundID, FundRaiserFileType.Document)
                 res.status(data.statusCode).json({ status: true, msg: data.msg, data: data.data })
             }).catch((err) => {
                 res.status(500).json({ status: false, msg: "Interanl server error", })

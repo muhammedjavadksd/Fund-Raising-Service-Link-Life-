@@ -92,7 +92,6 @@ const schemeFundRaise = new mongoose_1.default.Schema({
     },
     user_id: {
         type: mongoose_1.Schema.Types.ObjectId,
-        required: true
     },
     age: {
         type: Number,

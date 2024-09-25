@@ -1,7 +1,7 @@
 import FundRaiserRepo from "../repositorys/FundRaiserRepo";
 import { FundRaiserCreatedBy, FundRaiserStatus } from "../types/Enums/DbEnum";
 import { FundRaiserFileType, JwtTimer, JwtType, StatusCode } from "../types/Enums/UtilEnum";
-import { IEditableFundRaiser, IFundRaise, IFundRaiseInitialData, iFundRaiseModel } from "../types/Interface/IDBmodel";
+import { IAdminAddFundRaiser, IEditableFundRaiser, IFundRaise, IFundRaiseInitialData, iFundRaiseModel } from "../types/Interface/IDBmodel";
 import { IFundRaiserService } from "../types/Interface/IService";
 import { HelperFuncationResponse, ICloseFundRaiseJwtToken, IPaginatedResponse } from "../types/Interface/Util";
 import fs from 'fs'
@@ -127,6 +127,9 @@ class FundRaiserService implements IFundRaiserService {
             };
 
             const request = await axios.request(authOptions)
+            console.log("fund-raising");
+            console.log(request);
+
             const responseData = request.data.data
             console.log(responseData);
 
@@ -307,7 +310,7 @@ class FundRaiserService implements IFundRaiserService {
         }
     }
 
-    async createFundRaisePost(data: IFundRaiseInitialData | IFundRaise): Promise<HelperFuncationResponse> {
+    async createFundRaisePost(data: IFundRaiseInitialData | IAdminAddFundRaiser): Promise<HelperFuncationResponse> {
 
         console.log(data);
 
@@ -317,28 +320,12 @@ class FundRaiserService implements IFundRaiserService {
             console.log(createFundRaise);
             console.log("this");
 
-
-            // const picturesPreisgnedUrl = []
-            // const DocumentsPreisgnedUrl = []
-            // const utlHelper = new UtilHelper()
-            // for (let index = 0; index < const_data.FUND_RAISER_DOCUMENTS_LENGTH; index++) {
-            //     const randomImageName = `${utlHelper.createRandomText(5)}${new Date().getMilliseconds()}.jpeg`
-            //     const picPresignedUrl = await this.fundRaiserPictureBucket.generatePresignedUrl(`pics_${randomImageName}`)
-            //     const docsPresignedUrl = await this.fundRaiserDocumentBucket.generatePresignedUrl(`docs_${randomImageName}`)
-            //     picturesPreisgnedUrl.push(picPresignedUrl)
-            //     DocumentsPreisgnedUrl.push(docsPresignedUrl)
-            // }
-
             return {
                 status: createFundRaise.status,
                 msg: createFundRaise.msg,
                 data: {
                     id: createFundRaise.data?.id,
                     fund_id: createFundRaise.data?.fund_id,
-                    // upload_images: {
-                    //     pictures: picturesPreisgnedUrl,
-                    //     documents: DocumentsPreisgnedUrl
-                    // }
                 },
                 statusCode: createFundRaise.statusCode
             }
@@ -554,6 +541,10 @@ class FundRaiserService implements IFundRaiserService {
             }
 
             const initFundRaise: iFundRaiseModel | null = await this.FundRaiserRepo.findFundPostByFundId(fundRaiserID);;
+
+
+            console.log(initFundRaise);
+
 
             if (initFundRaise) {
                 const replaceImage: string[] = initFundRaise[field] //initFundRaise[field] as string[]

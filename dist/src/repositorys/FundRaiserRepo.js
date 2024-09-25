@@ -145,15 +145,18 @@ class FundRaiserRepo {
             }
         });
     }
-    getAllFundRaiserPost(page, limit, status) {
+    getAllFundRaiserPost(page, limit, status, filter) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const skip = (page - 1) * limit;
+                const match = filter;
+                if (status) {
+                    match['status'] = status;
+                }
+                console.log(match);
                 const fundRaisePost = yield this.FundRaiserModel.aggregate([
                     {
-                        $match: {
-                            status
-                        }
+                        $match: match
                     },
                     {
                         $facet: {
@@ -182,6 +185,8 @@ class FundRaiserRepo {
                         }
                     }
                 ]);
+                console.log(fundRaisePost);
+                console.log(match);
                 const response = {
                     paginated: fundRaisePost[0].paginated,
                     total_records: fundRaisePost[0].total_records,

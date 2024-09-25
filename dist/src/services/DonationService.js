@@ -245,6 +245,7 @@ class DonationService {
                 if (findOrder && !findOrder.status) {
                     const fundRaise = yield this.fundRepo.findFundPostByFundId(findOrder.fund_id);
                     if (fundRaise) {
+                        yield this.orderRepo.updateStatus(order_id, true);
                         const campignTitle = utilHelper.generateFundRaiserTitle(fundRaise);
                         try {
                             const donatedDate = utilHelper.formatDateToMonthNameAndDate(findOrder.date);
@@ -286,7 +287,6 @@ class DonationService {
                         console.log(donationHistory);
                         fundRaise.collected += (_f = (_e = verifyPayment === null || verifyPayment === void 0 ? void 0 : verifyPayment.data) === null || _e === void 0 ? void 0 : _e.order) === null || _f === void 0 ? void 0 : _f.order_amount;
                         yield this.fundRepo.updateFundRaiserByModel(fundRaise);
-                        yield this.orderRepo.updateStatus(order_id, true);
                         yield this.webHookRepo.updateWebhookStatus(order_id, true);
                         const insertHistory = yield this.donationHistoryRepo.insertDonationHistory(donationHistory);
                         console.log(insertHistory);

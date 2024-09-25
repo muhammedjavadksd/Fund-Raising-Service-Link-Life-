@@ -18,13 +18,13 @@ interface iFundRaiseModel extends Document, IFundRaise {
 }
 
 interface IFundRaiseInitialData {
-    validate: {
+    validate?: {
         otp: number,
         otp_expired: number
     }
     created_date: Date
     created_by: FundRaiserCreatedBy
-    user_id: mongoose.Types.ObjectId | string
+    user_id?: mongoose.Types.ObjectId | string
     fund_id: string
     amount: number
     category: string
@@ -62,6 +62,29 @@ interface IWithdrawDetails {
     accont_type: FundRaiserBankAccountType
 }
 
+interface IAdminAddFundRaiser {
+    created_by: FundRaiserCreatedBy,
+    fund_id: string,
+    status: FundRaiserStatus,
+    full_name: string;               // Name of the fundraiser
+    age: number | null;         // Age of the fundraiser (nullable)
+    deadline: Date | null;             // Deadline for the fundraiser (nullable)
+    benificiary_relation: string;      // Relation to the beneficiary
+    amount: number | null;             // Amount to be raised (nullable)
+    category: string;                  // Category of the fundraiser
+    sub_category: string;               // Sub-category of the fundraiser
+    phone_number: string | null;       // Phone number (nullable)
+    email_id: string;                  // Email address
+    city: string;                      // City of the fundraiser
+    pincode: string | null;            // Pincode (nullable)
+    state: string;                     // State of the fundraiser
+    district: string;                  // District of the fundraiser
+    full_address: string;               // Full address of the fundraiser
+    about: string;                     // Information about the fundraiser
+    description: string;               // Detailed description of the fundraiser
+    created_date: Date,
+}
+
 interface IFundRaise {
     "benf_id"?: string
     "close_token"?: string
@@ -74,7 +97,7 @@ interface IFundRaise {
     "created_date": Date,
     "description": string,
     "created_by": FundRaiserCreatedBy,
-    "user_id": mongoose.Types.ObjectId | string,
+    "user_id"?: mongoose.Types.ObjectId | string,
     "closed": boolean,
     "status": FundRaiserStatus,
     "about": string,
@@ -157,4 +180,4 @@ interface IWebhookCollection extends WebhookPayload, Document {
 }
 
 export { IMetaData, IMetaDataCollection }
-export { IPaymentOrderCollection, IPaymentOrder, IDonateHistoryTemplate, IDonateHistoryCollection, IWebhookCollection, IPaginatedCommente, ICommentCollection, ICommentTemplate, IWithdrawDetails, IFundRaise, IFundRaiseInitialData, iFundRaiseModel, IEditableFundRaiser }
+export { IPaymentOrderCollection, IPaymentOrder, IDonateHistoryTemplate, IDonateHistoryCollection, IWebhookCollection, IPaginatedCommente, ICommentCollection, ICommentTemplate, IWithdrawDetails, IFundRaise, IFundRaiseInitialData, iFundRaiseModel, IEditableFundRaiser, IAdminAddFundRaiser }

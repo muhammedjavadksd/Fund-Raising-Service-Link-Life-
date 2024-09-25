@@ -181,6 +181,10 @@ class AuthMiddleware implements IAuthMiddleware {
 
             if (checkValidity && typeof checkValidity == "object") {
                 if (checkValidity?.email && checkValidity.role == "admin") {
+
+
+                    console.log(checkValidity);
+
                     req.context.email_id = checkValidity?.email;
                     req.context.token = token;
                     req.context.user_id = checkValidity.id;
