@@ -28,10 +28,20 @@ class AdminController implements IAdminController {
         this.getStatitics = this.getStatitics.bind(this)
         this.presignedUrl = this.presignedUrl.bind(this)
         this.uploadImages = this.uploadImages.bind(this)
-
+        this.deleteFundRaiserImage = this.deleteFundRaiserImage.bind(this)
         this.fundRaiserRepo = new FundRaiserRepo();
         this.fundRaiserService = new FundRaiserService();
         this.donationService = new DonationService()
+    }
+
+    async deleteFundRaiserImage(req: Request, res: Response): Promise<void> {
+
+        const fundId: string = req.params.fund_id;
+        const type: FundRaiserFileType = req.params.type as FundRaiserFileType;
+        const image: string = req.query.image?.toString() || '';
+
+        const deleteImage = await this.fundRaiserService.deleteFundRaiserImage(fundId, image, type);
+        res.status(deleteImage.statusCode).json({ status: deleteImage.status, msg: deleteImage.msg, data: deleteImage.data })
     }
 
 

@@ -34,12 +34,52 @@ class FundRaiserService {
         this.paginatedFundRaiserByCategory = this.paginatedFundRaiserByCategory.bind(this);
         this.closeFundRaiserVerification = this.closeFundRaiserVerification.bind(this);
         this.createPresignedUrl = this.createPresignedUrl.bind(this);
+        this.deleteFundRaiserImage = this.deleteFundRaiserImage.bind(this);
         (0, dotenv_1.config)();
         this.FundRaiserRepo = new FundRaiserRepo_1.default();
         console.log("Main bucket  name");
         console.log(process.env.FUND_RAISER_BUCKET);
         this.fundRaiserPictureBucket = new s3Bucket_1.default(process.env.FUND_RAISER_BUCKET || "", ConstData_1.S3Folder.FundRaiserPicture);
         this.fundRaiserDocumentBucket = new s3Bucket_1.default(process.env.FUND_RAISER_BUCKET || "", ConstData_1.S3Folder.FundRaiserDocument);
+    }
+    deleteFundRaiserImage(fundId, image, type) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const findProfile = yield this.FundRaiserRepo.findFundPostByFundId(fundId);
+            if (findProfile) {
+                const field = type == UtilEnum_1.FundRaiserFileType.Document ? 'documents' : 'picture';
+                if (findProfile[field].length < 4) {
+                    return {
+                        status: false,
+                        msg: "Image deletion is not allowed; at least 3 images must be retained",
+                        statusCode: UtilEnum_1.StatusCode.BAD_REQUESR
+                    };
+                }
+                else {
+                    const deletePic = type == UtilEnum_1.FundRaiserFileType.Pictures ? yield this.FundRaiserRepo.deleteOnePicture(fundId, image) : yield this.FundRaiserRepo.deleteOneDocument(fundId, image);
+                    if (deletePic) {
+                        return {
+                            msg: `${type} delete success`,
+                            status: true,
+                            statusCode: UtilEnum_1.StatusCode.OK
+                        };
+                    }
+                    else {
+                        return {
+                            msg: `${type} delete failed`,
+                            status: false,
+                            statusCode: UtilEnum_1.StatusCode.BAD_REQUESR
+                        };
+                    }
+                }
+            }
+            else {
+                return {
+                    msg: `Profile not found`,
+                    status: false,
+                    statusCode: UtilEnum_1.StatusCode.NOT_FOUND
+                };
+            }
+        });
     }
     createPresignedUrl(type) {
         return __awaiter(this, void 0, void 0, function* () {

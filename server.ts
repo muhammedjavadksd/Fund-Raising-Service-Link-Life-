@@ -8,6 +8,7 @@ import adminRouter from './src/router/adminRouter';
 import path from 'path'
 import PaymentHelper from './src/util/helper/paymentHelper';
 import FundRaiserService from './src/services/FundRaiserService';
+import UtilHelper from './src/util/helper/utilHelper';
 
 const envPath = path.resolve(__dirname, "../.env")
 console.log(envPath);
@@ -24,6 +25,10 @@ app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
 app.use(morgan("dev"))
+
+
+const s = new UtilHelper();
+s.createFundRaiserReport()
 
 const SmeeClient = require('smee-client')
 

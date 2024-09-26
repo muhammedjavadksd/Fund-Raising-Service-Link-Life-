@@ -30,9 +30,20 @@ class AdminController {
         this.getStatitics = this.getStatitics.bind(this);
         this.presignedUrl = this.presignedUrl.bind(this);
         this.uploadImages = this.uploadImages.bind(this);
+        this.deleteFundRaiserImage = this.deleteFundRaiserImage.bind(this);
         this.fundRaiserRepo = new FundRaiserRepo_1.default();
         this.fundRaiserService = new FundRaiserService_1.default();
         this.donationService = new DonationService_1.default();
+    }
+    deleteFundRaiserImage(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            var _a;
+            const fundId = req.params.fund_id;
+            const type = req.params.type;
+            const image = ((_a = req.query.image) === null || _a === void 0 ? void 0 : _a.toString()) || '';
+            const deleteImage = yield this.fundRaiserService.deleteFundRaiserImage(fundId, image, type);
+            res.status(deleteImage.statusCode).json({ status: deleteImage.status, msg: deleteImage.msg, data: deleteImage.data });
+        });
     }
     getStatitics(req, res) {
         return __awaiter(this, void 0, void 0, function* () {

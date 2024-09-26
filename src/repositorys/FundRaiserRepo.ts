@@ -26,8 +26,22 @@ class FundRaiserRepo implements IFundRaiserRepo {
         this.getSingleFundRaiseOfUser = this.getSingleFundRaiseOfUser.bind(this)
         this.fundRaiserPaginatedByCategory = this.fundRaiserPaginatedByCategory.bind(this);
         this.closeFundRaiser = this.closeFundRaiser.bind(this);
+        this.deleteOneDocument = this.deleteOneDocument.bind(this)
+        this.deleteOnePicture = this.deleteOnePicture.bind(this)
 
         this.FundRaiserModel = InitFundRaisingModel
+    }
+
+
+    async deleteOneDocument(fundId: string, image: string): Promise<boolean> {
+        const deleteDoc = await this.FundRaiserModel.updateOne({ fund_id: fundId }, { $pull: { documents: image } })
+        return deleteDoc.modifiedCount > 0
+    }
+
+
+    async deleteOnePicture(fundId: string, image: string): Promise<boolean> {
+        const deleteDoc = await this.FundRaiserModel.updateOne({ fund_id: fundId }, { $pull: { picture: image } })
+        return deleteDoc.modifiedCount > 0
     }
 
 

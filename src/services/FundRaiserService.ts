@@ -33,6 +33,7 @@ class FundRaiserService implements IFundRaiserService {
         this.paginatedFundRaiserByCategory = this.paginatedFundRaiserByCategory.bind(this);
         this.closeFundRaiserVerification = this.closeFundRaiserVerification.bind(this);
         this.createPresignedUrl = this.createPresignedUrl.bind(this)
+        this.deleteFundRaiserImage = this.deleteFundRaiserImage.bind(this)
         config()
         this.FundRaiserRepo = new FundRaiserRepo();
         console.log("Main bucket  name");
@@ -40,6 +41,42 @@ class FundRaiserService implements IFundRaiserService {
 
         this.fundRaiserPictureBucket = new S3BucketHelper(process.env.FUND_RAISER_BUCKET || "", S3Folder.FundRaiserPicture);
         this.fundRaiserDocumentBucket = new S3BucketHelper(process.env.FUND_RAISER_BUCKET || "", S3Folder.FundRaiserDocument);
+    }
+
+    async deleteFundRaiserImage(fundId: string, image: string, type: FundRaiserFileType): Promise<HelperFuncationResponse> {
+
+        const findProfile = await this.FundRaiserRepo.findFundPostByFundId(fundId)
+        if (findProfile) {
+            const field = type == FundRaiserFileType.Document ? 'documents' : 'picture'
+            if (findProfile[field].length < 4) {
+                return {
+                    status: false,
+                    msg: "Image deletion is not allowed; at least 3 images must be retained",
+                    statusCode: StatusCode.BAD_REQUESR
+                }
+            } else {
+                const deletePic = type == FundRaiserFileType.Pictures ? await this.FundRaiserRepo.deleteOnePicture(fundId, image) : await this.FundRaiserRepo.deleteOneDocument(fundId, image);
+                if (deletePic) {
+                    return {
+                        msg: `${type} delete success`,
+                        status: true,
+                        statusCode: StatusCode.OK
+                    }
+                } else {
+                    return {
+                        msg: `${type} delete failed`,
+                        status: false,
+                        statusCode: StatusCode.BAD_REQUESR
+                    }
+                }
+            }
+        } else {
+            return {
+                msg: `Profile not found`,
+                status: false,
+                statusCode: StatusCode.NOT_FOUND
+            }
+        }
     }
 
 

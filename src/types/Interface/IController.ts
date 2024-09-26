@@ -26,6 +26,7 @@ interface IUserController {
 }
 
 interface IAdminController {
+    deleteFundRaiserImage(req: Request, res: Response): Promise<void>
     getStatitics(req: Request, res: Response): Promise<void>
     getAllFundRaise(req: Request, res: Response): Promise<void>
     getSingleProfile(req: Request, res: Response): Promise<void>

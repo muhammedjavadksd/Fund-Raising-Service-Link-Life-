@@ -22,5 +22,5 @@ adminRouter.patch("/upload_images/:edit_id", authMiddleware.isValidAdmin, AdminC
 adminRouter.patch("/edit/:edit_id", AdminControllers.editFundRaiser); //test completed
 adminRouter.patch("/update_status/:edit_id", authMiddleware.isValidAdmin, AdminControllers.updateStatus); //test completed
 adminRouter.patch("/close/:edit_id", authMiddleware.isValidAdmin, AdminControllers.closeFundRaiser); //test completed
-// adminRouter.post("/edit_fundraise", AdminControllers.editFundRaiser) // test completed
+adminRouter.delete("/delete-images/:fund_id/:type", authMiddleware.isValidAdmin, AdminControllers.deleteFundRaiserImage); // test completed
 exports.default = adminRouter;

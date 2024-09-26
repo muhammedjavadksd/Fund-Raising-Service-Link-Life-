@@ -3,6 +3,8 @@ import { IEditableFundRaiser, IFundRaise, iFundRaiseModel } from "./IDBmodel"
 import { HelperFuncationResponse, IPaginatedResponse } from "./Util"
 
 interface IFundRaiserRepo {
+    deleteOnePicture(fundId: string, image: string): Promise<boolean>
+    deleteOneDocument(fundId: string, image: string): Promise<boolean>
     getStatitics(): Promise<Record<string, any>>
     getSingleFundRaiseOfUser(user_id: string, fund_id: string): Promise<iFundRaiseModel | null>
     findFundPostByFundId(fund_id: string): Promise<iFundRaiseModel | null>

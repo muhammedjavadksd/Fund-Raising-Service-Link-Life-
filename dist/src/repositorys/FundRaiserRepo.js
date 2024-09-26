@@ -30,7 +30,21 @@ class FundRaiserRepo {
         this.getSingleFundRaiseOfUser = this.getSingleFundRaiseOfUser.bind(this);
         this.fundRaiserPaginatedByCategory = this.fundRaiserPaginatedByCategory.bind(this);
         this.closeFundRaiser = this.closeFundRaiser.bind(this);
+        this.deleteOneDocument = this.deleteOneDocument.bind(this);
+        this.deleteOnePicture = this.deleteOnePicture.bind(this);
         this.FundRaiserModel = initFundRaiseModel_1.default;
+    }
+    deleteOneDocument(fundId, image) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const deleteDoc = yield this.FundRaiserModel.updateOne({ fund_id: fundId }, { $pull: { documents: image } });
+            return deleteDoc.modifiedCount > 0;
+        });
+    }
+    deleteOnePicture(fundId, image) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const deleteDoc = yield this.FundRaiserModel.updateOne({ fund_id: fundId }, { $pull: { picture: image } });
+            return deleteDoc.modifiedCount > 0;
+        });
     }
     getStatitics() {
         return __awaiter(this, void 0, void 0, function* () {
