@@ -11,9 +11,9 @@ const UserControllers = new userController_1.default();
 const authMiddleware = new authMiddleware_1.default();
 const multer = require("multer");
 const multerDisk = multer.memoryStorage();
-const multerStorage = multer({ storage: multerDisk });
-// userRouter.get("/generate_presigned_url", UserControllers.getPresignedUrl); //test completed
-// userRouter.put("/upload_image_presigned", multerStorage.single("file"), UserControllers.uploadImageIntoS3); //test completed
+userRouter.get("/", (req, res) => {
+    res.status(200).send("Welcome to fund raiser service");
+});
 //Get method
 userRouter.get("/view/self/:limit/:page/:status?", authMiddleware.isValidUser, UserControllers.getUserFundRaisePost); //test completed
 userRouter.get("/view/:category/:limit/:page", UserControllers.categoryFundRaiserPaginated); //test completed

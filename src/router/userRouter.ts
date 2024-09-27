@@ -1,18 +1,18 @@
 import UserController from "../controller/userController";
 import express, { Router } from 'express'
 import AuthMiddleware from "../middleware/authMiddleware";
-
+import { Request, Response } from 'express'
 const userRouter: Router = express.Router();
 
 const UserControllers = new UserController();
 const authMiddleware = new AuthMiddleware()
 const multer = require("multer");
 const multerDisk = multer.memoryStorage();
-const multerStorage = multer({ storage: multerDisk })
 
-// userRouter.get("/generate_presigned_url", UserControllers.getPresignedUrl); //test completed
-// userRouter.put("/upload_image_presigned", multerStorage.single("file"), UserControllers.uploadImageIntoS3); //test completed
 
+userRouter.get("/", (req: Request, res: Response) => {
+    res.status(200).send("Welcome to fund raiser service");
+})
 
 //Get method
 userRouter.get("/view/self/:limit/:page/:status?", authMiddleware.isValidUser, UserControllers.getUserFundRaisePost); //test completed
