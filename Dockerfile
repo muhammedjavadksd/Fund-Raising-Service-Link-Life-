@@ -4,4 +4,8 @@ COPY .package*.json ./
 COPY . .
 RUN npm install
 RUN npx tsc
+WORKDIR .src/apis
+RUN npm install
+WORKDIR app/FundRaising
+RUN npm update
 CMD ["npm","start"]

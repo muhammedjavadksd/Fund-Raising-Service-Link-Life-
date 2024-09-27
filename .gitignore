@@ -1,5 +1,4 @@
 .git
 /node_modules
 .env
-src/apis
-src/.api
+src/apis/cashfreedocs-new/node_modules
