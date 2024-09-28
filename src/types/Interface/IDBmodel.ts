@@ -165,10 +165,20 @@ interface IMetaData {
     metadata: Map<any, any>
 }
 
+interface IBankAccount {
+    befId: string,
+    account_number: number,
+    ifsc_code: string,
+    holder_name: string,
+    account_type: 'saving' | 'current',
+    fund_id: string
+}
+
 
 interface IMetaDataCollection extends Document, IMetaData { }
 interface IDonateHistoryCollection extends Document, IDonateHistoryTemplate { }
 interface IPaymentOrderCollection extends IPaymentOrder, Document { }
+interface IBankAccountCollection extends IBankAccount, Document { }
 
 interface ICommentCollection extends Document, ICommentTemplate {
 }
@@ -180,4 +190,5 @@ interface IWebhookCollection extends WebhookPayload, Document {
 }
 
 export { IMetaData, IMetaDataCollection }
-export { IPaymentOrderCollection, IPaymentOrder, IDonateHistoryTemplate, IDonateHistoryCollection, IWebhookCollection, IPaginatedCommente, ICommentCollection, ICommentTemplate, IWithdrawDetails, IFundRaise, IFundRaiseInitialData, iFundRaiseModel, IEditableFundRaiser, IAdminAddFundRaiser }
+interface IBankAccountCollection extends IBankAccount, Document { }
+export { IPaymentOrderCollection, IPaymentOrder, IDonateHistoryTemplate, IDonateHistoryCollection, IWebhookCollection, IPaginatedCommente, ICommentCollection, ICommentTemplate, IWithdrawDetails, IFundRaise, IFundRaiseInitialData, iFundRaiseModel, IEditableFundRaiser, IAdminAddFundRaiser, IBankAccountCollection, IBankAccount }
