@@ -49,11 +49,22 @@ class UserController implements IUserController {
         this.getPresignedUrl = this.getPresignedUrl.bind(this)
         this.addBankAccount = this.addBankAccount.bind(this)
         this.getBankAccounts = this.getBankAccounts.bind(this)
+        this.profileBankAccounts = this.profileBankAccounts.bind(this)
         this.fundRaiserService = new FundRaiserService();
         this.commentService = new CommentService();
         this.fundRaiserRepo = new FundRaiserRepo();
         this.donationService = new DonationService()
         this.bankAccountService = new BankAccountService()
+    }
+
+    async profileBankAccounts(req: CustomRequest, res: Response): Promise<void> {
+        const fundId: string = req.params.edit_id;
+        const page: number = +req.params.page;
+        const limit: number = +req.params.limit;
+
+        const findAllBenificiary = await this.bankAccountService.getActiveBankAccount(fundId, page, limit);
+        res.status(findAllBenificiary.statusCode).json({ status: findAllBenificiary.status, msg: findAllBenificiary.msg, data: findAllBenificiary.data })
+
     }
 
     async getBankAccounts(req: CustomRequest, res: Response): Promise<void> {

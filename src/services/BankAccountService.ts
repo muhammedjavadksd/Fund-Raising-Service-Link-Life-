@@ -11,6 +11,7 @@ interface IBankAccountService {
     deleteAccount(benfId: string): Promise<HelperFuncationResponse>
     updateAccount(banfId: string, data: Partial<IBankAccount>): Promise<HelperFuncationResponse>
     getAllBankAccount(fundId: string, page: number, limit: number): Promise<HelperFuncationResponse>
+    getActiveBankAccount(fundId: string, page: number, limit: number): Promise<HelperFuncationResponse>
 }
 
 
@@ -22,7 +23,28 @@ class BankAccountService implements IBankAccountService {
         this.addBankAccount = this.addBankAccount.bind(this)
         this.deleteAccount = this.deleteAccount.bind(this);
         this.updateAccount = this.updateAccount.bind(this)
+        this.getAllBankAccount = this.getAllBankAccount.bind(this)
+        this.getActiveBankAccount = this.getActiveBankAccount.bind(this);
         this.bankRepo = new BankAccountRepo()
+    }
+
+    async getActiveBankAccount(fundId: string, page: number, limit: number): Promise<HelperFuncationResponse> {
+        const skip: number = (page - 1) * limit;
+        const findAllAccount = await this.bankRepo.findActivePaginatedAccountsByProfile(fundId, skip, limit);
+        if (findAllAccount.paginated.length) {
+            return {
+                msg: "Bank account's fetch",
+                status: true,
+                statusCode: StatusCode.OK,
+                data: findAllAccount
+            }
+        } else {
+            return {
+                msg: "No data found",
+                status: false,
+                statusCode: StatusCode.NOT_FOUND
+            }
+        }
     }
 
 
@@ -48,7 +70,7 @@ class BankAccountService implements IBankAccountService {
 
     async addBankAccount(account_number: number, ifsc_code: string, holder_name: string, accountType: BankAccountType, fundId: string): Promise<HelperFuncationResponse> {
 
-        const findExist = await this.bankRepo.findByAccountNumber(account_number);
+        const findExist = await this.bankRepo.findLiveAccountByNumber(account_number);
         if (findExist) {
             return {
                 msg: "This bank account already using by other fund raiser profile",

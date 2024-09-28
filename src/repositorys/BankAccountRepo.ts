@@ -5,19 +5,21 @@ import { IPaginatedResponse } from "../types/Interface/Util";
 interface IBankAccountRepo {
     findOne(benfId: string): Promise<IBankAccountCollection | null>
     findPaginatedAccountsByProfile(fund_id: string, skip: number, limit: number): Promise<IPaginatedResponse<IBankAccountCollection>>
+    findActivePaginatedAccountsByProfile(fund_id: string, skip: number, limit: number): Promise<IPaginatedResponse<IBankAccountCollection>>
     deleteOne(benId: string): Promise<boolean>
     updateOne(benId: string, data: Partial<IBankAccount>): Promise<boolean>
     insertOne(data: IBankAccount): Promise<boolean>
-    findByAccountNumber(account: number): Promise<IBankAccountCollection | null>
+    findLiveAccountByNumber(account: number): Promise<IBankAccountCollection | null>
 }
 
 
 class BankAccountRepo implements IBankAccountRepo {
 
-    async findByAccountNumber(account: number): Promise<IBankAccountCollection | null> {
-        const findByAccountNumber = await BankAccountCollection.findOne({ account_number: account });
+    async findLiveAccountByNumber(account: number): Promise<IBankAccountCollection | null> {
+        const findByAccountNumber = await BankAccountCollection.findOne({ account_number: account, is_closed: false });
         return findByAccountNumber
     }
+
 
     async findOne(benfId: string): Promise<IBankAccountCollection | null> {
         const findone = await BankAccountCollection.findOne({ befId: benfId });
@@ -73,6 +75,60 @@ class BankAccountRepo implements IBankAccountRepo {
             }
         }
     }
+
+
+    async findActivePaginatedAccountsByProfile(fund_id: string, skip: number, limit: number): Promise<IPaginatedResponse<IBankAccountCollection>> {
+
+        try {
+            const findProfile = await BankAccountCollection.aggregate([
+                {
+                    $match: {
+                        fund_id,
+                        is_active: true,
+                        is_closed: false
+                    }
+                },
+                {
+                    $facet: {
+                        paginated: [
+                            {
+                                $skip: skip
+                            },
+                            {
+                                $limit: limit
+                            }
+                        ],
+                        total_records: [
+                            {
+                                $count: "total_records"
+                            }
+                        ]
+                    }
+                },
+                {
+                    $unwind: "$total_records"
+                },
+                {
+                    $project: {
+                        paginated: 1,
+                        total_records: "$total_records.total_records"
+                    }
+                }
+            ]);
+
+            const response: IPaginatedResponse<IBankAccountCollection> = {
+                paginated: findProfile[0].paginated,
+                total_records: findProfile[0].total_records,
+            }
+            return response
+        } catch (e) {
+            return {
+                paginated: [],
+                total_records: 0
+            }
+        }
+    }
+
 
     async deleteOne(benId: string): Promise<boolean> {
         const deleteOne = await BankAccountCollection.deleteOne({ befId: benId })
