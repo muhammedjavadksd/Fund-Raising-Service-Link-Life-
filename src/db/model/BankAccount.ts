@@ -1,5 +1,6 @@
 import { model, Schema } from "mongoose";
 import { IBankAccountCollection } from "../../types/Interface/IDBmodel";
+import { BankAccountType } from "../../types/Enums/DbEnum";
 
 
 const bankAccountSchema = new Schema<IBankAccountCollection>({
@@ -22,7 +23,7 @@ const bankAccountSchema = new Schema<IBankAccountCollection>({
     account_type: {
         type: String,
         required: true,
-        enum: ['saving', 'current']
+        enum: Object.values(BankAccountType)
     },
     fund_id: {
         type: String,

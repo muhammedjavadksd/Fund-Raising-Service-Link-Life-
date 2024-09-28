@@ -1,5 +1,5 @@
 import mongoose, { Document } from "mongoose";
-import { FundRaiserCreatedBy, FundRaiserStatus } from "../Enums/DbEnum";
+import { BankAccountType, FundRaiserCreatedBy, FundRaiserStatus } from "../Enums/DbEnum";
 import { FundRaiserBankAccountType, FundRaiserCategory } from "../Enums/UtilEnum";
 import { WebhookPayload } from "./Util";
 
@@ -170,7 +170,7 @@ interface IBankAccount {
     account_number: number,
     ifsc_code: string,
     holder_name: string,
-    account_type: 'saving' | 'current',
+    account_type: BankAccountType,
     fund_id: string
 }
 

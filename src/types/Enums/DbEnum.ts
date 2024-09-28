@@ -15,4 +15,10 @@ enum FundRaiserStatus {
     CLOSED = "CLOSED"
 }
 
-export { FundRaiserCreatedBy, FundRaiserStatus }
+
+enum BankAccountType {
+    Saving = "saving",
+    Current = "current",
+}
+
+export { FundRaiserCreatedBy, FundRaiserStatus, BankAccountType }

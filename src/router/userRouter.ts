@@ -31,7 +31,7 @@ userRouter.post("/verify-payment", UserControllers.verifyPayment)
 
 // POST method
 userRouter.post("/create", authMiddleware.isValidUser, UserControllers.createFundRaise); //test completed
-userRouter.post("/add-bank-account", authMiddleware.isValidUser, UserControllers.createFundRaise); //test completed
+userRouter.post("/add-bank-account", authMiddleware.isValidUser, UserControllers.addBankAccount); //test completed
 userRouter.post("/add_comment/:post_id", authMiddleware.isValidUser, UserControllers.addComment)
 userRouter.post("/verify-close-token", UserControllers.verifyCloseToken)
 
