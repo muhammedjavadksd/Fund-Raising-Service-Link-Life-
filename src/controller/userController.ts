@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import FundRaiserService from "../services/FundRaiserService";
 import { CustomRequest } from "../types/DataType/Objects";
-import { FundRaiserCreatedBy, FundRaiserStatus } from "../types/Enums/DbEnum";
+import { BankAccountType, FundRaiserCreatedBy, FundRaiserStatus } from "../types/Enums/DbEnum";
 import { HelperFuncationResponse, ICloseFundRaiseJwtToken, IPaginatedResponse, IVerifyPaymentResponse } from "../types/Interface/Util";
 import { IEditableFundRaiser, IFundRaise, IFundRaiseInitialData, iFundRaiseModel } from "../types/Interface/IDBmodel";
 import { FundRaiserFileType, JwtTimer, JwtType, StatusCode } from "../types/Enums/UtilEnum";
@@ -15,6 +15,7 @@ import url from 'url'
 import CommentService from "../services/CommentService";
 import TokenHelper from "../util/helper/tokenHelper";
 import DonationService from "../services/DonationService";
+import BankAccountService from "../services/BankAccountService";
 
 class UserController implements IUserController {
 
@@ -22,6 +23,7 @@ class UserController implements IUserController {
     private readonly commentService;
     private readonly fundRaiserRepo;
     private readonly donationService;
+    private readonly bankAccountService;
 
     constructor() {
 
@@ -49,6 +51,7 @@ class UserController implements IUserController {
         this.commentService = new CommentService();
         this.fundRaiserRepo = new FundRaiserRepo();
         this.donationService = new DonationService()
+        this.bankAccountService = new BankAccountService()
     }
 
 
@@ -56,13 +59,12 @@ class UserController implements IUserController {
         const accountNumber: number = req.body.account_number
         const ifsc_code: string = req.body.ifsc_code
         const holderName: string = req.body.holder_name
-        const accountType: string = req.body.account_type
+        const accountType: BankAccountType = req.body.account_type
+        const fund_id: string = req.params.fund_id
 
-        return;
+        const addBankAccount = await this.bankAccountService.addBankAccount(accountNumber, ifsc_code, holderName, accountType, fund_id);
+        res.status(addBankAccount.statusCode).json({ status: addBankAccount.status, msg: addBankAccount.msg, data: addBankAccount.data });
     }
-
-
-
 
     async findPaymentOrder(req: CustomRequest, res: Response): Promise<void> {
 
