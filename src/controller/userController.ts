@@ -52,6 +52,16 @@ class UserController implements IUserController {
     }
 
 
+    async addBankAccount(req: CustomRequest, res: Response): Promise<void> {
+        const accountNumber: number = req.body.account_number
+        const ifsc_code: string = req.body.ifsc_code
+        const holderName: string = req.body.holder_name
+        const accountType: string = req.body.account_type
+
+        return;
+    }
+
+
 
 
     async findPaymentOrder(req: CustomRequest, res: Response): Promise<void> {

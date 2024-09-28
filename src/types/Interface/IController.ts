@@ -3,6 +3,7 @@ import { Request, Response } from "express";
 import { CustomRequest } from "../DataType/Objects";
 
 interface IUserController {
+    addBankAccount(req: CustomRequest, res: Response): Promise<void>
     getPresignedUrl(req: CustomRequest, res: Response): Promise<void>
     findPaymentOrder(req: CustomRequest, res: Response): Promise<void>
     getUserFundRaisePost(req: CustomRequest, res: Response): Promise<void>
