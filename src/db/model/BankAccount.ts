@@ -8,6 +8,10 @@ const bankAccountSchema = new Schema<IBankAccountCollection>({
         type: String,
         required: true
     },
+    is_active: {
+        type: Boolean,
+        required: true
+    },
     is_closed: {
         type: Boolean,
         required: true

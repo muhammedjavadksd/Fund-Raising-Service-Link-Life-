@@ -1,9 +1,10 @@
 import BankAccountCollection from "../db/model/BankAccount";
 import { IBankAccount, IBankAccountCollection } from "../types/Interface/IDBmodel";
+import { IPaginatedResponse } from "../types/Interface/Util";
 
 interface IBankAccountRepo {
     findOne(benfId: string): Promise<IBankAccountCollection | null>
-    findAccountByProfile(fund_id: string): Promise<IBankAccountCollection[]>
+    findPaginatedAccountsByProfile(fund_id: string, skip: number, limit: number): Promise<IPaginatedResponse<IBankAccountCollection>>
     deleteOne(benId: string): Promise<boolean>
     updateOne(benId: string, data: Partial<IBankAccount>): Promise<boolean>
     insertOne(data: IBankAccount): Promise<boolean>
@@ -23,9 +24,54 @@ class BankAccountRepo implements IBankAccountRepo {
         return findone
     }
 
-    async findAccountByProfile(fund_id: string): Promise<IBankAccountCollection[]> {
-        const findProfile: IBankAccountCollection[] = await BankAccountCollection.find({ fund_id });
-        return findProfile
+    async findPaginatedAccountsByProfile(fund_id: string, skip: number, limit: number): Promise<IPaginatedResponse<IBankAccountCollection>> {
+
+        try {
+            const findProfile = await BankAccountCollection.aggregate([
+                {
+                    $match: {
+                        fund_id
+                    }
+                },
+                {
+                    $facet: {
+                        paginated: [
+                            {
+                                $skip: skip
+                            },
+                            {
+                                $limit: limit
+                            }
+                        ],
+                        total_records: [
+                            {
+                                $count: "total_records"
+                            }
+                        ]
+                    }
+                },
+                {
+                    $unwind: "$total_records"
+                },
+                {
+                    $project: {
+                        paginated: 1,
+                        total_records: "$total_records.total_records"
+                    }
+                }
+            ]);
+
+            const response: IPaginatedResponse<IBankAccountCollection> = {
+                paginated: findProfile[0].paginated,
+                total_records: findProfile[0].total_records,
+            }
+            return response
+        } catch (e) {
+            return {
+                paginated: [],
+                total_records: 0
+            }
+        }
     }
 
     async deleteOne(benId: string): Promise<boolean> {

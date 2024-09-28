@@ -6,9 +6,6 @@ const userRouter: Router = express.Router();
 
 const UserControllers = new UserController();
 const authMiddleware = new AuthMiddleware()
-const multer = require("multer");
-const multerDisk = multer.memoryStorage();
-
 
 userRouter.get("/", (req: Request, res: Response) => {
     res.status(200).send("Welcome to fund raiser service");
@@ -24,6 +21,7 @@ userRouter.get("/donation-history/:fund_id/:limit/:page", UserControllers.donati
 userRouter.get("/my-donation-history/:limit/:page", authMiddleware.isValidUser, UserControllers.myDonationHistory);//test completed
 userRouter.get("/find-payment-order/:order_id", authMiddleware.isValidUser, UserControllers.findPaymentOrder);//test completed
 userRouter.get("/presigned-url", authMiddleware.isValidUser, UserControllers.getPresignedUrl);//test completed
+userRouter.get("/get-bankaccounts/:edit_id/:limit/:page", authMiddleware.isValidUser, authMiddleware.isFundRaiseRequestValid, UserControllers.getBankAccounts);//test completed
 
 //payemnt post
 userRouter.post("/pay/:fund_id", authMiddleware.isValidUser, UserControllers.payToFundRaiser)
@@ -31,7 +29,7 @@ userRouter.post("/verify-payment", UserControllers.verifyPayment)
 
 // POST method
 userRouter.post("/create", authMiddleware.isValidUser, UserControllers.createFundRaise); //test completed
-userRouter.post("/add-bank-account", authMiddleware.isValidUser, UserControllers.addBankAccount); //test completed
+userRouter.post("/add-bank-account/:edit_id", authMiddleware.isValidUser, authMiddleware.isFundRaiseRequestValid, UserControllers.addBankAccount); //test completed
 userRouter.post("/add_comment/:post_id", authMiddleware.isValidUser, UserControllers.addComment)
 userRouter.post("/verify-close-token", UserControllers.verifyCloseToken)
 

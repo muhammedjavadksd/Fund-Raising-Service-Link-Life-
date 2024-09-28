@@ -47,11 +47,23 @@ class UserController implements IUserController {
         this.myDonationHistory = this.myDonationHistory.bind(this)
         this.findPaymentOrder = this.findPaymentOrder.bind(this)
         this.getPresignedUrl = this.getPresignedUrl.bind(this)
+        this.addBankAccount = this.addBankAccount.bind(this)
+        this.getBankAccounts = this.getBankAccounts.bind(this)
         this.fundRaiserService = new FundRaiserService();
         this.commentService = new CommentService();
         this.fundRaiserRepo = new FundRaiserRepo();
         this.donationService = new DonationService()
         this.bankAccountService = new BankAccountService()
+    }
+
+    async getBankAccounts(req: CustomRequest, res: Response): Promise<void> {
+
+        const fundId: string = req.params.edit_id;
+        const page: number = +req.params.page;
+        const limit: number = +req.params.limit;
+
+        const findAllBenificiary = await this.bankAccountService.getAllBankAccount(fundId, page, limit);
+        res.status(findAllBenificiary.statusCode).json({ status: findAllBenificiary.status, msg: findAllBenificiary.msg, data: findAllBenificiary.data })
     }
 
 
@@ -60,7 +72,7 @@ class UserController implements IUserController {
         const ifsc_code: string = req.body.ifsc_code
         const holderName: string = req.body.holder_name
         const accountType: BankAccountType = req.body.account_type
-        const fund_id: string = req.params.fund_id
+        const fund_id: string = req.params.edit_id
 
         const addBankAccount = await this.bankAccountService.addBankAccount(accountNumber, ifsc_code, holderName, accountType, fund_id);
         res.status(addBankAccount.statusCode).json({ status: addBankAccount.status, msg: addBankAccount.msg, data: addBankAccount.data });
