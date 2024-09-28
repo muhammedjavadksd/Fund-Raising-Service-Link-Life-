@@ -166,6 +166,7 @@ interface IMetaData {
 }
 
 interface IBankAccount {
+    is_closed: boolean,
     befId: string,
     account_number: number,
     ifsc_code: string,

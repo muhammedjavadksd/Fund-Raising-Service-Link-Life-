@@ -23,6 +23,15 @@ class BankAccountService implements IBankAccountService {
 
     async addBankAccount(account_number: number, ifsc_code: string, holder_name: string, accountType: BankAccountType, fundId: string): Promise<HelperFuncationResponse> {
 
+        const findExist = await this.bankRepo.findByAccountNumber(account_number);
+        if (findExist) {
+            return {
+                msg: "This bank account already using by other fund raiser profile",
+                status: false,
+                statusCode: StatusCode.BAD_REQUESR
+            }
+        }
+
         const utilHelper = new UtilHelper();
 
         let randomNumber: number = utilHelper.generateAnOTP(4)
@@ -36,6 +45,7 @@ class BankAccountService implements IBankAccountService {
         }
 
         const data: IBankAccount = {
+            is_closed: false,
             account_number,
             account_type: accountType,
             fund_id: fundId,
@@ -43,6 +53,7 @@ class BankAccountService implements IBankAccountService {
             holder_name,
             ifsc_code
         }
+
 
         const add = await this.bankRepo.insertOne(data);
         if (add) {
@@ -96,3 +107,5 @@ class BankAccountService implements IBankAccountService {
         }
     }
 }
+
+export default BankAccountService;

@@ -7,10 +7,16 @@ interface IBankAccountRepo {
     deleteOne(benId: string): Promise<boolean>
     updateOne(benId: string, data: Partial<IBankAccount>): Promise<boolean>
     insertOne(data: IBankAccount): Promise<boolean>
+    findByAccountNumber(account: number): Promise<IBankAccountCollection | null>
 }
 
 
 class BankAccountRepo implements IBankAccountRepo {
+
+    async findByAccountNumber(account: number): Promise<IBankAccountCollection | null> {
+        const findByAccountNumber = await BankAccountCollection.findOne({ account_number: account });
+        return findByAccountNumber
+    }
 
     async findOne(benfId: string): Promise<IBankAccountCollection | null> {
         const findone = await BankAccountCollection.findOne({ befId: benfId });
