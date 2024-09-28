@@ -62,7 +62,7 @@ class BankAccountService implements IBankAccountService {
 
     async deleteAccount(benfId: string): Promise<HelperFuncationResponse> {
 
-        const deletAccount = await this.deleteAccount(benfId);
+        const deletAccount = await this.bankRepo.deleteOne(benfId);
         if (deletAccount) {
             return {
                 msg: "Bank account deleted",
@@ -78,7 +78,21 @@ class BankAccountService implements IBankAccountService {
         }
     }
 
-    updateAccount(banfId: string, data: Partial<IBankAccount>): Promise<HelperFuncationResponse> {
-        throw new Error("Method not implemented.");
+    async updateAccount(banfId: string, data: Partial<IBankAccount>): Promise<HelperFuncationResponse> {
+
+        const update = await this.bankRepo.updateOne(banfId, data);
+        if (update) {
+            return {
+                status: true,
+                msg: "Updated success",
+                statusCode: StatusCode.OK
+            }
+        } else {
+            return {
+                status: false,
+                msg: "Updated failed",
+                statusCode: StatusCode.BAD_REQUESR
+            }
+        }
     }
 }
