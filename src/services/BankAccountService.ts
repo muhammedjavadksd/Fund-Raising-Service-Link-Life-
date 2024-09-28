@@ -60,8 +60,22 @@ class BankAccountService implements IBankAccountService {
         }
     }
 
-    deleteAccount(benfId: string): Promise<HelperFuncationResponse> {
-        throw new Error("Method not implemented.");
+    async deleteAccount(benfId: string): Promise<HelperFuncationResponse> {
+
+        const deletAccount = await this.deleteAccount(benfId);
+        if (deletAccount) {
+            return {
+                msg: "Bank account deleted",
+                status: true,
+                statusCode: StatusCode.OK
+            }
+        } else {
+            return {
+                msg: "Bank account delete failed",
+                status: false,
+                statusCode: StatusCode.BAD_REQUESR
+            }
+        }
     }
 
     updateAccount(banfId: string, data: Partial<IBankAccount>): Promise<HelperFuncationResponse> {
