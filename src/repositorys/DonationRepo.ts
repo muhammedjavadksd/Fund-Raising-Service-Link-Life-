@@ -29,10 +29,10 @@ class DonationRepo implements IDonationRepo {
                 {
                     $match: {
                         fund_id,
-                        date: {
-                            $gte: from_date,
-                            $lte: to_date
-                        }
+                        // date: {
+                        //     $gte: from_date,
+                        //     $lte: to_date
+                        // }
                     }
                 },
                 {
@@ -50,8 +50,15 @@ class DonationRepo implements IDonationRepo {
                     }
                 },
                 {
+                    $project: {
+                        _id: 0,
+                        date: "$_id",
+                        amount: { $sum: "$amount" }
+                    }
+                },
+                {
                     $sort: {
-                        "_id": -1
+                        "_id": 1
                     }
                 }
             ])

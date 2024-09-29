@@ -53,6 +53,7 @@ class UserController implements IUserController {
         this.getBankAccounts = this.getBankAccounts.bind(this)
         this.profileBankAccounts = this.profileBankAccounts.bind(this)
         this.getDonationStatitics = this.getDonationStatitics.bind(this)
+        this.deleteBankAccount = this.deleteBankAccount.bind(this)
         this.fundRaiserService = new FundRaiserService();
         this.commentService = new CommentService();
         this.fundRaiserRepo = new FundRaiserRepo();
@@ -61,17 +62,37 @@ class UserController implements IUserController {
         this.bankAccountService = new BankAccountService()
     }
 
+
+    async deleteBankAccount(req: CustomRequest, res: Response): Promise<void> {
+
+        const fundId = req.params.edit_id;
+        const benfId = req.params.benf_id;
+
+        const deleteBenf = await this.bankAccountService.deleteAccount(benfId, fundId);
+        res.status(deleteBenf.statusCode).json({ status: deleteBenf.status, msg: deleteBenf.msg, data: deleteBenf.data })
+    }
+
     async getDonationStatitics(req: CustomRequest, res: Response): Promise<void> {
         const dateFrom = new Date(req.query.from_date?.toString() || new Date());
         const dateTo = new Date(req.query.to_date?.toString() || new Date());
         const fund_id = req.params.fund_id;
 
+        console.log("The date");
+
+        console.log(dateFrom);
+        console.log(dateTo);
+
+
         if (dateFrom == null || dateTo == null) {
             res.status(StatusCode.BAD_REQUESR).json({ status: false, msg: "Please provide valid date" })
         } else {
             const findStatitics = await this.donationRepo.donationStatitics(dateFrom, dateTo, fund_id);
+            console.log("Find statitics");
+
+            console.log(findStatitics);
+
             if (findStatitics) {
-                res.status(StatusCode.OK).json({ status: false, msg: "Data found", data: findStatitics })
+                res.status(StatusCode.OK).json({ status: true, msg: "Data found", data: findStatitics })
             } else {
                 res.status(StatusCode.NOT_FOUND).json({ status: false, msg: "No data found", })
             }

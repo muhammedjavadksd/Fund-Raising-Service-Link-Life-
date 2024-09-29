@@ -20,6 +20,7 @@ const PaymentWebHookRepo_1 = __importDefault(require("../repositorys/PaymentWebH
 const UtilEnum_1 = require("../types/Enums/UtilEnum");
 const paymentHelper_1 = __importDefault(require("../util/helper/paymentHelper"));
 const utilHelper_1 = __importDefault(require("../util/helper/utilHelper"));
+const BankAccountRepo_1 = __importDefault(require("../repositorys/BankAccountRepo"));
 class DonationService {
     constructor() {
         this.paymentHelper = new paymentHelper_1.default();
@@ -27,6 +28,7 @@ class DonationService {
         this.fundRepo = new FundRaiserRepo_1.default();
         this.webHookRepo = new PaymentWebHookRepo_1.default();
         this.donationHistoryRepo = new DonationRepo_1.default();
+        this.bankRepo = new BankAccountRepo_1.default();
         this.findPrivateProfileHistoryPaginated = this.findPrivateProfileHistoryPaginated.bind(this);
         this.findMyDonationHistory = this.findMyDonationHistory.bind(this);
         this.findDonationByOrderId = this.findDonationByOrderId.bind(this);
@@ -81,43 +83,53 @@ class DonationService {
             try {
                 const findProfile = yield this.fundRepo.findFundPostByFundId(fundId);
                 if (findProfile) {
-                    const options = {
-                        method: 'POST',
-                        url: 'https://sandbox.cashfree.com/payout/transfers',
-                        headers: {
-                            accept: 'application/json',
-                            'x-api-version': '2024-01-01',
-                            'content-type': 'application/json',
-                            'x-client-id': process.env.CASHFREE_PAYOUT_KEY,
-                            'x-client-secret': process.env.CASHFREE_PAYOUT_SECRET
-                        },
-                        data: {
-                            beneficiary_details: {
-                                beneficiary_instrument_details: {
-                                    bank_account_number: findProfile.withdraw_docs.account_number,
-                                    bank_ifsc: findProfile.withdraw_docs.ifsc_code
-                                },
-                                beneficiary_id: findProfile.benf_id,
-                                beneficiary_name: findProfile.withdraw_docs.holder_name
+                    const findBen = yield this.bankRepo.findOne(findProfile.withdraw_docs.benf_id);
+                    if (findBen) {
+                        const options = {
+                            method: 'POST',
+                            url: 'https://sandbox.cashfree.com/payout/transfers',
+                            headers: {
+                                accept: 'application/json',
+                                'x-api-version': '2024-01-01',
+                                'content-type': 'application/json',
+                                'x-client-id': process.env.CASHFREE_PAYOUT_KEY,
+                                'x-client-secret': process.env.CASHFREE_PAYOUT_SECRET
                             },
-                            transfer_id: donation_id,
-                            transfer_amount: amount,
-                            transfer_currency: 'INR',
-                            transfer_mode: 'banktransfer'
-                        }
-                    };
-                    const transfer = (yield axios_1.default.request(options)).data;
-                    if (transfer && transfer.status && transfer.status == "RECEIVED") {
-                        return {
-                            status: true,
-                            msg: "Payment transfer scheduled",
-                            statusCode: UtilEnum_1.StatusCode.OK
+                            data: {
+                                beneficiary_details: {
+                                    beneficiary_instrument_details: {
+                                        bank_account_number: findBen.account_number,
+                                        bank_ifsc: findBen.ifsc_code
+                                    },
+                                    beneficiary_id: findProfile.benf_id,
+                                    beneficiary_name: findBen.holder_name
+                                },
+                                transfer_id: donation_id,
+                                transfer_amount: amount,
+                                transfer_currency: 'INR',
+                                transfer_mode: 'banktransfer'
+                            }
                         };
+                        const transfer = (yield axios_1.default.request(options)).data;
+                        if (transfer && transfer.status && transfer.status == "RECEIVED") {
+                            return {
+                                status: true,
+                                msg: "Payment transfer scheduled",
+                                statusCode: UtilEnum_1.StatusCode.OK
+                            };
+                        }
+                        else {
+                            return {
+                                status: false,
+                                msg: "Something went wrong",
+                                statusCode: UtilEnum_1.StatusCode.BAD_REQUESR
+                            };
+                        }
                     }
                     else {
                         return {
                             status: false,
-                            msg: "Something went wrong",
+                            msg: "No active bank account found",
                             statusCode: UtilEnum_1.StatusCode.BAD_REQUESR
                         };
                     }

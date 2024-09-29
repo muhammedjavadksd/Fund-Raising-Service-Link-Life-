@@ -503,33 +503,33 @@ class FundRaiserService implements IFundRaiserService {
     async editFundRaiser(fund_id: string, edit_data: IEditableFundRaiser): Promise<HelperFuncationResponse> {
         try {
 
-            if (edit_data?.withdraw_docs?.account_number) {
-                const findProfile = await this.FundRaiserRepo.findFundPostByFundId(fund_id);
-                if (findProfile) {
-                    const addBeneficiary = await this.addBeneficiary(fund_id, findProfile.full_name, findProfile.email_id, findProfile.phone_number.toString(), edit_data?.withdraw_docs?.account_number, edit_data?.withdraw_docs?.ifsc_code, findProfile.full_address);
-                    console.log("Add Benificiary details");
+            // if (edit_data?.withdraw_docs?.account_number) {
+            //     const findProfile = await this.FundRaiserRepo.findFundPostByFundId(fund_id);
+            //     if (findProfile) {
+            //         const addBeneficiary = await this.addBeneficiary(fund_id, findProfile.full_name, findProfile.email_id, findProfile.phone_number.toString(), edit_data?.withdraw_docs?.account_number, edit_data?.withdraw_docs?.ifsc_code, findProfile.full_address);
+            //         console.log("Add Benificiary details");
 
-                    console.log(addBeneficiary);
+            //         console.log(addBeneficiary);
 
-                    if (addBeneficiary.status) {
-                        const utilHelper = new UtilHelper();
-                        const benfId = utilHelper.convertFundIdToBeneficiaryId(fund_id);
-                        edit_data.benf_id = benfId;
-                    } else {
-                        return {
-                            msg: addBeneficiary.msg,
-                            status: false,
-                            statusCode: StatusCode.BAD_REQUESR
-                        }
-                    }
-                } else {
-                    return {
-                        status: false,
-                        msg: "We couldn't find the profile",
-                        statusCode: StatusCode.BAD_REQUESR
-                    }
-                }
-            }
+            //         if (addBeneficiary.status) {
+            //             const utilHelper = new UtilHelper();
+            //             const benfId = utilHelper.convertFundIdToBeneficiaryId(fund_id);
+            //             edit_data.benf_id = benfId;
+            //         } else {
+            //             return {
+            //                 msg: addBeneficiary.msg,
+            //                 status: false,
+            //                 statusCode: StatusCode.BAD_REQUESR
+            //             }
+            //         }
+            //     } else {
+            //         return {
+            //             status: false,
+            //             msg: "We couldn't find the profile",
+            //             statusCode: StatusCode.BAD_REQUESR
+            //         }
+            //     }
+            // }
             const updateFundRaiserData = await this.FundRaiserRepo.updateFundRaiser(fund_id, edit_data);
             if (updateFundRaiserData) {
                 return {

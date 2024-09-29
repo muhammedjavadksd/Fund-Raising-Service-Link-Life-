@@ -48,6 +48,7 @@ class UserController {
         this.getBankAccounts = this.getBankAccounts.bind(this);
         this.profileBankAccounts = this.profileBankAccounts.bind(this);
         this.getDonationStatitics = this.getDonationStatitics.bind(this);
+        this.deleteBankAccount = this.deleteBankAccount.bind(this);
         this.fundRaiserService = new FundRaiserService_1.default();
         this.commentService = new CommentService_1.default();
         this.fundRaiserRepo = new FundRaiserRepo_1.default();
@@ -55,19 +56,32 @@ class UserController {
         this.donationService = new DonationService_1.default();
         this.bankAccountService = new BankAccountService_1.default();
     }
+    deleteBankAccount(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const fundId = req.params.edit_id;
+            const benfId = req.params.benf_id;
+            const deleteBenf = yield this.bankAccountService.deleteAccount(benfId, fundId);
+            res.status(deleteBenf.statusCode).json({ status: deleteBenf.status, msg: deleteBenf.msg, data: deleteBenf.data });
+        });
+    }
     getDonationStatitics(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             var _a, _b;
             const dateFrom = new Date(((_a = req.query.from_date) === null || _a === void 0 ? void 0 : _a.toString()) || new Date());
             const dateTo = new Date(((_b = req.query.to_date) === null || _b === void 0 ? void 0 : _b.toString()) || new Date());
             const fund_id = req.params.fund_id;
+            console.log("The date");
+            console.log(dateFrom);
+            console.log(dateTo);
             if (dateFrom == null || dateTo == null) {
                 res.status(UtilEnum_1.StatusCode.BAD_REQUESR).json({ status: false, msg: "Please provide valid date" });
             }
             else {
                 const findStatitics = yield this.donationRepo.donationStatitics(dateFrom, dateTo, fund_id);
+                console.log("Find statitics");
+                console.log(findStatitics);
                 if (findStatitics) {
-                    res.status(UtilEnum_1.StatusCode.OK).json({ status: false, msg: "Data found", data: findStatitics });
+                    res.status(UtilEnum_1.StatusCode.OK).json({ status: true, msg: "Data found", data: findStatitics });
                 }
                 else {
                     res.status(UtilEnum_1.StatusCode.NOT_FOUND).json({ status: false, msg: "No data found", });

@@ -23,7 +23,7 @@ userRouter.get("/find-payment-order/:order_id", authMiddleware.isValidUser, User
 userRouter.get("/presigned-url", authMiddleware.isValidUser, UserControllers.getPresignedUrl);//test completed
 userRouter.get("/bank-accounts/:edit_id/:limit/:page", authMiddleware.isValidUser, authMiddleware.isFundRaiseRequestValid, UserControllers.getBankAccounts);//test completed
 userRouter.get("/profile-bank-account/:edit_id/:limit/:page", authMiddleware.isValidUser, UserControllers.profileBankAccounts);//test completed
-userRouter.get("/donation-statistics", UserControllers.profileBankAccounts);//test completed
+userRouter.get("/donation-statistics/:fund_id", UserControllers.getDonationStatitics);//test completed
 
 //payemnt post
 userRouter.post("/pay/:fund_id", authMiddleware.isValidUser, UserControllers.payToFundRaiser)
@@ -44,6 +44,7 @@ userRouter.patch("/edit_comment/:comment_id", authMiddleware.isValidUser, authMi
 //delete method
 userRouter.delete("/delete_image/:type/:edit_id", authMiddleware.isValidUser, authMiddleware.isFundRaiseRequestValid, UserControllers.deleteImage) //test completed
 userRouter.delete("/delete_comment/:comment_id", authMiddleware.isValidUser, authMiddleware.isValidCommentOwner, UserControllers.deleteComment)
+userRouter.delete("/delete-bank-account/:edit_id/:benf_id", authMiddleware.isValidUser, authMiddleware.isFundRaiseRequestValid, UserControllers.deleteComment)
 
 
 export default userRouter

@@ -56,10 +56,11 @@ interface IEditableFundRaiser {
 }
 
 interface IWithdrawDetails {
-    account_number: string,
-    holder_name: string,
-    ifsc_code: string,
-    accont_type: FundRaiserBankAccountType
+    benf_id: string
+    // account_number: string,
+    // holder_name: string,
+    // ifsc_code: string,s
+    // accont_type: FundRaiserBankAccountType
 }
 
 interface IAdminAddFundRaiser {
