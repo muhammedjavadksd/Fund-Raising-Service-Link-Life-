@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.FundRaiserStatus = exports.FundRaiserCreatedBy = void 0;
+exports.BankAccountType = exports.FundRaiserStatus = exports.FundRaiserCreatedBy = void 0;
 var FundRaiserCreatedBy;
 (function (FundRaiserCreatedBy) {
     FundRaiserCreatedBy["ADMIN"] = "ADMIN";
@@ -16,3 +16,8 @@ var FundRaiserStatus;
     FundRaiserStatus["REJECTED"] = "REJECTED";
     FundRaiserStatus["CLOSED"] = "CLOSED";
 })(FundRaiserStatus || (exports.FundRaiserStatus = FundRaiserStatus = {}));
+var BankAccountType;
+(function (BankAccountType) {
+    BankAccountType["Saving"] = "saving";
+    BankAccountType["Current"] = "current";
+})(BankAccountType || (exports.BankAccountType = BankAccountType = {}));

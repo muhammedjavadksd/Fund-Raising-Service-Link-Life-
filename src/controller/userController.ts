@@ -16,6 +16,7 @@ import CommentService from "../services/CommentService";
 import TokenHelper from "../util/helper/tokenHelper";
 import DonationService from "../services/DonationService";
 import BankAccountService from "../services/BankAccountService";
+import DonationRepo from "../repositorys/DonationRepo";
 
 class UserController implements IUserController {
 
@@ -24,6 +25,7 @@ class UserController implements IUserController {
     private readonly fundRaiserRepo;
     private readonly donationService;
     private readonly bankAccountService;
+    private readonly donationRepo;
 
     constructor() {
 
@@ -50,11 +52,30 @@ class UserController implements IUserController {
         this.addBankAccount = this.addBankAccount.bind(this)
         this.getBankAccounts = this.getBankAccounts.bind(this)
         this.profileBankAccounts = this.profileBankAccounts.bind(this)
+        this.getDonationStatitics = this.getDonationStatitics.bind(this)
         this.fundRaiserService = new FundRaiserService();
         this.commentService = new CommentService();
         this.fundRaiserRepo = new FundRaiserRepo();
+        this.donationRepo = new DonationRepo()
         this.donationService = new DonationService()
         this.bankAccountService = new BankAccountService()
+    }
+
+    async getDonationStatitics(req: CustomRequest, res: Response): Promise<void> {
+        const dateFrom = new Date(req.query.from_date?.toString() || new Date());
+        const dateTo = new Date(req.query.to_date?.toString() || new Date());
+        const fund_id = req.params.fund_id;
+
+        if (dateFrom == null || dateTo == null) {
+            res.status(StatusCode.BAD_REQUESR).json({ status: false, msg: "Please provide valid date" })
+        } else {
+            const findStatitics = await this.donationRepo.donationStatitics(dateFrom, dateTo, fund_id);
+            if (findStatitics) {
+                res.status(StatusCode.OK).json({ status: false, msg: "Data found", data: findStatitics })
+            } else {
+                res.status(StatusCode.NOT_FOUND).json({ status: false, msg: "No data found", })
+            }
+        }
     }
 
     async profileBankAccounts(req: CustomRequest, res: Response): Promise<void> {
@@ -72,6 +93,9 @@ class UserController implements IUserController {
         const fundId: string = req.params.edit_id;
         const page: number = +req.params.page;
         const limit: number = +req.params.limit;
+
+        console.log("Get bank account");
+
 
         const findAllBenificiary = await this.bankAccountService.getAllBankAccount(fundId, page, limit);
         res.status(findAllBenificiary.statusCode).json({ status: findAllBenificiary.status, msg: findAllBenificiary.msg, data: findAllBenificiary.data })

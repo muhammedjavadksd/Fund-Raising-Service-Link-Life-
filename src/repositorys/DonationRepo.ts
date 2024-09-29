@@ -1,7 +1,7 @@
 import DonateHistoryCollection from "../db/model/DonationHistory";
 import PaymentOrderCollection from "../db/model/PaymentOrder";
 import { IDonateHistoryCollection, IDonateHistoryTemplate } from "../types/Interface/IDBmodel";
-import { IPaginatedResponse } from "../types/Interface/Util";
+import { IDonationStatitics, IPaginatedResponse } from "../types/Interface/Util";
 
 
 interface IDonationRepo {
@@ -15,10 +15,52 @@ interface IDonationRepo {
     findPrivateProfilePaginedtHistory(profile_id: string, limit: number, skip: number): Promise<IPaginatedResponse<IDonateHistoryCollection[]>>
     findUserDonationHistory(profile_id: string, limit: number, skip: number): Promise<IPaginatedResponse<IDonateHistoryCollection[]>>
     findOrder(order_id: string): Promise<null | IDonateHistoryCollection>
+    donationStatitics(from_date: Date, to_date: Date, fund_id: string): Promise<false | IDonationStatitics[]>
 }
 
 
 class DonationRepo implements IDonationRepo {
+
+
+    async donationStatitics(from_date: Date, to_date: Date, fund_id: string): Promise<false | IDonationStatitics[]> {
+
+        try {
+            const data = await DonateHistoryCollection.aggregate([
+                {
+                    $match: {
+                        fund_id,
+                        date: {
+                            $gte: from_date,
+                            $lte: to_date
+                        }
+                    }
+                },
+                {
+                    $project: {
+                        amount: 1,
+                        date: {
+                            $dateToString: { format: "%Y-%m-%d", date: "$date" }
+                        }
+                    }
+                },
+                {
+                    $group: {
+                        _id: "$date",
+                        amount: { $sum: "$amount" }
+                    }
+                },
+                {
+                    $sort: {
+                        "_id": -1
+                    }
+                }
+            ])
+            return data
+        } catch (e) {
+            return false
+        }
+
+    }
 
 
     async getStatitics(): Promise<Record<string, any>> {

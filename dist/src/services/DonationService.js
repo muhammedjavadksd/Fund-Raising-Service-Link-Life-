@@ -165,6 +165,7 @@ class DonationService {
         return __awaiter(this, void 0, void 0, function* () {
             const skip = (page - 1) * limit;
             const findHistory = yield this.donationHistoryRepo.findPrivateProfilePaginedtHistory(profile_id, limit, skip);
+            console.log("Came here");
             if (findHistory.total_records) {
                 return {
                     msg: "Histroy found",

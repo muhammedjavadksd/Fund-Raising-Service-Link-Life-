@@ -22,7 +22,8 @@ userRouter.get("/my-donation-history/:limit/:page", authMiddleware.isValidUser, 
 userRouter.get("/find-payment-order/:order_id", authMiddleware.isValidUser, UserControllers.findPaymentOrder);//test completed
 userRouter.get("/presigned-url", authMiddleware.isValidUser, UserControllers.getPresignedUrl);//test completed
 userRouter.get("/bank-accounts/:edit_id/:limit/:page", authMiddleware.isValidUser, authMiddleware.isFundRaiseRequestValid, UserControllers.getBankAccounts);//test completed
-userRouter.get("/profile-bank-account/:edit_id/:limit/:page", authMiddleware.isValidUser, authMiddleware.isFundRaiseRequestValid, UserControllers.profileBankAccounts);//test completed
+userRouter.get("/profile-bank-account/:edit_id/:limit/:page", authMiddleware.isValidUser, UserControllers.profileBankAccounts);//test completed
+userRouter.get("/donation-statistics", UserControllers.profileBankAccounts);//test completed
 
 //payemnt post
 userRouter.post("/pay/:fund_id", authMiddleware.isValidUser, UserControllers.payToFundRaiser)

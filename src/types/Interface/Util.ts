@@ -1,5 +1,9 @@
 import { JwtType, StatusCode } from "../Enums/UtilEnum"
 
+interface IDonationStatitics {
+    date: string,
+    amount: number
+}
 
 interface HelperFuncationResponse {
     status: boolean,
@@ -138,4 +142,4 @@ interface OrderMeta {
 }
 
 
-export { IVerifyPaymentResponse, IOrderTemplate, WebhookPayload, IPaymentItem, HelperFuncationResponse, IPaginatedResponse, ICloseFundRaiseJwtToken }
+export { IVerifyPaymentResponse, IOrderTemplate, WebhookPayload, IPaymentItem, HelperFuncationResponse, IPaginatedResponse, ICloseFundRaiseJwtToken, IDonationStatitics }

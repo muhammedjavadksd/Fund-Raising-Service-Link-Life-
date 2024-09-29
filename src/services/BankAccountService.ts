@@ -52,6 +52,10 @@ class BankAccountService implements IBankAccountService {
 
         const skip: number = (page - 1) * limit;
         const findAllAccount = await this.bankRepo.findPaginatedAccountsByProfile(fundId, skip, limit);
+        console.log("Finding all bank account");
+
+        console.log(findAllAccount);
+
         if (findAllAccount.paginated.length) {
             return {
                 msg: "Bank account's fetch",
@@ -108,7 +112,10 @@ class BankAccountService implements IBankAccountService {
             return {
                 msg: "Bank account created success",
                 status: true,
-                statusCode: StatusCode.CREATED
+                statusCode: StatusCode.CREATED,
+                data: {
+                    bank_id: benfId
+                }
             }
         } else {
             return {

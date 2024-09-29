@@ -170,6 +170,8 @@ class DonationService implements IDonationService {
     async findPrivateProfileHistoryPaginated(profile_id: string, limit: number, page: number): Promise<HelperFuncationResponse> {
         const skip: number = (page - 1) * limit
         const findHistory = await this.donationHistoryRepo.findPrivateProfilePaginedtHistory(profile_id, limit, skip);
+        console.log("Came here");
+
         if (findHistory.total_records) {
             return {
                 msg: "Histroy found",
