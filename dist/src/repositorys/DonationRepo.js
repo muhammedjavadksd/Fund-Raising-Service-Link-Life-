@@ -15,6 +15,53 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const DonationHistory_1 = __importDefault(require("../db/model/DonationHistory"));
 const PaymentOrder_1 = __importDefault(require("../db/model/PaymentOrder"));
 class DonationRepo {
+    donationStatitics(from_date, to_date, fund_id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const data = yield DonationHistory_1.default.aggregate([
+                    {
+                        $match: {
+                            fund_id,
+                            // date: {
+                            //     $gte: from_date,
+                            //     $lte: to_date
+                            // }
+                        }
+                    },
+                    {
+                        $project: {
+                            amount: 1,
+                            date: {
+                                $dateToString: { format: "%Y-%m-%d", date: "$date" }
+                            }
+                        }
+                    },
+                    {
+                        $group: {
+                            _id: "$date",
+                            amount: { $sum: "$amount" }
+                        }
+                    },
+                    {
+                        $project: {
+                            _id: 0,
+                            date: "$_id",
+                            amount: { $sum: "$amount" }
+                        }
+                    },
+                    {
+                        $sort: {
+                            "_id": 1
+                        }
+                    }
+                ]);
+                return data;
+            }
+            catch (e) {
+                return false;
+            }
+        });
+    }
     getStatitics() {
         return __awaiter(this, void 0, void 0, function* () {
             var _a;

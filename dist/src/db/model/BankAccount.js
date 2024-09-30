@@ -7,6 +7,14 @@ const bankAccountSchema = new mongoose_1.Schema({
         type: String,
         required: true
     },
+    is_active: {
+        type: Boolean,
+        required: true
+    },
+    is_closed: {
+        type: Boolean,
+        required: true
+    },
     account_number: {
         type: Number,
         required: true

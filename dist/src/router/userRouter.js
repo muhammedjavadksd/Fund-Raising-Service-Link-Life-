@@ -9,8 +9,6 @@ const authMiddleware_1 = __importDefault(require("../middleware/authMiddleware")
 const userRouter = express_1.default.Router();
 const UserControllers = new userController_1.default();
 const authMiddleware = new authMiddleware_1.default();
-const multer = require("multer");
-const multerDisk = multer.memoryStorage();
 userRouter.get("/", (req, res) => {
     res.status(200).send("Welcome to fund raiser service");
 });
@@ -24,12 +22,15 @@ userRouter.get("/donation-history/:fund_id/:limit/:page", UserControllers.donati
 userRouter.get("/my-donation-history/:limit/:page", authMiddleware.isValidUser, UserControllers.myDonationHistory); //test completed
 userRouter.get("/find-payment-order/:order_id", authMiddleware.isValidUser, UserControllers.findPaymentOrder); //test completed
 userRouter.get("/presigned-url", authMiddleware.isValidUser, UserControllers.getPresignedUrl); //test completed
+userRouter.get("/bank-accounts/:edit_id/:limit/:page", authMiddleware.isValidUser, authMiddleware.isFundRaiseRequestValid, UserControllers.getBankAccounts); //test completed
+userRouter.get("/profile-bank-account/:edit_id/:limit/:page", authMiddleware.isValidUser, UserControllers.profileBankAccounts); //test completed
+userRouter.get("/donation-statistics/:fund_id", UserControllers.getDonationStatitics); //test completed
 //payemnt post
 userRouter.post("/pay/:fund_id", authMiddleware.isValidUser, UserControllers.payToFundRaiser);
 userRouter.post("/verify-payment", UserControllers.verifyPayment);
 // POST method
 userRouter.post("/create", authMiddleware.isValidUser, UserControllers.createFundRaise); //test completed
-userRouter.post("/add-bank-account", authMiddleware.isValidUser, UserControllers.addBankAccount); //test completed
+userRouter.post("/add-bank-account/:edit_id", authMiddleware.isValidUser, authMiddleware.isFundRaiseRequestValid, UserControllers.addBankAccount); //test completed
 userRouter.post("/add_comment/:post_id", authMiddleware.isValidUser, UserControllers.addComment);
 userRouter.post("/verify-close-token", UserControllers.verifyCloseToken);
 //Patch method
@@ -40,4 +41,5 @@ userRouter.patch("/edit_comment/:comment_id", authMiddleware.isValidUser, authMi
 //delete method
 userRouter.delete("/delete_image/:type/:edit_id", authMiddleware.isValidUser, authMiddleware.isFundRaiseRequestValid, UserControllers.deleteImage); //test completed
 userRouter.delete("/delete_comment/:comment_id", authMiddleware.isValidUser, authMiddleware.isValidCommentOwner, UserControllers.deleteComment);
+userRouter.delete("/delete-bank-account/:edit_id/:benf_id", authMiddleware.isValidUser, authMiddleware.isFundRaiseRequestValid, UserControllers.deleteBankAccount);
 exports.default = userRouter;

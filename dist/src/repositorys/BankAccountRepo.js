@@ -14,16 +14,118 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const BankAccount_1 = __importDefault(require("../db/model/BankAccount"));
 class BankAccountRepo {
+    findLiveAccountByNumber(account) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const findByAccountNumber = yield BankAccount_1.default.findOne({ account_number: account, is_closed: false });
+            return findByAccountNumber;
+        });
+    }
     findOne(benfId) {
         return __awaiter(this, void 0, void 0, function* () {
             const findone = yield BankAccount_1.default.findOne({ befId: benfId });
             return findone;
         });
     }
-    findAccountByProfile(fund_id) {
+    findPaginatedAccountsByProfile(fund_id, skip, limit) {
         return __awaiter(this, void 0, void 0, function* () {
-            const findProfile = yield BankAccount_1.default.find({ fund_id });
-            return findProfile;
+            try {
+                const findProfile = yield BankAccount_1.default.aggregate([
+                    {
+                        $match: {
+                            fund_id
+                        }
+                    },
+                    {
+                        $facet: {
+                            paginated: [
+                                {
+                                    $skip: skip
+                                },
+                                {
+                                    $limit: limit
+                                }
+                            ],
+                            total_records: [
+                                {
+                                    $count: "total_records"
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        $unwind: "$total_records"
+                    },
+                    {
+                        $project: {
+                            paginated: 1,
+                            total_records: "$total_records.total_records"
+                        }
+                    }
+                ]);
+                const response = {
+                    paginated: findProfile[0].paginated,
+                    total_records: findProfile[0].total_records,
+                };
+                return response;
+            }
+            catch (e) {
+                return {
+                    paginated: [],
+                    total_records: 0
+                };
+            }
+        });
+    }
+    findActivePaginatedAccountsByProfile(fund_id, skip, limit) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const findProfile = yield BankAccount_1.default.aggregate([
+                    {
+                        $match: {
+                            fund_id,
+                            is_active: true,
+                            is_closed: false
+                        }
+                    },
+                    {
+                        $facet: {
+                            paginated: [
+                                {
+                                    $skip: skip
+                                },
+                                {
+                                    $limit: limit
+                                }
+                            ],
+                            total_records: [
+                                {
+                                    $count: "total_records"
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        $unwind: "$total_records"
+                    },
+                    {
+                        $project: {
+                            paginated: 1,
+                            total_records: "$total_records.total_records"
+                        }
+                    }
+                ]);
+                const response = {
+                    paginated: findProfile[0].paginated,
+                    total_records: findProfile[0].total_records,
+                };
+                return response;
+            }
+            catch (e) {
+                return {
+                    paginated: [],
+                    total_records: 0
+                };
+            }
         });
     }
     deleteOne(benId) {
