@@ -6,7 +6,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const dotenv_1 = __importDefault(require("dotenv"));
 const morgan_1 = __importDefault(require("morgan"));
-const mongo_connection_1 = __importDefault(require("./src/db/mongo_connection"));
 const path_1 = __importDefault(require("path"));
 const cors_1 = __importDefault(require("cors"));
 const app = (0, express_1.default)();
@@ -15,6 +14,7 @@ app.use(express_1.default.urlencoded({ extended: true }));
 app.use((0, cors_1.default)({
     origin: ['http://localhost:3000', "https://life-link.online"]
 }));
+const mongo_connection_1 = __importDefault(require("./src/db/mongo_connection"));
 const envPath = path_1.default.resolve(__dirname, "../.env");
 console.log(envPath);
 dotenv_1.default.config({ path: envPath });

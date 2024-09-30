@@ -1,7 +1,6 @@
 import express, { Express } from 'express';
 import dotenv from 'dotenv'
 import morgan from 'morgan'
-import fundRaiseDbConnection from './src/db/mongo_connection';
 import path from 'path'
 import cors from 'cors'
 
@@ -12,6 +11,7 @@ app.use(cors({
     origin: ['http://localhost:3000', "https://life-link.online"]
 }))
 
+import fundRaiseDbConnection from './src/db/mongo_connection';
 const envPath = path.resolve(__dirname, "../.env")
 console.log(envPath);
 dotenv.config({ path: envPath });
