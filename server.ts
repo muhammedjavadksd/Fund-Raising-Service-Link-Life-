@@ -3,8 +3,7 @@ import dotenv from 'dotenv'
 // import fileUpload from 'express-fileupload'
 import morgan from 'morgan'
 import fundRaiseDbConnection from './src/db/mongo_connection';
-import userRouter from './src/router/userRouter';
-import adminRouter from './src/router/adminRouter';
+
 import path from 'path'
 import PaymentHelper from './src/util/helper/paymentHelper';
 import FundRaiserService from './src/services/FundRaiserService';
@@ -31,7 +30,8 @@ app.use(express.urlencoded({ extended: true }))
 
 app.use(morgan("dev"))
 
-
+import userRouter from './src/router/userRouter';
+import adminRouter from './src/router/adminRouter';
 // const s = new UtilHelper();
 // s.createFundRaiserReport()
 
