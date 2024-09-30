@@ -9,7 +9,7 @@ interface IFundRaiserService {
 
     deleteFundRaiserImage(fundId: string, image: string, type: FundRaiserFileType): Promise<HelperFuncationResponse>
     createPresignedUrl(type: FundRaiserFileType): Promise<HelperFuncationResponse>
-    deleteImage(fund_id: string, type: FundRaiserFileType, image: string): Promise<boolean>
+    deleteImage(fund_id: string, type: FundRaiserFileType, image: string): Promise<HelperFuncationResponse>
     createFundRaisePost(data: IFundRaiseInitialData): Promise<HelperFuncationResponse>
     getOwnerFundRaise(owner_id: string, limit: number, skip: number, status: FundRaiserStatus): Promise<HelperFuncationResponse>
     closeFundRaiser(fund_id: string): Promise<HelperFuncationResponse>

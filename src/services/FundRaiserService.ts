@@ -329,21 +329,43 @@ class FundRaiserService implements IFundRaiserService {
 
 
 
-    async deleteImage(fund_id: string, type: FundRaiserFileType, image: string): Promise<boolean> {
+    async deleteImage(fund_id: string, type: FundRaiserFileType, image: string): Promise<HelperFuncationResponse> {
         try {
             const findData = await this.FundRaiserRepo.findFundPostByFundId(fund_id) // await InitFundRaisingModel.findOne({ fund_id: fund_id });
             if (findData) {
                 const field: "documents" | "picture" = (type == FundRaiserFileType.Document) ? "documents" : "picture";
+                if (!!findData.description) {
+                    const length: number = findData[field].length;
+                    if (length <= 3) {
+                        return {
+                            msg: "Please keep minimum 3 image's",
+                            status: false,
+                            statusCode: StatusCode.BAD_REQUESR
+                        }
+                    }
+                }
                 const filterImage = findData[field].filter((each) => each != image)
                 findData[field] = [...filterImage]
                 await this.FundRaiserRepo.updateFundRaiserByModel(findData);
-                return true
+                return {
+                    msg: "Image deletion success",
+                    status: true,
+                    statusCode: StatusCode.OK
+                }
             } else {
-                return false
+                return {
+                    msg: "Data couldn't found",
+                    status: false,
+                    statusCode: StatusCode.NOT_FOUND
+                }
             }
         } catch (e) {
             console.log(e);
-            return false
+            return {
+                msg: "Something went wrong",
+                status: false,
+                statusCode: StatusCode.SERVER_ERROR
+            }
         }
     }
 

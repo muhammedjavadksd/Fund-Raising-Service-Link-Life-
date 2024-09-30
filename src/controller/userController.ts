@@ -370,12 +370,8 @@ class UserController implements IUserController {
         const imageName: string = req.query.image_id?.toString() || "";
 
         try {
-            const deleteImage: boolean = await this.fundRaiserService.deleteImage(edit_id, type, imageName)
-            if (deleteImage) {
-                res.status(200).json({ status: true, msg: "Image delete success" })
-            } else {
-                res.status(500).json({ status: false, msg: "Something went wrong" })
-            }
+            const deleteImage: HelperFuncationResponse = await this.fundRaiserService.deleteImage(edit_id, type, imageName)
+            res.status(200).json({ status: deleteImage.status, msg: deleteImage.msg, data: deleteImage.data })
         } catch (e) {
             console.log(e);
             res.status(500).json({ status: false, msg: "Something went wrong" })
