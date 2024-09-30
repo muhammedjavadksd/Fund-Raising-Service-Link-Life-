@@ -110,6 +110,11 @@ class BankAccountService implements IBankAccountService {
                     ifsc_code
                 }
 
+                if (!findProfile.withdraw_docs.benf_id) {
+                    findProfile.withdraw_docs.benf_id = benfId;
+                    await this.fundRepo.updateFundRaiserByModel(findProfile)
+                }
+
                 const add = await this.bankRepo.insertOne(data);
 
                 console.log("Adding cause error");
