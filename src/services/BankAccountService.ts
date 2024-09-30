@@ -110,9 +110,15 @@ class BankAccountService implements IBankAccountService {
                     ifsc_code
                 }
 
-                if (!findProfile.withdraw_docs.benf_id) {
+                console.log("The profile is");
+                console.log(findProfile);
+
+
+                if (!findProfile.withdraw_docs?.benf_id) {
+                    console.log("First time bank");
                     findProfile.withdraw_docs.benf_id = benfId;
-                    await this.fundRepo.updateFundRaiserByModel(findProfile)
+                    const updateFund = await this.fundRepo.updateFundRaiserByModel(findProfile)
+                    console.log(updateFund);
                 }
 
                 const add = await this.bankRepo.insertOne(data);

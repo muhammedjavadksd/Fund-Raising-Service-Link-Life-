@@ -346,7 +346,10 @@ class FundRaiserRepo implements IFundRaiserRepo {
 
     async updateFundRaiserByModel(model: iFundRaiseModel): Promise<boolean> {
         try {
-            await model.save();
+            const save = await model.save();
+            console.log("Save the data");
+
+            console.log(save);
             return true
         } catch (e) {
             console.log(e);
