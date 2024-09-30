@@ -5,13 +5,11 @@ import fundRaiseDbConnection from './src/db/mongo_connection';
 import path from 'path'
 import cors from 'cors'
 
-
-
 const app: Express = express();
-
-
+app.use(express.json())
+app.use(express.urlencoded({ extended: true }))
 app.use(cors({
-    origin: ['*'] // ['http://localhost:3000', "https://life-link.online"]
+    origin: ['http://localhost:3000', "https://life-link.online"]
 }))
 
 const envPath = path.resolve(__dirname, "../.env")
@@ -20,8 +18,7 @@ dotenv.config({ path: envPath });
 const PORT = process.env.PORT || 7005
 fundRaiseDbConnection()
 
-app.use(express.json())
-app.use(express.urlencoded({ extended: true }))
+
 
 app.use(morgan("dev"))
 
@@ -42,7 +39,7 @@ smee.start()
 const staticPath = path.join(__dirname, 'public/images');
 console.log(`Serving static files from: ${staticPath}`);
 
-app.use("/image", express.static(staticPath))
+// app.use("/image", express.static(staticPath))
 
 app.use("/", userRouter)
 app.use("/admin", adminRouter)
