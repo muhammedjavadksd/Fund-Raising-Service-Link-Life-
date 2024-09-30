@@ -1,30 +1,25 @@
 import express, { Express } from 'express';
 import dotenv from 'dotenv'
-// import fileUpload from 'express-fileupload'
 import morgan from 'morgan'
 import fundRaiseDbConnection from './src/db/mongo_connection';
-
 import path from 'path'
-import PaymentHelper from './src/util/helper/paymentHelper';
-import FundRaiserService from './src/services/FundRaiserService';
-import UtilHelper from './src/util/helper/utilHelper';
 import cors from 'cors'
 
-const envPath = path.resolve(__dirname, "../.env")
-console.log(envPath);
-dotenv.config({ path: envPath });
 
-
-
-
-fundRaiseDbConnection()
 
 const app: Express = express();
-const PORT = process.env.PORT || 7005
+
 
 app.use(cors({
     origin: ['http://localhost:3000', "https://life-link.online"]
 }))
+
+const envPath = path.resolve(__dirname, "../.env")
+console.log(envPath);
+dotenv.config({ path: envPath });
+const PORT = process.env.PORT || 7005
+fundRaiseDbConnection()
+
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
