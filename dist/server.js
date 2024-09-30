@@ -25,13 +25,13 @@ const userRouter_1 = __importDefault(require("./src/router/userRouter"));
 const adminRouter_1 = __importDefault(require("./src/router/adminRouter"));
 // const s = new UtilHelper();
 // s.createFundRaiserReport()
-const SmeeClient = require('smee-client');
-const smee = new SmeeClient({
-    source: 'https://smee.io/XLWna6tXQfipghBJ',
-    target: `http://${process.env.FUND_RAISE_PAYMENT_VERIFY}/verify-payment`,
-    logger: console
-});
-smee.start();
+// const SmeeClient = require('smee-client')
+// const smee = new SmeeClient({
+//     source: 'https://smee.io/XLWna6tXQfipghBJ',
+//     target: `http://${process.env.FUND_RAISE_PAYMENT_VERIFY}/verify-payment`,
+//     logger: console
+// })
+// smee.start()
 const staticPath = path_1.default.join(__dirname, 'public/images');
 console.log(`Serving static files from: ${staticPath}`);
 // app.use("/image", express.static(staticPath))
