@@ -41,5 +41,5 @@ userRouter.patch("/edit_comment/:comment_id", authMiddleware.isValidUser, authMi
 //delete method
 userRouter.delete("/delete_image/:type/:edit_id", authMiddleware.isValidUser, authMiddleware.isFundRaiseRequestValid, UserControllers.deleteImage); //test completed
 userRouter.delete("/delete_comment/:comment_id", authMiddleware.isValidUser, authMiddleware.isValidCommentOwner, UserControllers.deleteComment);
-userRouter.delete("/delete-bank-account/:edit_id/:benf_id", authMiddleware.isValidUser, authMiddleware.isFundRaiseRequestValid, UserControllers.deleteComment);
+userRouter.delete("/delete-bank-account/:edit_id/:benf_id", authMiddleware.isValidUser, authMiddleware.isFundRaiseRequestValid, UserControllers.deleteBankAccount);
 exports.default = userRouter;
