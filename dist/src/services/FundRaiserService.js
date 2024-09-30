@@ -490,32 +490,35 @@ class FundRaiserService {
     }
     editFundRaiser(fund_id, edit_data) {
         return __awaiter(this, void 0, void 0, function* () {
+            var _a, _b, _c;
             try {
-                // if (edit_data?.withdraw_docs?.account_number) {
-                //     const findProfile = await this.FundRaiserRepo.findFundPostByFundId(fund_id);
-                //     if (findProfile) {
-                //         const addBeneficiary = await this.addBeneficiary(fund_id, findProfile.full_name, findProfile.email_id, findProfile.phone_number.toString(), edit_data?.withdraw_docs?.account_number, edit_data?.withdraw_docs?.ifsc_code, findProfile.full_address);
-                //         console.log("Add Benificiary details");
-                //         console.log(addBeneficiary);
-                //         if (addBeneficiary.status) {
-                //             const utilHelper = new UtilHelper();
-                //             const benfId = utilHelper.convertFundIdToBeneficiaryId(fund_id);
-                //             edit_data.benf_id = benfId;
-                //         } else {
-                //             return {
-                //                 msg: addBeneficiary.msg,
-                //                 status: false,
-                //                 statusCode: StatusCode.BAD_REQUESR
-                //             }
-                //         }
-                //     } else {
-                //         return {
-                //             status: false,
-                //             msg: "We couldn't find the profile",
-                //             statusCode: StatusCode.BAD_REQUESR
-                //         }
-                //     }
-                // }
+                if ((_a = edit_data === null || edit_data === void 0 ? void 0 : edit_data.withdraw_docs) === null || _a === void 0 ? void 0 : _a.account_number) {
+                    const findProfile = yield this.FundRaiserRepo.findFundPostByFundId(fund_id);
+                    if (findProfile) {
+                        const addBeneficiary = yield this.addBeneficiary(fund_id, findProfile.full_name, findProfile.email_id, findProfile.phone_number.toString(), (_b = edit_data === null || edit_data === void 0 ? void 0 : edit_data.withdraw_docs) === null || _b === void 0 ? void 0 : _b.account_number, (_c = edit_data === null || edit_data === void 0 ? void 0 : edit_data.withdraw_docs) === null || _c === void 0 ? void 0 : _c.ifsc_code, findProfile.full_address);
+                        console.log("Add Benificiary details");
+                        console.log(addBeneficiary);
+                        if (addBeneficiary.status) {
+                            const utilHelper = new utilHelper_1.default();
+                            const benfId = utilHelper.convertFundIdToBeneficiaryId(fund_id);
+                            edit_data.benf_id = benfId;
+                        }
+                        else {
+                            return {
+                                msg: addBeneficiary.msg,
+                                status: false,
+                                statusCode: UtilEnum_1.StatusCode.BAD_REQUESR
+                            };
+                        }
+                    }
+                    else {
+                        return {
+                            status: false,
+                            msg: "We couldn't find the profile",
+                            statusCode: UtilEnum_1.StatusCode.BAD_REQUESR
+                        };
+                    }
+                }
                 const updateFundRaiserData = yield this.FundRaiserRepo.updateFundRaiser(fund_id, edit_data);
                 if (updateFundRaiserData) {
                     return {

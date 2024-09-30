@@ -20,8 +20,6 @@ const utilHelper_1 = __importDefault(require("../util/helper/utilHelper"));
 const ConstData_1 = require("../types/Enums/ConstData");
 const CommentService_1 = __importDefault(require("../services/CommentService"));
 const DonationService_1 = __importDefault(require("../services/DonationService"));
-const BankAccountService_1 = __importDefault(require("../services/BankAccountService"));
-const DonationRepo_1 = __importDefault(require("../repositorys/DonationRepo"));
 class UserController {
     constructor() {
         this.getUserFundRaisePost = this.getUserFundRaisePost.bind(this);
@@ -44,69 +42,10 @@ class UserController {
         this.myDonationHistory = this.myDonationHistory.bind(this);
         this.findPaymentOrder = this.findPaymentOrder.bind(this);
         this.getPresignedUrl = this.getPresignedUrl.bind(this);
-        this.addBankAccount = this.addBankAccount.bind(this);
-        this.getBankAccounts = this.getBankAccounts.bind(this);
-        this.profileBankAccounts = this.profileBankAccounts.bind(this);
-        this.getDonationStatitics = this.getDonationStatitics.bind(this);
-        this.deleteBankAccount = this.deleteBankAccount.bind(this);
         this.fundRaiserService = new FundRaiserService_1.default();
         this.commentService = new CommentService_1.default();
         this.fundRaiserRepo = new FundRaiserRepo_1.default();
-        this.donationRepo = new DonationRepo_1.default();
         this.donationService = new DonationService_1.default();
-        this.bankAccountService = new BankAccountService_1.default();
-    }
-    deleteBankAccount(req, res) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const fundId = req.params.edit_id;
-            const benfId = req.params.benf_id;
-            const deleteBenf = yield this.bankAccountService.deleteAccount(benfId, fundId);
-            res.status(deleteBenf.statusCode).json({ status: deleteBenf.status, msg: deleteBenf.msg, data: deleteBenf.data });
-        });
-    }
-    getDonationStatitics(req, res) {
-        return __awaiter(this, void 0, void 0, function* () {
-            var _a, _b;
-            const dateFrom = new Date(((_a = req.query.from_date) === null || _a === void 0 ? void 0 : _a.toString()) || new Date());
-            const dateTo = new Date(((_b = req.query.to_date) === null || _b === void 0 ? void 0 : _b.toString()) || new Date());
-            const fund_id = req.params.fund_id;
-            console.log("The date");
-            console.log(dateFrom);
-            console.log(dateTo);
-            if (dateFrom == null || dateTo == null) {
-                res.status(UtilEnum_1.StatusCode.BAD_REQUESR).json({ status: false, msg: "Please provide valid date" });
-            }
-            else {
-                const findStatitics = yield this.donationRepo.donationStatitics(dateFrom, dateTo, fund_id);
-                console.log("Find statitics");
-                console.log(findStatitics);
-                if (findStatitics) {
-                    res.status(UtilEnum_1.StatusCode.OK).json({ status: true, msg: "Data found", data: findStatitics });
-                }
-                else {
-                    res.status(UtilEnum_1.StatusCode.NOT_FOUND).json({ status: false, msg: "No data found", });
-                }
-            }
-        });
-    }
-    profileBankAccounts(req, res) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const fundId = req.params.edit_id;
-            const page = +req.params.page;
-            const limit = +req.params.limit;
-            const findAllBenificiary = yield this.bankAccountService.getActiveBankAccount(fundId, page, limit);
-            res.status(findAllBenificiary.statusCode).json({ status: findAllBenificiary.status, msg: findAllBenificiary.msg, data: findAllBenificiary.data });
-        });
-    }
-    getBankAccounts(req, res) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const fundId = req.params.edit_id;
-            const page = +req.params.page;
-            const limit = +req.params.limit;
-            console.log("Get bank account");
-            const findAllBenificiary = yield this.bankAccountService.getAllBankAccount(fundId, page, limit);
-            res.status(findAllBenificiary.statusCode).json({ status: findAllBenificiary.status, msg: findAllBenificiary.msg, data: findAllBenificiary.data });
-        });
     }
     addBankAccount(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -114,9 +53,7 @@ class UserController {
             const ifsc_code = req.body.ifsc_code;
             const holderName = req.body.holder_name;
             const accountType = req.body.account_type;
-            const fund_id = req.params.edit_id;
-            const addBankAccount = yield this.bankAccountService.addBankAccount(accountNumber, ifsc_code, holderName, accountType, fund_id);
-            res.status(addBankAccount.statusCode).json({ status: addBankAccount.status, msg: addBankAccount.msg, data: addBankAccount.data });
+            return;
         });
     }
     findPaymentOrder(req, res) {
