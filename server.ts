@@ -11,7 +11,7 @@ const app: Express = express();
 
 
 app.use(cors({
-    origin: ['http://localhost:3000', "https://life-link.online"]
+    origin: ['*'] // ['http://localhost:3000', "https://life-link.online"]
 }))
 
 const envPath = path.resolve(__dirname, "../.env")

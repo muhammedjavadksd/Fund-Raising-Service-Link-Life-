@@ -11,7 +11,7 @@ const path_1 = __importDefault(require("path"));
 const cors_1 = __importDefault(require("cors"));
 const app = (0, express_1.default)();
 app.use((0, cors_1.default)({
-    origin: ['http://localhost:3000', "https://life-link.online"]
+    origin: ['*'] // ['http://localhost:3000', "https://life-link.online"]
 }));
 const envPath = path_1.default.resolve(__dirname, "../.env");
 console.log(envPath);
