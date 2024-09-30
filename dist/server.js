@@ -12,7 +12,7 @@ const app = (0, express_1.default)();
 app.use(express_1.default.json());
 app.use(express_1.default.urlencoded({ extended: true }));
 app.use((0, cors_1.default)({
-    origin: ['http://localhost:3000', "https://life-link.online"]
+    origin: ['*'] //['http://localhost:3000', "https://life-link.online"]
 }));
 const mongo_connection_1 = __importDefault(require("./src/db/mongo_connection"));
 const envPath = path_1.default.resolve(__dirname, "../.env");
@@ -25,13 +25,13 @@ const userRouter_1 = __importDefault(require("./src/router/userRouter"));
 const adminRouter_1 = __importDefault(require("./src/router/adminRouter"));
 // const s = new UtilHelper();
 // s.createFundRaiserReport()
-// const SmeeClient = require('smee-client')
-// const smee = new SmeeClient({
-//     source: 'https://smee.io/XLWna6tXQfipghBJ',
-//     target: `http://${process.env.FUND_RAISE_PAYMENT_VERIFY}/verify-payment`,
-//     logger: console
-// })
-// smee.start()
+const SmeeClient = require('smee-client');
+const smee = new SmeeClient({
+    source: 'https://smee.io/XLWna6tXQfipghBJ',
+    target: `http://${process.env.FUND_RAISE_PAYMENT_VERIFY}/verify-payment`,
+    logger: console
+});
+smee.start();
 const staticPath = path_1.default.join(__dirname, 'public/images');
 console.log(`Serving static files from: ${staticPath}`);
 // app.use("/image", express.static(staticPath))
