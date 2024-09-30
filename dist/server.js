@@ -11,18 +11,21 @@ const mongo_connection_1 = __importDefault(require("./src/db/mongo_connection"))
 const userRouter_1 = __importDefault(require("./src/router/userRouter"));
 const adminRouter_1 = __importDefault(require("./src/router/adminRouter"));
 const path_1 = __importDefault(require("path"));
-const utilHelper_1 = __importDefault(require("./src/util/helper/utilHelper"));
+const cors_1 = __importDefault(require("cors"));
 const envPath = path_1.default.resolve(__dirname, "../.env");
 console.log(envPath);
 dotenv_1.default.config({ path: envPath });
 (0, mongo_connection_1.default)();
 const app = (0, express_1.default)();
 const PORT = process.env.PORT || 7005;
+app.use((0, cors_1.default)({
+    origin: ['http://localhost:3000', "https://life-link.online"]
+}));
 app.use(express_1.default.json());
 app.use(express_1.default.urlencoded({ extended: true }));
 app.use((0, morgan_1.default)("dev"));
-const s = new utilHelper_1.default();
-s.createFundRaiserReport();
+// const s = new UtilHelper();
+// s.createFundRaiserReport()
 const SmeeClient = require('smee-client');
 const smee = new SmeeClient({
     source: 'https://smee.io/XLWna6tXQfipghBJ',

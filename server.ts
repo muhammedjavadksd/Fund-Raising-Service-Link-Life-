@@ -9,10 +9,12 @@ import path from 'path'
 import PaymentHelper from './src/util/helper/paymentHelper';
 import FundRaiserService from './src/services/FundRaiserService';
 import UtilHelper from './src/util/helper/utilHelper';
+import cors from 'cors'
 
 const envPath = path.resolve(__dirname, "../.env")
 console.log(envPath);
 dotenv.config({ path: envPath });
+
 
 
 
@@ -21,14 +23,17 @@ fundRaiseDbConnection()
 const app: Express = express();
 const PORT = process.env.PORT || 7005
 
+app.use(cors({
+    origin: ['http://localhost:3000', "https://life-link.online"]
+}))
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
 app.use(morgan("dev"))
 
 
-const s = new UtilHelper();
-s.createFundRaiserReport()
+// const s = new UtilHelper();
+// s.createFundRaiserReport()
 
 const SmeeClient = require('smee-client')
 
