@@ -335,8 +335,16 @@ class FundRaiserService implements IFundRaiserService {
         const matchQuery: Record<string, any> = {
             ...(filter.sub_category ? { sub_category: filter.sub_category } : {}),
             ...(filter.state ? { state: filter.state } : {}),
-            ...(filter.min ? { amount: { $gte: +filter.min } } : {}),
-            ...(filter.max ? { amount: { $lte: +filter.max } } : {})
+            ...(
+                filter.min || filter.max
+                    ? {
+                        amount: {
+                            ...(filter.min ? { $gte: +filter.min } : {}),
+                            ...(filter.max ? { $lte: +filter.max } : {})
+                        }
+                    }
+                    : {}
+            )
         };
         if (category != "all") {
             matchQuery['category'] = category
