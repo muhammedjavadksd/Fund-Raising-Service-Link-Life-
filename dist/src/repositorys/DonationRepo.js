@@ -18,16 +18,22 @@ class DonationRepo {
     donationStatitics(from_date, to_date, fund_id) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const data = yield DonationHistory_1.default.aggregate([
-                    {
-                        $match: {
-                            fund_id,
-                            // date: {
-                            //     $gte: from_date,
-                            //     $lte: to_date
-                            // }
+                console.log("Filter");
+                console.log(from_date.getTime()); ///2023-01-08T18:30:00.000Z
+                console.log(to_date); //2024-01-08T18:30:00.000Z
+                const match = {
+                    $match: {
+                        fund_id,
+                        date: {
+                            $gte: from_date,
+                            $lte: to_date
                         }
-                    },
+                    }
+                };
+                console.log("Match");
+                console.log(match);
+                const data = yield DonationHistory_1.default.aggregate([
+                    match,
                     {
                         $project: {
                             amount: 1,
@@ -51,13 +57,16 @@ class DonationRepo {
                     },
                     {
                         $sort: {
-                            "_id": 1
+                            "date": 1
                         }
                     }
                 ]);
-                return data;
+                console.log('The data is');
+                console.log(data);
+                return data.length ? data : false;
             }
             catch (e) {
+                console.log(e);
                 return false;
             }
         });

@@ -25,16 +25,29 @@ class DonationRepo implements IDonationRepo {
     async donationStatitics(from_date: Date, to_date: Date, fund_id: string): Promise<false | IDonationStatitics[]> {
 
         try {
-            const data = await DonateHistoryCollection.aggregate([
-                {
-                    $match: {
-                        fund_id,
-                        // date: {
-                        //     $gte: from_date,
-                        //     $lte: to_date
-                        // }
+
+            console.log("Filter");
+
+            console.log(from_date.getTime()); ///2023-01-08T18:30:00.000Z
+            console.log(to_date); //2024-01-08T18:30:00.000Z
+
+            const match = {
+                $match: {
+                    fund_id,
+                    date: {
+                        $gte: from_date,
+                        $lte: to_date
                     }
-                },
+                }
+            }
+
+            console.log("Match");
+            console.log(match);
+
+
+
+            const data = await DonateHistoryCollection.aggregate([
+                match,
                 {
                     $project: {
                         amount: 1,
@@ -58,12 +71,18 @@ class DonationRepo implements IDonationRepo {
                 },
                 {
                     $sort: {
-                        "_id": 1
+                        "date": 1
                     }
                 }
             ])
-            return data
+
+            console.log('The data is');
+            console.log(data);
+
+
+            return data.length ? data : false
         } catch (e) {
+            console.log(e);
             return false
         }
 

@@ -73,6 +73,7 @@ class BankAccountService {
     }
     addBankAccount(account_number, ifsc_code, holder_name, accountType, fundId) {
         return __awaiter(this, void 0, void 0, function* () {
+            var _a;
             const findExist = yield this.bankRepo.findLiveAccountByNumber(account_number);
             if (findExist) {
                 return {
@@ -85,6 +86,8 @@ class BankAccountService {
             const fundService = new FundRaiserService_1.default();
             if (findProfile) {
                 const addBeneficiary = yield fundService.addBeneficiary(fundId, findProfile.full_name, findProfile.email_id, findProfile.phone_number.toString(), account_number.toString(), ifsc_code, findProfile.full_address);
+                console.log("Add benificiary details");
+                console.log(addBeneficiary);
                 if (addBeneficiary.status) {
                     const utilHelper = new utilHelper_1.default();
                     const benfId = utilHelper.convertFundIdToBeneficiaryId(fundId);
@@ -98,7 +101,17 @@ class BankAccountService {
                         holder_name,
                         ifsc_code
                     };
+                    console.log("The profile is");
+                    console.log(findProfile);
+                    if (!((_a = findProfile.withdraw_docs) === null || _a === void 0 ? void 0 : _a.benf_id)) {
+                        console.log("First time bank");
+                        findProfile.withdraw_docs.benf_id = benfId;
+                        const updateFund = yield this.fundRepo.updateFundRaiserByModel(findProfile);
+                        console.log(updateFund);
+                    }
                     const add = yield this.bankRepo.insertOne(data);
+                    console.log("Adding cause error");
+                    console.log(add);
                     if (add) {
                         return {
                             msg: "Bank account created success",

@@ -22,6 +22,7 @@ const tokenHelper_1 = __importDefault(require("../util/helper/tokenHelper"));
 const provider_1 = __importDefault(require("../communication/provider"));
 const dotenv_1 = require("dotenv");
 const cashfreedocs_new_1 = __importDefault(require("../apis/cashfreedocs-new"));
+const BankAccountRepo_1 = __importDefault(require("../repositorys/BankAccountRepo"));
 class FundRaiserService {
     constructor() {
         this.deleteImage = this.deleteImage.bind(this);
@@ -35,10 +36,12 @@ class FundRaiserService {
         this.closeFundRaiserVerification = this.closeFundRaiserVerification.bind(this);
         this.createPresignedUrl = this.createPresignedUrl.bind(this);
         this.deleteFundRaiserImage = this.deleteFundRaiserImage.bind(this);
+        this.removeBeneficiary = this.removeBeneficiary.bind(this);
         (0, dotenv_1.config)();
         this.FundRaiserRepo = new FundRaiserRepo_1.default();
         console.log("Main bucket  name");
         console.log(process.env.FUND_RAISER_BUCKET);
+        this.bankRepo = new BankAccountRepo_1.default();
         this.fundRaiserPictureBucket = new s3Bucket_1.default(process.env.FUND_RAISER_BUCKET || "", ConstData_1.S3Folder.FundRaiserPicture);
         this.fundRaiserDocumentBucket = new s3Bucket_1.default(process.env.FUND_RAISER_BUCKET || "", ConstData_1.S3Folder.FundRaiserDocument);
     }
@@ -144,6 +147,70 @@ class FundRaiserService {
     //         }
     //     }
     // }
+    removeBeneficiary(benfId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                cashfreedocs_new_1.default.auth(process.env.CASHFREE_PAYOUT_KEY || "");
+                cashfreedocs_new_1.default.auth(process.env.CASHFREE_PAYOUT_SECRET || "");
+                const authOptions = {
+                    method: 'POST',
+                    url: 'https://payout-gamma.cashfree.com/payout/v1/authorize',
+                    headers: {
+                        accept: 'application/json',
+                        'x-client-id': process.env.CASHFREE_PAYOUT_KEY,
+                        'x-client-secret': process.env.CASHFREE_PAYOUT_SECRET
+                    }
+                };
+                const request = yield axios_1.default.request(authOptions);
+                const responseData = request.data.data;
+                const { token } = responseData;
+                if (token) {
+                    const options = {
+                        method: 'POST',
+                        url: 'https://payout-gamma.cashfree.com/payout/v1/removeBeneficiary',
+                        headers: {
+                            accept: 'application/json',
+                            'content-type': 'application/json',
+                            Authorization: `Bearer ${token}`
+                        },
+                        data: {
+                            beneId: benfId,
+                        }
+                    };
+                    const addBeneficiary = yield (yield axios_1.default.request(options)).data;
+                    if (addBeneficiary.status == "SUCCESS") {
+                        return {
+                            msg: "Beneficiary added success",
+                            status: true,
+                            statusCode: UtilEnum_1.StatusCode.OK
+                        };
+                    }
+                    else {
+                        return {
+                            msg: addBeneficiary.message,
+                            status: false,
+                            statusCode: UtilEnum_1.StatusCode.BAD_REQUESR
+                        };
+                    }
+                }
+                else {
+                    return {
+                        msg: "Something went wrong",
+                        status: false,
+                        statusCode: UtilEnum_1.StatusCode.SERVER_ERROR
+                    };
+                }
+            }
+            catch (e) {
+                console.log(e);
+                return {
+                    msg: "Something went wrong",
+                    status: false,
+                    statusCode: UtilEnum_1.StatusCode.SERVER_ERROR
+                };
+            }
+        });
+    }
     addBeneficiary(fund_id, name, email, phone, accountNumber, ifsc, address) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
@@ -230,6 +297,11 @@ class FundRaiserService {
                 if (fund_id && type == UtilEnum_1.JwtType.CloseFundRaise) {
                     console.log(fund_id);
                     yield this.FundRaiserRepo.closeFundRaiser(fund_id);
+                    const findFund = yield this.FundRaiserRepo.findFundPostByFundId(fund_id);
+                    if (findFund) {
+                        // const findAccount = await this.bankRepo.find
+                        // await this.removeBeneficiary()
+                    }
                     return {
                         status: true,
                         msg: "Fund raising closed",
@@ -246,7 +318,11 @@ class FundRaiserService {
     }
     paginatedFundRaiserByCategory(category, limit, skip, filter) {
         return __awaiter(this, void 0, void 0, function* () {
-            const matchQuery = Object.assign(Object.assign(Object.assign(Object.assign({}, (filter.sub_category ? { sub_category: filter.sub_category } : {})), (filter.state ? { state: filter.state } : {})), (filter.min ? { amount: { $gte: +filter.min } } : {})), (filter.max ? { amount: { $lte: +filter.max } } : {}));
+            const matchQuery = Object.assign(Object.assign(Object.assign({}, (filter.sub_category ? { sub_category: filter.sub_category } : {})), (filter.state ? { state: filter.state } : {})), (filter.min || filter.max
+                ? {
+                    amount: Object.assign(Object.assign({}, (filter.min ? { $gte: +filter.min } : {})), (filter.max ? { $lte: +filter.max } : {}))
+                }
+                : {}));
             if (category != "all") {
                 matchQuery['category'] = category;
             }
@@ -312,18 +388,40 @@ class FundRaiserService {
                 const findData = yield this.FundRaiserRepo.findFundPostByFundId(fund_id); // await InitFundRaisingModel.findOne({ fund_id: fund_id });
                 if (findData) {
                     const field = (type == UtilEnum_1.FundRaiserFileType.Document) ? "documents" : "picture";
+                    if (!!findData.description) {
+                        const length = findData[field].length;
+                        if (length <= 3) {
+                            return {
+                                msg: "Please keep minimum 3 image's",
+                                status: false,
+                                statusCode: UtilEnum_1.StatusCode.BAD_REQUESR
+                            };
+                        }
+                    }
                     const filterImage = findData[field].filter((each) => each != image);
                     findData[field] = [...filterImage];
                     yield this.FundRaiserRepo.updateFundRaiserByModel(findData);
-                    return true;
+                    return {
+                        msg: "Image deletion success",
+                        status: true,
+                        statusCode: UtilEnum_1.StatusCode.OK
+                    };
                 }
                 else {
-                    return false;
+                    return {
+                        msg: "Data couldn't found",
+                        status: false,
+                        statusCode: UtilEnum_1.StatusCode.NOT_FOUND
+                    };
                 }
             }
             catch (e) {
                 console.log(e);
-                return false;
+                return {
+                    msg: "Something went wrong",
+                    status: false,
+                    statusCode: UtilEnum_1.StatusCode.SERVER_ERROR
+                };
             }
         });
     }

@@ -140,13 +140,14 @@ const schemeFundRaise = new mongoose_1.default.Schema({
         required: false
     },
     withdraw_docs: {
-        account_number: String,
-        holder_name: String,
-        ifsc_code: String,
-        account_type: {
-            type: String,
-            enum: Object.values(UtilEnum_1.FundRaiserBankAccountType)
-        }
+        // account_number: String,
+        // holder_name: String,
+        // ifsc_code: String,
+        // account_type: {
+        //     type: String,
+        //     enum: Object.values(FundRaiserBankAccountType)
+        // }
+        benf_id: String
     }
 });
 const InitFundRaisingModel = mongoose_1.default.model("init_fund_raising", schemeFundRaise, "init_fund_raising");

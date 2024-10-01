@@ -34,7 +34,6 @@ const smee = new SmeeClient({
 smee.start();
 const staticPath = path_1.default.join(__dirname, 'public/images');
 console.log(`Serving static files from: ${staticPath}`);
-// app.use("/image", express.static(staticPath))
 app.use("/", userRouter_1.default);
 app.use("/admin", adminRouter_1.default);
 app.listen(PORT, () => {

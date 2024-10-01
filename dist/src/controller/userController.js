@@ -342,12 +342,7 @@ class UserController {
             const imageName = ((_a = req.query.image_id) === null || _a === void 0 ? void 0 : _a.toString()) || "";
             try {
                 const deleteImage = yield this.fundRaiserService.deleteImage(edit_id, type, imageName);
-                if (deleteImage) {
-                    res.status(200).json({ status: true, msg: "Image delete success" });
-                }
-                else {
-                    res.status(500).json({ status: false, msg: "Something went wrong" });
-                }
+                res.status(200).json({ status: deleteImage.status, msg: deleteImage.msg, data: deleteImage.data });
             }
             catch (e) {
                 console.log(e);

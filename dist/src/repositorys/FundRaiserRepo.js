@@ -336,7 +336,9 @@ class FundRaiserRepo {
     updateFundRaiserByModel(model) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                yield model.save();
+                const save = yield model.save();
+                console.log("Save the data");
+                console.log(save);
                 return true;
             }
             catch (e) {
