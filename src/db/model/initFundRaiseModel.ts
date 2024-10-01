@@ -121,13 +121,14 @@ const schemeFundRaise = new mongoose.Schema<iFundRaiseModel>({
         required: false
     },
     withdraw_docs: {
-        account_number: String,
-        holder_name: String,
-        ifsc_code: String,
-        account_type: {
-            type: String,
-            enum: Object.values(FundRaiserBankAccountType)
-        }
+        // account_number: String,
+        // holder_name: String,
+        // ifsc_code: String,
+        // account_type: {
+        //     type: String,
+        //     enum: Object.values(FundRaiserBankAccountType)
+        // }
+        benf_id: String
     }
 });
 

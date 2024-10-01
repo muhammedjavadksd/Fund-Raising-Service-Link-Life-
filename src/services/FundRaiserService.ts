@@ -14,6 +14,7 @@ import TokenHelper from "../util/helper/tokenHelper";
 import FundRaiserProvider from "../communication/provider";
 import { config } from 'dotenv';
 import cashfreedocsNew from '../apis/cashfreedocs-new';
+import BankAccountRepo from "../repositorys/BankAccountRepo";
 
 
 class FundRaiserService implements IFundRaiserService {
@@ -21,6 +22,7 @@ class FundRaiserService implements IFundRaiserService {
     private readonly FundRaiserRepo;
     private readonly fundRaiserPictureBucket;
     private readonly fundRaiserDocumentBucket;
+    private readonly bankRepo;
 
     constructor() {
         this.deleteImage = this.deleteImage.bind(this)
@@ -34,11 +36,12 @@ class FundRaiserService implements IFundRaiserService {
         this.closeFundRaiserVerification = this.closeFundRaiserVerification.bind(this);
         this.createPresignedUrl = this.createPresignedUrl.bind(this)
         this.deleteFundRaiserImage = this.deleteFundRaiserImage.bind(this)
+        this.removeBeneficiary = this.removeBeneficiary.bind(this)
         config()
         this.FundRaiserRepo = new FundRaiserRepo();
         console.log("Main bucket  name");
         console.log(process.env.FUND_RAISER_BUCKET);
-
+        this.bankRepo = new BankAccountRepo()
         this.fundRaiserPictureBucket = new S3BucketHelper(process.env.FUND_RAISER_BUCKET || "", S3Folder.FundRaiserPicture);
         this.fundRaiserDocumentBucket = new S3BucketHelper(process.env.FUND_RAISER_BUCKET || "", S3Folder.FundRaiserDocument);
     }
@@ -144,6 +147,73 @@ class FundRaiserService implements IFundRaiserService {
 
     // }
 
+    async removeBeneficiary(benfId: string): Promise<HelperFuncationResponse> {
+
+
+        try {
+            cashfreedocsNew.auth(process.env.CASHFREE_PAYOUT_KEY || "");
+            cashfreedocsNew.auth(process.env.CASHFREE_PAYOUT_SECRET || "");
+            const authOptions = {
+                method: 'POST',
+                url: 'https://payout-gamma.cashfree.com/payout/v1/authorize',
+                headers: {
+                    accept: 'application/json',
+                    'x-client-id': process.env.CASHFREE_PAYOUT_KEY,
+                    'x-client-secret': process.env.CASHFREE_PAYOUT_SECRET
+                }
+            };
+
+            const request = await axios.request(authOptions)
+            const responseData = request.data.data
+            const { token } = responseData;
+
+            if (token) {
+                const options = {
+                    method: 'POST',
+                    url: 'https://payout-gamma.cashfree.com/payout/v1/removeBeneficiary',
+                    headers: {
+                        accept: 'application/json',
+                        'content-type': 'application/json',
+                        Authorization: `Bearer ${token}`
+                    },
+                    data: {
+                        beneId: benfId,
+                    }
+                };
+
+
+
+                const addBeneficiary = await (await axios.request(options)).data
+                if (addBeneficiary.status == "SUCCESS") {
+                    return {
+                        msg: "Beneficiary added success",
+                        status: true,
+                        statusCode: StatusCode.OK
+                    }
+                } else {
+                    return {
+                        msg: addBeneficiary.message,
+                        status: false,
+                        statusCode: StatusCode.BAD_REQUESR
+                    }
+                }
+            } else {
+                return {
+                    msg: "Something went wrong",
+                    status: false,
+                    statusCode: StatusCode.SERVER_ERROR
+                }
+            }
+        } catch (e) {
+            console.log(e);
+            return {
+                msg: "Something went wrong",
+                status: false,
+                statusCode: StatusCode.SERVER_ERROR
+            }
+        }
+    }
+
 
     async addBeneficiary(fund_id: string, name: string, email: string, phone: string, accountNumber: string, ifsc: string, address: string): Promise<HelperFuncationResponse> {
 
@@ -233,10 +303,18 @@ class FundRaiserService implements IFundRaiserService {
         if (verifyToken && typeof verifyToken == "object") {
             const fund_id = verifyToken?.fund_id
             const type = verifyToken?.type;
+
             if (fund_id && type == JwtType.CloseFundRaise) {
                 console.log(fund_id);
 
                 await this.FundRaiserRepo.closeFundRaiser(fund_id)
+                const findFund = await this.FundRaiserRepo.findFundPostByFundId(fund_id);
+                if (findFund) {
+                    // const findAccount = await this.bankRepo.find
+                    // await this.removeBeneficiary()
+
+                }
+
                 return {
                     status: true,
                     msg: "Fund raising closed",
