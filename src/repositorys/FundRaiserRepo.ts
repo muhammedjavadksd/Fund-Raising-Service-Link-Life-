@@ -83,6 +83,8 @@ class FundRaiserRepo implements IFundRaiserRepo {
 
     async closeFundRaiser(fund_id: string): Promise<boolean> {
         const findUpdate = await this.FundRaiserModel.findOneAndUpdate({ fund_id }, { closed: true, status: FundRaiserStatus.CLOSED })
+        console.log(findUpdate);
+
         return !!findUpdate?.isModified()
     }
 
