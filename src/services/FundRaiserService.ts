@@ -629,6 +629,8 @@ class FundRaiserService implements IFundRaiserService {
     async editFundRaiser(fund_id: string, edit_data: IEditableFundRaiser): Promise<HelperFuncationResponse> {
         try {
 
+
+
             // if (edit_data?.withdraw_docs?.account_number) {
             //     const findProfile = await this.FundRaiserRepo.findFundPostByFundId(fund_id);
             //     if (findProfile) {

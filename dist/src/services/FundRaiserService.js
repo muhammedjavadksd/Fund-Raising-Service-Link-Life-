@@ -297,11 +297,11 @@ class FundRaiserService {
                 if (fund_id && type == UtilEnum_1.JwtType.CloseFundRaise) {
                     console.log(fund_id);
                     yield this.FundRaiserRepo.closeFundRaiser(fund_id);
-                    const findFund = yield this.FundRaiserRepo.findFundPostByFundId(fund_id);
-                    if (findFund) {
-                        // const findAccount = await this.bankRepo.find
-                        // await this.removeBeneficiary()
-                    }
+                    // const findFund = await this.FundRaiserRepo.findFundPostByFundId(fund_id);
+                    // if (findFund) {
+                    //     // const findAccount = await this.bankRepo.find
+                    //     // await this.removeBeneficiary()
+                    // }
                     return {
                         status: true,
                         msg: "Fund raising closed",
@@ -496,36 +496,55 @@ class FundRaiserService {
                         };
                     }
                     else {
-                        const tokenHelper = new tokenHelper_1.default();
-                        const communication = new provider_1.default(process.env.FUND_RAISER_CLOSE_NOTIFICATION || "");
-                        yield communication._init__();
-                        const createToken = {
-                            fund_id,
-                            type: UtilEnum_1.JwtType.CloseFundRaise
-                        };
-                        const token = yield tokenHelper.createJWTToken(createToken, UtilEnum_1.JwtTimer._15Min);
-                        communication.transferData({
-                            token,
-                            email_id: currentFund.email_id,
-                            full_name: currentFund.full_name,
-                            collected_amount: currentFund.collected
-                        });
-                        if (token) {
-                            currentFund.close_token = token;
-                            // currentFund.closed = true;
-                            yield this.FundRaiserRepo.updateFundRaiserByModel(currentFund);
-                            return {
-                                msg: "A verification email has been sent to the registered email address.",
-                                status: true,
-                                statusCode: UtilEnum_1.StatusCode.OK
+                        if (needVerification) {
+                            const tokenHelper = new tokenHelper_1.default();
+                            const communication = new provider_1.default(process.env.FUND_RAISER_CLOSE_NOTIFICATION || "");
+                            yield communication._init__();
+                            const createToken = {
+                                fund_id,
+                                type: UtilEnum_1.JwtType.CloseFundRaise
                             };
+                            const token = yield tokenHelper.createJWTToken(createToken, UtilEnum_1.JwtTimer._15Min);
+                            communication.transferData({
+                                token,
+                                email_id: currentFund.email_id,
+                                full_name: currentFund.full_name,
+                                collected_amount: currentFund.collected
+                            });
+                            if (token) {
+                                currentFund.close_token = token;
+                                // currentFund.closed = true;
+                                yield this.FundRaiserRepo.updateFundRaiserByModel(currentFund);
+                                return {
+                                    msg: "A verification email has been sent to the registered email address.",
+                                    status: true,
+                                    statusCode: UtilEnum_1.StatusCode.OK
+                                };
+                            }
+                            else {
+                                return {
+                                    msg: "Something went wrong",
+                                    status: false,
+                                    statusCode: UtilEnum_1.StatusCode.BAD_REQUESR
+                                };
+                            }
                         }
                         else {
-                            return {
-                                msg: "Something went wrong",
-                                status: false,
-                                statusCode: UtilEnum_1.StatusCode.BAD_REQUESR
-                            };
+                            const close = yield this.FundRaiserRepo.closeFundRaiser(fund_id);
+                            if (close) {
+                                return {
+                                    msg: "Fund raising campign has been closed",
+                                    status: true,
+                                    statusCode: UtilEnum_1.StatusCode.OK
+                                };
+                            }
+                            else {
+                                return {
+                                    msg: "Campign already stopped",
+                                    status: false,
+                                    statusCode: UtilEnum_1.StatusCode.BAD_REQUESR
+                                };
+                            }
                         }
                     }
                 }

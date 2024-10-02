@@ -82,10 +82,8 @@ class FundRaiserRepo implements IFundRaiserRepo {
 
 
     async closeFundRaiser(fund_id: string): Promise<boolean> {
-        const findUpdate = await this.FundRaiserModel.findOneAndUpdate({ fund_id }, { closed: true, status: FundRaiserStatus.CLOSED })
-        console.log(findUpdate);
-
-        return !!findUpdate?.isModified()
+        const findUpdate = await this.FundRaiserModel.updateOne({ fund_id }, { $set: { closed: true, status: FundRaiserStatus.CLOSED } })
+        return findUpdate.modifiedCount > 0
     }
 
     async fundRaiserPaginatedByCategory(category: string, skip: number, limit: number): Promise<iFundRaiseModel[]> {

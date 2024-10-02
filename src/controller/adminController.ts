@@ -101,8 +101,11 @@ class AdminController implements IAdminController {
             if (req.query.category) {
                 filter['category'] = req.query.category
             }
-            if (req.query.urgency) {
-                filter['urgency'] = req.query.urgency == "urgent"
+            if (req.query.urgency && req.query.urgency == "urgent") {
+                const date = new Date()
+                filter['deadline'] = {
+                    $lte: new Date(date.setDate(date.getDate() + 10))
+                }
             }
             if (req.query.state) {
                 filter['state'] = req.query.state
@@ -159,6 +162,32 @@ class AdminController implements IAdminController {
             const edit_data: IEditableFundRaiser = req.body.edit_data;
 
 
+            const editData: Record<string, any> = {}
+
+            const fieldsToUpdate = [
+                'benf_id',
+                'amount',
+                'category',
+                'sub_category',
+                'about',
+                'age',
+                'benificiary_relation',
+                'full_name',
+                'city',
+                'district',
+                'full_address',
+                'pincode',
+                'state',
+                'deadline',
+                'description',
+                'withdraw_docs'
+            ];
+
+            fieldsToUpdate.forEach((field) => {
+                if (req.body[field] !== undefined) {
+                    editData[field] = req.body[field];
+                }
+            });
             const updateFundRaiser: HelperFuncationResponse = await this.fundRaiserService.editFundRaiser(fund_id, edit_data);
             console.log("This worked");
 

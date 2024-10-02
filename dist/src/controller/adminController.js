@@ -92,8 +92,11 @@ class AdminController {
                 if (req.query.category) {
                     filter['category'] = req.query.category;
                 }
-                if (req.query.urgency) {
-                    filter['urgency'] = req.query.urgency == "urgent";
+                if (req.query.urgency && req.query.urgency == "urgent") {
+                    const date = new Date();
+                    filter['deadline'] = {
+                        $lte: new Date(date.setDate(date.getDate() + 10))
+                    };
                 }
                 if (req.query.state) {
                     filter['state'] = req.query.state;
@@ -145,6 +148,30 @@ class AdminController {
             try {
                 const fund_id = req.params.edit_id;
                 const edit_data = req.body.edit_data;
+                const editData = {};
+                const fieldsToUpdate = [
+                    'benf_id',
+                    'amount',
+                    'category',
+                    'sub_category',
+                    'about',
+                    'age',
+                    'benificiary_relation',
+                    'full_name',
+                    'city',
+                    'district',
+                    'full_address',
+                    'pincode',
+                    'state',
+                    'deadline',
+                    'description',
+                    'withdraw_docs'
+                ];
+                fieldsToUpdate.forEach((field) => {
+                    if (req.body[field] !== undefined) {
+                        editData[field] = req.body[field];
+                    }
+                });
                 const updateFundRaiser = yield this.fundRaiserService.editFundRaiser(fund_id, edit_data);
                 console.log("This worked");
                 res.status(updateFundRaiser.statusCode).json({
@@ -235,7 +262,7 @@ class AdminController {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const fund_id = req.params.edit_id;
-                const closeFundRaiser = yield this.fundRaiserService.closeFundRaiser(fund_id);
+                const closeFundRaiser = yield this.fundRaiserService.closeFundRaiser(fund_id, false);
                 res.status(closeFundRaiser.statusCode).json({ status: closeFundRaiser.status, msg: closeFundRaiser.msg });
             }
             catch (e) {

@@ -82,8 +82,8 @@ class FundRaiserRepo {
     }
     closeFundRaiser(fund_id) {
         return __awaiter(this, void 0, void 0, function* () {
-            const findUpdate = yield this.FundRaiserModel.findOneAndUpdate({ fund_id }, { closed: true, status: DbEnum_1.FundRaiserStatus.CLOSED });
-            return !!(findUpdate === null || findUpdate === void 0 ? void 0 : findUpdate.isModified());
+            const findUpdate = yield this.FundRaiserModel.updateOne({ fund_id }, { $set: { closed: true, status: DbEnum_1.FundRaiserStatus.CLOSED } });
+            return findUpdate.modifiedCount > 0;
         });
     }
     fundRaiserPaginatedByCategory(category, skip, limit) {
