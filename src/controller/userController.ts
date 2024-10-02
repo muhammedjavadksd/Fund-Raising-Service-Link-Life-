@@ -499,7 +499,6 @@ class UserController implements IUserController {
     async getActiveFundRaise(req: Request, res: Response): Promise<void> {
 
 
-        console.log(req.params);
 
         try {
 

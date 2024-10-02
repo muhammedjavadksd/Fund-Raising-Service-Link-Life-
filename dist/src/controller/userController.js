@@ -462,7 +462,6 @@ class UserController {
     }
     getActiveFundRaise(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            console.log(req.params);
             try {
                 const limit = Number(req.params.limit);
                 const page = Number(req.params.page);
