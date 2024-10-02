@@ -257,7 +257,7 @@ class AdminController implements IAdminController {
 
         try {
             const fund_id: string = req.params.edit_id;
-            const closeFundRaiser: HelperFuncationResponse = await this.fundRaiserService.closeFundRaiser(fund_id);
+            const closeFundRaiser: HelperFuncationResponse = await this.fundRaiserService.closeFundRaiser(fund_id, false);
             res.status(closeFundRaiser.statusCode).json({ status: closeFundRaiser.status, msg: closeFundRaiser.msg })
         } catch (e) {
             res.status(500).json({ status: false, msg: "Internal server error" })

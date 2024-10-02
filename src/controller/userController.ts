@@ -382,7 +382,7 @@ class UserController implements IUserController {
 
         try {
             const fund_id: string = req.params.edit_id;
-            const closePost: HelperFuncationResponse = await this.fundRaiserService.closeFundRaiser(fund_id);
+            const closePost: HelperFuncationResponse = await this.fundRaiserService.closeFundRaiser(fund_id, true);
             res.status(closePost.statusCode).json({ status: closePost.status, msg: closePost.msg })
         } catch (e) {
             res.status(500).json({ status: false, msg: "Internal server error" })

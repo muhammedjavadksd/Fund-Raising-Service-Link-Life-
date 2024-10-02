@@ -21,7 +21,7 @@ adminRouter.post("/create", authMiddleware.isValidAdmin, AdminControllers.addFun
 //patch method
 adminRouter.patch("/upload_images/:edit_id", authMiddleware.isValidAdmin, AdminControllers.uploadImages); // test completed
 adminRouter.patch("/edit/:edit_id", AdminControllers.editFundRaiser) //test completed
-adminRouter.patch("/update_status/:edit_id", authMiddleware.isValidAdmin, AdminControllers.updateStatus) //test completed
+adminRouter.patch("/update-status/:edit_id", authMiddleware.isValidAdmin, AdminControllers.updateStatus) //test completed
 adminRouter.patch("/close/:edit_id", authMiddleware.isValidAdmin, AdminControllers.closeFundRaiser) //test completed
 
 adminRouter.delete("/delete-images/:fund_id/:type", authMiddleware.isValidAdmin, AdminControllers.deleteFundRaiserImage) // test completed

@@ -308,12 +308,12 @@ class FundRaiserService implements IFundRaiserService {
                 console.log(fund_id);
 
                 await this.FundRaiserRepo.closeFundRaiser(fund_id)
-                const findFund = await this.FundRaiserRepo.findFundPostByFundId(fund_id);
-                if (findFund) {
-                    // const findAccount = await this.bankRepo.find
-                    // await this.removeBeneficiary()
+                // const findFund = await this.FundRaiserRepo.findFundPostByFundId(fund_id);
+                // if (findFund) {
+                //     // const findAccount = await this.bankRepo.find
+                //     // await this.removeBeneficiary()
 
-                }
+                // }
 
                 return {
                     status: true,
@@ -512,7 +512,7 @@ class FundRaiserService implements IFundRaiserService {
         }
     }
 
-    async closeFundRaiser(fund_id: string): Promise<HelperFuncationResponse> {
+    async closeFundRaiser(fund_id: string, needVerification: boolean): Promise<HelperFuncationResponse> {
         try {
             const currentFund: iFundRaiseModel | null = await this.FundRaiserRepo.findFundPostByFundId(fund_id);
             if (currentFund) {
@@ -523,35 +523,53 @@ class FundRaiserService implements IFundRaiserService {
                         statusCode: StatusCode.BAD_REQUESR,
                     }
                 } else {
-                    const tokenHelper = new TokenHelper()
-                    const communication = new FundRaiserProvider(process.env.FUND_RAISER_CLOSE_NOTIFICATION || "")
-                    await communication._init__()
 
-                    const createToken: ICloseFundRaiseJwtToken = {
-                        fund_id,
-                        type: JwtType.CloseFundRaise
-                    }
-                    const token = await tokenHelper.createJWTToken(createToken, JwtTimer._15Min);
-                    communication.transferData({
-                        token,
-                        email_id: currentFund.email_id,
-                        full_name: currentFund.full_name,
-                        collected_amount: currentFund.collected
-                    })
-                    if (token) {
-                        currentFund.close_token = token;
-                        // currentFund.closed = true;
-                        await this.FundRaiserRepo.updateFundRaiserByModel(currentFund);
-                        return {
-                            msg: "A verification email has been sent to the registered email address.",
-                            status: true,
-                            statusCode: StatusCode.OK
+                    if (needVerification) {
+                        const tokenHelper = new TokenHelper()
+                        const communication = new FundRaiserProvider(process.env.FUND_RAISER_CLOSE_NOTIFICATION || "")
+                        await communication._init__()
+
+                        const createToken: ICloseFundRaiseJwtToken = {
+                            fund_id,
+                            type: JwtType.CloseFundRaise
+                        }
+                        const token = await tokenHelper.createJWTToken(createToken, JwtTimer._15Min);
+                        communication.transferData({
+                            token,
+                            email_id: currentFund.email_id,
+                            full_name: currentFund.full_name,
+                            collected_amount: currentFund.collected
+                        })
+                        if (token) {
+                            currentFund.close_token = token;
+                            // currentFund.closed = true;
+                            await this.FundRaiserRepo.updateFundRaiserByModel(currentFund);
+                            return {
+                                msg: "A verification email has been sent to the registered email address.",
+                                status: true,
+                                statusCode: StatusCode.OK
+                            }
+                        } else {
+                            return {
+                                msg: "Something went wrong",
+                                status: false,
+                                statusCode: StatusCode.BAD_REQUESR
+                            }
                         }
                     } else {
-                        return {
-                            msg: "Something went wrong",
-                            status: false,
-                            statusCode: StatusCode.BAD_REQUESR
+                        const close = await this.FundRaiserRepo.closeFundRaiser(fund_id);
+                        if (close) {
+                            return {
+                                msg: "Fund raising campign has been closed",
+                                status: true,
+                                statusCode: StatusCode.OK
+                            }
+                        } else {
+                            return {
+                                msg: "Campign already stopped",
+                                status: false,
+                                statusCode: StatusCode.BAD_REQUESR
+                            }
                         }
                     }
                 }

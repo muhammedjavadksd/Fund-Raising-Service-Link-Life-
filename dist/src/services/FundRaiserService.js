@@ -483,7 +483,7 @@ class FundRaiserService {
             }
         });
     }
-    closeFundRaiser(fund_id) {
+    closeFundRaiser(fund_id, needVerification) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const currentFund = yield this.FundRaiserRepo.findFundPostByFundId(fund_id);
