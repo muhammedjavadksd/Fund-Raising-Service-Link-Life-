@@ -9,6 +9,7 @@ import { HelperFuncationResponse, IVerifyPaymentResponse } from "../types/Interf
 import PaymentHelper from "../util/helper/paymentHelper"
 import UtilHelper from "../util/helper/utilHelper"
 import BankAccountRepo from "../repositorys/BankAccountRepo"
+import FundRaiserProvider from "../communication/provider"
 
 
 interface IDonationService {
@@ -220,12 +221,13 @@ class DonationService implements IDonationService {
             const itemName: string = `Fund donation for ${fundProfile.full_name} on their ${fundProfile.category}`
             const createOrder = await this.paymentHelper.createOrder(order_id, amount, itemName, [{
                 item_description: fundProfile.about,
-                item_details_url: `http://localhost:3000/fund-raising/view/${fund_id}`,
+                item_details_url: `${process.env.FRONT_END}/fund-raising/view/${fund_id}`,
                 item_id: fund_id,
                 item_name: itemName
             }], profile_id, email_address, phone_number, name);
             const paymentOrder: IPaymentOrder = {
                 amount: amount,
+                email: email_address,
                 date: new Date(),
                 fund_id,
                 order_id,
@@ -317,6 +319,15 @@ class DonationService implements IDonationService {
                     await this.fundRepo.updateFundRaiserByModel(fundRaise)
                     await this.webHookRepo.updateWebhookStatus(order_id, true)
                     const insertHistory = await this.donationHistoryRepo.insertDonationHistory(donationHistory)
+                    const notification = new FundRaiserProvider(process.env.DONATION_SUCCESS_QUEUE || "")
+                    await notification._init__();
+                    notification.transferData({
+                        certificate_url: receipt,
+                        name: findOrder.name,
+                        amount: findOrder.amount,
+                        campign_title: campignTitle,
+                        email: findOrder.email
+                    })
                     console.log(insertHistory);
 
                     return {

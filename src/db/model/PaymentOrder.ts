@@ -3,13 +3,16 @@ import { IPaymentOrderCollection } from "../../types/Interface/IDBmodel";
 
 
 const PaymentOrderSchema = new Schema<IPaymentOrderCollection>({
+    email: {
+        type: String,
+        required: true
+    },
     name: {
         type: String,
         required: true
     },
     profile_id: {
         type: String,
-        required: true
     },
     order_id: {
         type: String,

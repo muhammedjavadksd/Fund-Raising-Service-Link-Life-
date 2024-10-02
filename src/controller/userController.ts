@@ -180,13 +180,10 @@ class UserController implements IUserController {
         const context = req.context
         const hide_profile = req.body.hide_profile
 
-        if (context && context.profile_id) {
-            const profile_id = context.profile_id
-            const createOrder = await this.donationService.creatOrder(profile_id, full_name, phone_number, email_id, amount, fund_id, hide_profile);
-            res.status(createOrder.statusCode).json({ status: createOrder.status, msg: createOrder.msg, data: createOrder.data })
-        } else {
-            res.status(StatusCode.UNAUTHORIZED).json({ status: false, msg: "Un authrazied access", })
-        }
+        const profile_id = context?.profile_id
+        const createOrder = await this.donationService.creatOrder(profile_id, full_name, phone_number, email_id, amount, fund_id, hide_profile);
+        res.status(createOrder.statusCode).json({ status: createOrder.status, msg: createOrder.msg, data: createOrder.data })
+
     }
 
 

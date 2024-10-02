@@ -136,7 +136,7 @@ interface IDonateHistoryTemplate {
     is_settled: boolean
     order_id: string
     fund_id: String,
-    profile_id: String,
+    profile_id?: String,
     name: String,
     amount: number,
     receipt: String,
@@ -147,6 +147,7 @@ interface IDonateHistoryTemplate {
 
 
 interface IPaymentOrder {
+    email: string,
     name: string,
     order_id: string,
     fund_id: string,
@@ -154,7 +155,7 @@ interface IPaymentOrder {
     status: boolean,
     amount: number
     hide_profile: boolean,
-    profile_id: string
+    profile_id?: string
 }
 
 

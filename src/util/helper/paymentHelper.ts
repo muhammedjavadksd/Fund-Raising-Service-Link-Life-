@@ -72,7 +72,7 @@ class PaymentHelper implements IPaymentHelper {
                     cart_items: items
                 },
                 customer_details: {
-                    customer_id: profile_id.replace("@", "_"),
+                    customer_id: profile_id ? profile_id.replaceAll("@", "_") : full_name.replaceAll("@", "_"),
                     customer_email: email_address,
                     customer_phone: phone.toString(),
                     customer_name: full_name
