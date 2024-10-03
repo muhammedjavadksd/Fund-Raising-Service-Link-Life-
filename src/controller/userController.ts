@@ -55,12 +55,22 @@ class UserController implements IUserController {
         this.getDonationStatitics = this.getDonationStatitics.bind(this)
         this.deleteBankAccount = this.deleteBankAccount.bind(this)
         this.getActiveBankAccounts = this.getActiveBankAccounts.bind(this)
+        this.activeBankAccount = this.activeBankAccount.bind(this)
         this.fundRaiserService = new FundRaiserService();
         this.commentService = new CommentService();
         this.fundRaiserRepo = new FundRaiserRepo();
         this.donationRepo = new DonationRepo()
         this.donationService = new DonationService()
         this.bankAccountService = new BankAccountService()
+    }
+
+
+    async activeBankAccount(req: CustomRequest, res: Response): Promise<void> {
+        const fundId: string = req.params.edit_id;
+        const benfId: string = req.params.benf_id;
+
+        const activeAccount = await this.bankAccountService.activeBankAccount(fundId, benfId);
+        res.status(activeAccount.statusCode).json({ status: activeAccount.status, msg: activeAccount.msg, data: activeAccount.data })
     }
 
 

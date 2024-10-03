@@ -3,6 +3,7 @@ import { Request, Response } from "express";
 import { CustomRequest } from "../DataType/Objects";
 
 interface IUserController {
+    activeBankAccount(req: CustomRequest, res: Response): Promise<void>
     deleteBankAccount(req: CustomRequest, res: Response): Promise<void>
     getActiveBankAccounts(req: CustomRequest, res: Response): Promise<void>
     getDonationStatitics(req: CustomRequest, res: Response): Promise<void>

@@ -2,7 +2,7 @@ import BankAccountRepo from "../repositorys/BankAccountRepo";
 import FundRaiserRepo from "../repositorys/FundRaiserRepo";
 import { BankAccountType } from "../types/Enums/DbEnum";
 import { StatusCode } from "../types/Enums/UtilEnum";
-import { IBankAccount } from "../types/Interface/IDBmodel";
+import { IBankAccount, IEditableFundRaiser, IFundRaise } from "../types/Interface/IDBmodel";
 import { HelperFuncationResponse } from "../types/Interface/Util";
 import UtilHelper from "../util/helper/utilHelper";
 import FundRaiserService from "./FundRaiserService";
@@ -14,6 +14,7 @@ interface IBankAccountService {
     updateAccount(banfId: string, data: Partial<IBankAccount>): Promise<HelperFuncationResponse>
     getAllBankAccount(fundId: string, page: number, limit: number, isActive: boolean): Promise<HelperFuncationResponse>
     getActiveBankAccount(fundId: string, page: number, limit: number): Promise<HelperFuncationResponse>
+    activeBankAccount(fundId: string, benfId: string): Promise<HelperFuncationResponse>
 }
 
 
@@ -28,8 +29,55 @@ class BankAccountService implements IBankAccountService {
         this.updateAccount = this.updateAccount.bind(this)
         this.getAllBankAccount = this.getAllBankAccount.bind(this)
         this.getActiveBankAccount = this.getActiveBankAccount.bind(this);
+        this.activeBankAccount = this.activeBankAccount.bind(this);
         this.bankRepo = new BankAccountRepo()
         this.fundRepo = new FundRaiserRepo()
+    }
+
+    async activeBankAccount(fundId: string, benfId: string): Promise<HelperFuncationResponse> {
+
+        const findFund = await this.fundRepo.findFundPostByFundId(fundId);
+        if (findFund) {
+            const currentBenf = findFund.withdraw_docs?.benf_id;
+            if (currentBenf == benfId) {
+                return {
+                    msg: "This account is already prime account",
+                    status: false,
+                    statusCode: StatusCode.BAD_REQUESR
+                }
+            } else {
+                const findBenf = await this.bankRepo.findOne(benfId);
+                if (findBenf) {
+                    if (findBenf.fund_id == fundId) {
+                        const editData: IEditableFundRaiser = {
+                            withdraw_docs: {
+                                benf_id: benfId
+                            }
+                        }
+
+                        const update = await this.fundRepo.updateFundRaiser(fundId, editData);
+                        if (update) {
+                            return {
+                                status: true,
+                                msg: "Account updated",
+                                statusCode: StatusCode.OK
+                            }
+                        }
+                    }
+                }
+                return {
+                    status: false,
+                    msg: "Invalid bank account",
+                    statusCode: StatusCode.NOT_FOUND
+                }
+            }
+        } else {
+            return {
+                status: false,
+                msg: "Campign not found",
+                statusCode: StatusCode.NOT_FOUND
+            }
+        }
     }
 
     async getActiveBankAccount(fundId: string, page: number, limit: number): Promise<HelperFuncationResponse> {
