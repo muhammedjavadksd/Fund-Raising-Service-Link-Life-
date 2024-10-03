@@ -78,8 +78,8 @@ class UtilHelper implements IUtilHelper {
     }
 
 
-    convertFundIdToBeneficiaryId(fund_id: string) {
-        return fund_id.replaceAll("-", "_")
+    convertFundIdToBeneficiaryId(fund_id: string, ifsc: string) {
+        return fund_id.replaceAll("-", "_").concat(ifsc)
     }
 
     async bufferFromImage(image: string) {

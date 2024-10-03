@@ -97,7 +97,7 @@ class BankAccountService implements IBankAccountService {
 
             if (addBeneficiary.status) {
                 const utilHelper = new UtilHelper();
-                const benfId = utilHelper.convertFundIdToBeneficiaryId(fundId);
+                const benfId = utilHelper.convertFundIdToBeneficiaryId(fundId, ifsc_code);
 
                 const data: IBankAccount = {
                     is_active: false,

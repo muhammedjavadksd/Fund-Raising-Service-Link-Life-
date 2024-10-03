@@ -220,7 +220,7 @@ class FundRaiserService implements IFundRaiserService {
 
         try {
             const utilHelper = new UtilHelper();
-            const benfId = utilHelper.convertFundIdToBeneficiaryId(fund_id);
+            const benfId = utilHelper.convertFundIdToBeneficiaryId(fund_id, ifsc);
             cashfreedocsNew.auth(process.env.CASHFREE_PAYOUT_KEY || "");
             cashfreedocsNew.auth(process.env.CASHFREE_PAYOUT_SECRET || "");
             const authOptions = {
