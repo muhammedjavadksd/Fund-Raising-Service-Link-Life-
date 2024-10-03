@@ -65,6 +65,9 @@ class PaymentHelper implements IPaymentHelper {
 
     async createOrder(order_id: string, amount: number, item_name: string, items: IPaymentItem[], profile_id: string, email_address: string, phone: number, full_name: string): Promise<IOrderTemplate | null> {
         try {
+
+
+            const customeProfileId = full_name.replace(/[^a-zA-Z0-9]/g, '')
             config()
             const data = {
                 cart_details: {
@@ -72,7 +75,7 @@ class PaymentHelper implements IPaymentHelper {
                     cart_items: items
                 },
                 customer_details: {
-                    customer_id: profile_id ? profile_id.replaceAll("@", "_") : full_name.replaceAll("@", "_"),
+                    customer_id: profile_id ? profile_id.replaceAll("@", "_") : customeProfileId,
                     customer_email: email_address,
                     customer_phone: phone.toString(),
                     customer_name: full_name
