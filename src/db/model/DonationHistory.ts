@@ -26,7 +26,6 @@ const DonateHistoryScheme = new Schema<IDonateHistoryCollection>({
     },
     profile_id: {
         type: String,
-        required: true
     },
     receipt: {
         type: String,

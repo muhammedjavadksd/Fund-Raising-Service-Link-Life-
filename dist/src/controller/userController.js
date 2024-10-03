@@ -124,13 +124,8 @@ class UserController {
             var _a;
             const order_id = req.params.order_id;
             const profile_id = (_a = req.context) === null || _a === void 0 ? void 0 : _a.profile_id;
-            if (profile_id) {
-                const findOrder = yield this.donationService.findDonationByOrderId(order_id, profile_id);
-                res.status(findOrder.statusCode).json({ status: findOrder.status, msg: findOrder.msg, data: findOrder.data });
-            }
-            else {
-                res.status(UtilEnum_1.StatusCode.UNAUTHORIZED).json({ status: false, msg: "Un Authraized access", });
-            }
+            const findOrder = yield this.donationService.findDonationByOrderId(order_id, profile_id);
+            res.status(findOrder.statusCode).json({ status: findOrder.status, msg: findOrder.msg, data: findOrder.data });
         });
     }
     myDonationHistory(req, res) {
@@ -166,14 +161,9 @@ class UserController {
             const fund_id = req.params.fund_id;
             const context = req.context;
             const hide_profile = req.body.hide_profile;
-            if (context && context.profile_id) {
-                const profile_id = context.profile_id;
-                const createOrder = yield this.donationService.creatOrder(profile_id, full_name, phone_number, email_id, amount, fund_id, hide_profile);
-                res.status(createOrder.statusCode).json({ status: createOrder.status, msg: createOrder.msg, data: createOrder.data });
-            }
-            else {
-                res.status(UtilEnum_1.StatusCode.UNAUTHORIZED).json({ status: false, msg: "Un authrazied access", });
-            }
+            const profile_id = context === null || context === void 0 ? void 0 : context.profile_id;
+            const createOrder = yield this.donationService.creatOrder(profile_id, full_name, phone_number, email_id, amount, fund_id, hide_profile);
+            res.status(createOrder.statusCode).json({ status: createOrder.status, msg: createOrder.msg, data: createOrder.data });
         });
     }
     verifyPayment(req, res) {

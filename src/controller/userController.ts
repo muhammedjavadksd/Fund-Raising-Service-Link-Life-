@@ -54,12 +54,23 @@ class UserController implements IUserController {
         this.profileBankAccounts = this.profileBankAccounts.bind(this)
         this.getDonationStatitics = this.getDonationStatitics.bind(this)
         this.deleteBankAccount = this.deleteBankAccount.bind(this)
+        this.getActiveBankAccounts = this.getActiveBankAccounts.bind(this)
         this.fundRaiserService = new FundRaiserService();
         this.commentService = new CommentService();
         this.fundRaiserRepo = new FundRaiserRepo();
         this.donationRepo = new DonationRepo()
         this.donationService = new DonationService()
         this.bankAccountService = new BankAccountService()
+    }
+
+
+    async getActiveBankAccounts(req: CustomRequest, res: Response): Promise<void> {
+        const fundId = req.params.edit_id
+        const page: number = +req.params.page;
+        const limit: number = +req.params.limit;
+
+        const findAllBenificiary = await this.bankAccountService.getAllBankAccount(fundId, page, limit, true);
+        res.status(findAllBenificiary.statusCode).json({ status: findAllBenificiary.status, msg: findAllBenificiary.msg, data: findAllBenificiary.data })
     }
 
 
@@ -118,7 +129,7 @@ class UserController implements IUserController {
         console.log("Get bank account");
 
 
-        const findAllBenificiary = await this.bankAccountService.getAllBankAccount(fundId, page, limit);
+        const findAllBenificiary = await this.bankAccountService.getAllBankAccount(fundId, page, limit, false);
         res.status(findAllBenificiary.statusCode).json({ status: findAllBenificiary.status, msg: findAllBenificiary.msg, data: findAllBenificiary.data })
     }
 
@@ -139,12 +150,9 @@ class UserController implements IUserController {
         const order_id: string = req.params.order_id;
         const profile_id: string = req.context?.profile_id
 
-        if (profile_id) {
-            const findOrder = await this.donationService.findDonationByOrderId(order_id, profile_id);
-            res.status(findOrder.statusCode).json({ status: findOrder.status, msg: findOrder.msg, data: findOrder.data })
-        } else {
-            res.status(StatusCode.UNAUTHORIZED).json({ status: false, msg: "Un Authraized access", })
-        }
+        const findOrder = await this.donationService.findDonationByOrderId(order_id, profile_id);
+        res.status(findOrder.statusCode).json({ status: findOrder.status, msg: findOrder.msg, data: findOrder.data })
+
     }
 
     async myDonationHistory(req: CustomRequest, res: Response): Promise<void> {

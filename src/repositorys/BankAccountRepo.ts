@@ -29,6 +29,10 @@ class BankAccountRepo implements IBankAccountRepo {
     async findPaginatedAccountsByProfile(fund_id: string, skip: number, limit: number): Promise<IPaginatedResponse<IBankAccountCollection>> {
 
         try {
+
+            const match: Record<string, any> = {
+
+            }
             const findProfile = await BankAccountCollection.aggregate([
                 {
                     $match: {

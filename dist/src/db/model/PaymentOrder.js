@@ -2,13 +2,16 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = require("mongoose");
 const PaymentOrderSchema = new mongoose_1.Schema({
+    email: {
+        type: String,
+        required: true
+    },
     name: {
         type: String,
         required: true
     },
     profile_id: {
         type: String,
-        required: true
     },
     order_id: {
         type: String,

@@ -69,7 +69,7 @@ class S3BucketHelper {
             await axios.put(presigned_url, file, {
                 headers: { "Content-Type": fileType, }
             })
-            const imageUrl = `http://${this.bucketName}.s3.amazonaws.com/${folderPath}`
+            const imageUrl = `https://${this.bucketName}.s3.amazonaws.com/${folderPath}`
             return imageUrl
         } catch (e) {
             return false

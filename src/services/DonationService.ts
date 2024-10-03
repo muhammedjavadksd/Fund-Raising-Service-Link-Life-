@@ -64,7 +64,7 @@ class DonationService implements IDonationService {
     async findDonationByOrderId(order_id: string, profile_id: string): Promise<HelperFuncationResponse> {
         const profile = await this.donationHistoryRepo.findOrder(order_id);
         if (profile) {
-            if (profile.profile_id == profile_id) {
+            if (!profile.profile_id || (profile.profile_id == profile_id)) {
                 return {
                     status: true,
                     msg: "Order found",
@@ -76,7 +76,6 @@ class DonationService implements IDonationService {
                     status: true,
                     msg: "Un authrazied access",
                     statusCode: StatusCode.UNAUTHORIZED,
-                    data: profile
                 }
             }
         } else {

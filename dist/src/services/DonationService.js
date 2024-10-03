@@ -21,6 +21,7 @@ const UtilEnum_1 = require("../types/Enums/UtilEnum");
 const paymentHelper_1 = __importDefault(require("../util/helper/paymentHelper"));
 const utilHelper_1 = __importDefault(require("../util/helper/utilHelper"));
 const BankAccountRepo_1 = __importDefault(require("../repositorys/BankAccountRepo"));
+const provider_1 = __importDefault(require("../communication/provider"));
 class DonationService {
     constructor() {
         this.paymentHelper = new paymentHelper_1.default();
@@ -52,7 +53,7 @@ class DonationService {
         return __awaiter(this, void 0, void 0, function* () {
             const profile = yield this.donationHistoryRepo.findOrder(order_id);
             if (profile) {
-                if (profile.profile_id == profile_id) {
+                if (!profile.profile_id || (profile.profile_id == profile_id)) {
                     return {
                         status: true,
                         msg: "Order found",
@@ -65,7 +66,6 @@ class DonationService {
                         status: true,
                         msg: "Un authrazied access",
                         statusCode: UtilEnum_1.StatusCode.UNAUTHORIZED,
-                        data: profile
                     };
                 }
             }
@@ -213,12 +213,13 @@ class DonationService {
                 const itemName = `Fund donation for ${fundProfile.full_name} on their ${fundProfile.category}`;
                 const createOrder = yield this.paymentHelper.createOrder(order_id, amount, itemName, [{
                         item_description: fundProfile.about,
-                        item_details_url: `http://localhost:3000/fund-raising/view/${fund_id}`,
+                        item_details_url: `${process.env.FRONT_END}/fund-raising/view/${fund_id}`,
                         item_id: fund_id,
                         item_name: itemName
                     }], profile_id, email_address, phone_number, name);
                 const paymentOrder = {
                     amount: amount,
+                    email: email_address,
                     date: new Date(),
                     fund_id,
                     order_id,
@@ -302,6 +303,15 @@ class DonationService {
                         yield this.fundRepo.updateFundRaiserByModel(fundRaise);
                         yield this.webHookRepo.updateWebhookStatus(order_id, true);
                         const insertHistory = yield this.donationHistoryRepo.insertDonationHistory(donationHistory);
+                        const notification = new provider_1.default(process.env.DONATION_SUCCESS_QUEUE || "");
+                        yield notification._init__();
+                        notification.transferData({
+                            certificate_url: receipt,
+                            name: findOrder.name,
+                            amount: findOrder.amount,
+                            campign_title: campignTitle,
+                            email: findOrder.email
+                        });
                         console.log(insertHistory);
                         return {
                             status: true,

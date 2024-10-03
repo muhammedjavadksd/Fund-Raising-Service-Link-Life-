@@ -4,6 +4,7 @@ import { CustomRequest } from "../DataType/Objects";
 
 interface IUserController {
     deleteBankAccount(req: CustomRequest, res: Response): Promise<void>
+    getActiveBankAccounts(req: CustomRequest, res: Response): Promise<void>
     getDonationStatitics(req: CustomRequest, res: Response): Promise<void>
     profileBankAccounts(req: CustomRequest, res: Response): Promise<void>
     getBankAccounts(req: CustomRequest, res: Response): Promise<void>

@@ -24,7 +24,6 @@ const DonateHistoryScheme = new mongoose_1.Schema({
     },
     profile_id: {
         type: String,
-        required: true
     },
     receipt: {
         type: String,
@@ -36,7 +35,6 @@ const DonateHistoryScheme = new mongoose_1.Schema({
     },
     hide_profile: {
         type: Boolean,
-        required: true
     },
     name: {
         type: String,

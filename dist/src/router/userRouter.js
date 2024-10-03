@@ -20,13 +20,14 @@ userRouter.get("/view/:limit/:page", UserControllers.getActiveFundRaise); //test
 userRouter.get("/comment/:fund_id/:limit/:page/", UserControllers.getPaginatedComments); //test completed
 userRouter.get("/donation-history/:fund_id/:limit/:page", UserControllers.donationHistory); //test completed
 userRouter.get("/my-donation-history/:limit/:page", authMiddleware.isValidUser, UserControllers.myDonationHistory); //test completed
-userRouter.get("/find-payment-order/:order_id", authMiddleware.isValidUser, UserControllers.findPaymentOrder); //test completed
+userRouter.get("/find-payment-order/:order_id", UserControllers.findPaymentOrder); //test completed
 userRouter.get("/presigned-url", authMiddleware.isValidUser, UserControllers.getPresignedUrl); //test completed
 userRouter.get("/bank-accounts/:edit_id/:limit/:page", authMiddleware.isValidUser, authMiddleware.isFundRaiseRequestValid, UserControllers.getBankAccounts); //test completed
+userRouter.get("/bank-active-accounts/:edit_id/:limit/:page", authMiddleware.isValidUser, authMiddleware.isFundRaiseRequestValid, UserControllers.getBankAccounts); //test completed
 userRouter.get("/profile-bank-account/:edit_id/:limit/:page", authMiddleware.isValidUser, UserControllers.profileBankAccounts); //test completed
 userRouter.get("/donation-statistics/:fund_id", UserControllers.getDonationStatitics); //test completed
 //payemnt post
-userRouter.post("/pay/:fund_id", authMiddleware.isValidUser, UserControllers.payToFundRaiser);
+userRouter.post("/pay/:fund_id", UserControllers.payToFundRaiser);
 userRouter.post("/verify-payment", UserControllers.verifyPayment);
 // POST method
 userRouter.post("/create", authMiddleware.isValidUser, UserControllers.createFundRaise); //test completed

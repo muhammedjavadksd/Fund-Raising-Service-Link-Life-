@@ -68,6 +68,7 @@ class PaymentHelper {
     createOrder(order_id, amount, item_name, items, profile_id, email_address, phone, full_name) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
+                const customeProfileId = full_name.replace(/[^a-zA-Z0-9]/g, '');
                 (0, dotenv_1.config)();
                 const data = {
                     cart_details: {
@@ -75,7 +76,7 @@ class PaymentHelper {
                         cart_items: items
                     },
                     customer_details: {
-                        customer_id: profile_id.replace("@", "_"),
+                        customer_id: profile_id ? profile_id.replaceAll("@", "_") : customeProfileId,
                         customer_email: email_address,
                         customer_phone: phone.toString(),
                         customer_name: full_name
