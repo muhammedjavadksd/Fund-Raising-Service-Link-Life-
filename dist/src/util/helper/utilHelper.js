@@ -73,8 +73,8 @@ class UtilHelper {
         const year = d.getFullYear();
         return `${monthName} ${day} ${year} `;
     }
-    convertFundIdToBeneficiaryId(fund_id) {
-        return fund_id.replaceAll("-", "_");
+    convertFundIdToBeneficiaryId(fund_id, ifsc) {
+        return fund_id.replaceAll("-", "_").concat(ifsc);
     }
     bufferFromImage(image) {
         return __awaiter(this, void 0, void 0, function* () {

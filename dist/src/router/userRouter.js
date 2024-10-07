@@ -23,7 +23,7 @@ userRouter.get("/my-donation-history/:limit/:page", authMiddleware.isValidUser, 
 userRouter.get("/find-payment-order/:order_id", UserControllers.findPaymentOrder); //test completed
 userRouter.get("/presigned-url", authMiddleware.isValidUser, UserControllers.getPresignedUrl); //test completed
 userRouter.get("/bank-accounts/:edit_id/:limit/:page", authMiddleware.isValidUser, authMiddleware.isFundRaiseRequestValid, UserControllers.getBankAccounts); //test completed
-userRouter.get("/bank-active-accounts/:edit_id/:limit/:page", authMiddleware.isValidUser, authMiddleware.isFundRaiseRequestValid, UserControllers.getBankAccounts); //test completed
+userRouter.get("/bank-active-accounts/:edit_id/:limit/:page", UserControllers.getActiveBankAccounts); //test completed
 userRouter.get("/profile-bank-account/:edit_id/:limit/:page", authMiddleware.isValidUser, UserControllers.profileBankAccounts); //test completed
 userRouter.get("/donation-statistics/:fund_id", UserControllers.getDonationStatitics); //test completed
 //payemnt post
@@ -39,6 +39,7 @@ userRouter.patch("/edit/:edit_id", authMiddleware.isValidUser, authMiddleware.is
 userRouter.patch("/upload_images/:edit_id", authMiddleware.isValidUser, authMiddleware.isFundRaiseRequestValid, UserControllers.uploadImage); // test completed
 userRouter.patch("/close/:edit_id", authMiddleware.isValidUser, authMiddleware.isFundRaiseRequestValid, UserControllers.closeFundRaise); // test completed
 userRouter.patch("/edit_comment/:comment_id", authMiddleware.isValidUser, authMiddleware.isValidCommentOwner, UserControllers.editComment);
+userRouter.patch("/active-bank/:edit_id/:benf_id", authMiddleware.isValidUser, authMiddleware.isFundRaiseRequestValid, UserControllers.activeBankAccount);
 //delete method
 userRouter.delete("/delete_image/:type/:edit_id", authMiddleware.isValidUser, authMiddleware.isFundRaiseRequestValid, UserControllers.deleteImage); //test completed
 userRouter.delete("/delete_comment/:comment_id", authMiddleware.isValidUser, authMiddleware.isValidCommentOwner, UserControllers.deleteComment);

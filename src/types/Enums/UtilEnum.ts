@@ -5,6 +5,13 @@ enum FundRaiserFileType {
     Pictures = "Pictures"
 }
 
+
+enum PaymentVia {
+    UPI = "QR",
+    PAYTM = "PAYTM",
+    Manual = "MANUAL"
+}
+
 enum PresignedType {
     Document = "Document",
     Pictures = "Pictures"
@@ -76,4 +83,4 @@ enum StatusCode {
 
 
 
-export { PresignedType, JwtTimer, FundRaiserBankAccountType, JwtType, FundRaiserFileType, FundRaiserCategory, StatusCode }
+export { PresignedType, JwtTimer, FundRaiserBankAccountType, JwtType, FundRaiserFileType, FundRaiserCategory, StatusCode, PaymentVia }

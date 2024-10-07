@@ -29,6 +29,7 @@ class BankAccountRepo {
     findPaginatedAccountsByProfile(fund_id, skip, limit) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
+                const match = {};
                 const findProfile = yield BankAccount_1.default.aggregate([
                     {
                         $match: {

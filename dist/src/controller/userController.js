@@ -49,12 +49,31 @@ class UserController {
         this.profileBankAccounts = this.profileBankAccounts.bind(this);
         this.getDonationStatitics = this.getDonationStatitics.bind(this);
         this.deleteBankAccount = this.deleteBankAccount.bind(this);
+        this.getActiveBankAccounts = this.getActiveBankAccounts.bind(this);
+        this.activeBankAccount = this.activeBankAccount.bind(this);
         this.fundRaiserService = new FundRaiserService_1.default();
         this.commentService = new CommentService_1.default();
         this.fundRaiserRepo = new FundRaiserRepo_1.default();
         this.donationRepo = new DonationRepo_1.default();
         this.donationService = new DonationService_1.default();
         this.bankAccountService = new BankAccountService_1.default();
+    }
+    activeBankAccount(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const fundId = req.params.edit_id;
+            const benfId = req.params.benf_id;
+            const activeAccount = yield this.bankAccountService.activeBankAccount(fundId, benfId);
+            res.status(activeAccount.statusCode).json({ status: activeAccount.status, msg: activeAccount.msg, data: activeAccount.data });
+        });
+    }
+    getActiveBankAccounts(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const fundId = req.params.edit_id;
+            const page = +req.params.page;
+            const limit = +req.params.limit;
+            const findAllBenificiary = yield this.bankAccountService.getAllBankAccount(fundId, page, limit, true);
+            res.status(findAllBenificiary.statusCode).json({ status: findAllBenificiary.status, msg: findAllBenificiary.msg, data: findAllBenificiary.data });
+        });
     }
     deleteBankAccount(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -104,7 +123,7 @@ class UserController {
             const page = +req.params.page;
             const limit = +req.params.limit;
             console.log("Get bank account");
-            const findAllBenificiary = yield this.bankAccountService.getAllBankAccount(fundId, page, limit);
+            const findAllBenificiary = yield this.bankAccountService.getAllBankAccount(fundId, page, limit, false);
             res.status(findAllBenificiary.statusCode).json({ status: findAllBenificiary.status, msg: findAllBenificiary.msg, data: findAllBenificiary.data });
         });
     }

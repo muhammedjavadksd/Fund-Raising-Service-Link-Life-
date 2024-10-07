@@ -86,7 +86,8 @@ class PaymentHelper {
                     order_currency: "INR",
                     order_meta: {
                         return_url: `${process.env.PAYMENT_SUCCESS_ENDPOINT}/${order_id}`
-                    }
+                    },
+                    paymentMethod: 'QR',
                 };
                 console.log(data);
                 const configData = {

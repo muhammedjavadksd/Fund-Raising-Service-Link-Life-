@@ -215,7 +215,7 @@ class FundRaiserService {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const utilHelper = new utilHelper_1.default();
-                const benfId = utilHelper.convertFundIdToBeneficiaryId(fund_id);
+                const benfId = utilHelper.convertFundIdToBeneficiaryId(fund_id, ifsc);
                 cashfreedocs_new_1.default.auth(process.env.CASHFREE_PAYOUT_KEY || "");
                 cashfreedocs_new_1.default.auth(process.env.CASHFREE_PAYOUT_SECRET || "");
                 const authOptions = {

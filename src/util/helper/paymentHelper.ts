@@ -10,10 +10,11 @@ import blobStream from 'blob-stream'
 import { S3Folder } from "../../types/Enums/ConstData";
 import fspath from 'path'
 import { config } from 'dotenv'
+import { PaymentVia } from "../../types/Enums/UtilEnum";
 
 interface IPaymentHelper {
     verifyPayment(order_id: string): Promise<IVerifyPaymentResponse | false>
-    createOrder(order_id: string, amount: number, item_name: string, items: IPaymentItem[], profile_id: string, email_address: string, phone: number, full_name: string): Promise<IOrderTemplate | null>
+    createOrder(order_id: string, amount: number, item_name: string, items: IPaymentItem[], profile_id: string, email_address: string, phone: number, full_name: string, via: PaymentVia): Promise<IOrderTemplate | null>
 }
 
 
@@ -63,7 +64,7 @@ class PaymentHelper implements IPaymentHelper {
     }
 
 
-    async createOrder(order_id: string, amount: number, item_name: string, items: IPaymentItem[], profile_id: string, email_address: string, phone: number, full_name: string): Promise<IOrderTemplate | null> {
+    async createOrder(order_id: string, amount: number, item_name: string, items: IPaymentItem[], profile_id: string, email_address: string, phone: number, full_name: string, via: PaymentVia): Promise<IOrderTemplate | null> {
         try {
 
 
@@ -85,7 +86,8 @@ class PaymentHelper implements IPaymentHelper {
                 order_currency: "INR",
                 order_meta: {
                     return_url: `${process.env.PAYMENT_SUCCESS_ENDPOINT}/${order_id}`
-                }
+                },
+                paymentMethod: via != PaymentVia.Manual && via,
             };
 
 

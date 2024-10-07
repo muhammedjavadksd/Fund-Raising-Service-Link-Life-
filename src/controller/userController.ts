@@ -4,7 +4,7 @@ import { CustomRequest } from "../types/DataType/Objects";
 import { BankAccountType, FundRaiserCreatedBy, FundRaiserStatus } from "../types/Enums/DbEnum";
 import { HelperFuncationResponse, ICloseFundRaiseJwtToken, IPaginatedResponse, IVerifyPaymentResponse } from "../types/Interface/Util";
 import { IEditableFundRaiser, IFundRaise, IFundRaiseInitialData, iFundRaiseModel } from "../types/Interface/IDBmodel";
-import { FundRaiserFileType, JwtTimer, JwtType, StatusCode } from "../types/Enums/UtilEnum";
+import { FundRaiserFileType, JwtTimer, JwtType, PaymentVia, StatusCode } from "../types/Enums/UtilEnum";
 import FundRaiserRepo from "../repositorys/FundRaiserRepo";
 import UtilHelper from "../util/helper/utilHelper";
 import { const_data } from "../types/Enums/ConstData";
@@ -197,6 +197,7 @@ class UserController implements IUserController {
         const fund_id = req.params.fund_id;
         const context = req.context
         const hide_profile = req.body.hide_profile
+        const paymentVia: PaymentVia = req.body.type
 
         const profile_id = context?.profile_id
         const createOrder = await this.donationService.creatOrder(profile_id, full_name, phone_number, email_id, amount, fund_id, hide_profile);

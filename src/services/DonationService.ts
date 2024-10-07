@@ -3,7 +3,7 @@ import DonationRepo from "../repositorys/DonationRepo"
 import FundRaiserRepo from "../repositorys/FundRaiserRepo"
 import PaymentOrderRepo from "../repositorys/PaymentOrderRepo"
 import PaymentWebHookRepo from "../repositorys/PaymentWebHookRepo"
-import { StatusCode } from "../types/Enums/UtilEnum"
+import { PaymentVia, StatusCode } from "../types/Enums/UtilEnum"
 import { IDonateHistoryTemplate, IPaymentOrder } from "../types/Interface/IDBmodel"
 import { HelperFuncationResponse, IVerifyPaymentResponse } from "../types/Interface/Util"
 import PaymentHelper from "../util/helper/paymentHelper"
@@ -14,7 +14,7 @@ import FundRaiserProvider from "../communication/provider"
 
 interface IDonationService {
     transferAmountToBenf(amount: number, fundId: string, donation_id: string): Promise<HelperFuncationResponse>
-    creatOrder(profile_id: string, name: string, phone_number: number, email_address: string, amount: number, fund_id: string, hide_profile: boolean): Promise<HelperFuncationResponse>
+    creatOrder(profile_id: string, name: string, phone_number: number, email_address: string, amount: number, fund_id: string, hide_profile: boolean, via: PaymentVia): Promise<HelperFuncationResponse>
     verifyPayment(order_id: string): Promise<HelperFuncationResponse>
     findPrivateProfileHistoryPaginated(profile_id: string, limit: number, page: number): Promise<HelperFuncationResponse>
     findMyDonationHistory(profile_id: string, limit: number, page: number): Promise<HelperFuncationResponse>
@@ -200,7 +200,7 @@ class DonationService implements IDonationService {
         }
     }
 
-    async creatOrder(profile_id: string, name: string, phone_number: number, email_address: string, amount: number, fund_id: string, hide_profile: boolean): Promise<HelperFuncationResponse> {
+    async creatOrder(profile_id: string, name: string, phone_number: number, email_address: string, amount: number, fund_id: string, hide_profile: boolean, via: PaymentVia): Promise<HelperFuncationResponse> {
 
         const utilHelper = new UtilHelper();
 

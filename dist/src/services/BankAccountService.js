@@ -24,8 +24,57 @@ class BankAccountService {
         this.updateAccount = this.updateAccount.bind(this);
         this.getAllBankAccount = this.getAllBankAccount.bind(this);
         this.getActiveBankAccount = this.getActiveBankAccount.bind(this);
+        this.activeBankAccount = this.activeBankAccount.bind(this);
         this.bankRepo = new BankAccountRepo_1.default();
         this.fundRepo = new FundRaiserRepo_1.default();
+    }
+    activeBankAccount(fundId, benfId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            var _a;
+            const findFund = yield this.fundRepo.findFundPostByFundId(fundId);
+            if (findFund) {
+                const currentBenf = (_a = findFund.withdraw_docs) === null || _a === void 0 ? void 0 : _a.benf_id;
+                if (currentBenf == benfId) {
+                    return {
+                        msg: "This account is already prime account",
+                        status: false,
+                        statusCode: UtilEnum_1.StatusCode.BAD_REQUESR
+                    };
+                }
+                else {
+                    const findBenf = yield this.bankRepo.findOne(benfId);
+                    if (findBenf) {
+                        if (findBenf.fund_id == fundId) {
+                            const editData = {
+                                withdraw_docs: {
+                                    benf_id: benfId
+                                }
+                            };
+                            const update = yield this.fundRepo.updateFundRaiser(fundId, editData);
+                            if (update) {
+                                return {
+                                    status: true,
+                                    msg: "Account updated",
+                                    statusCode: UtilEnum_1.StatusCode.OK
+                                };
+                            }
+                        }
+                    }
+                    return {
+                        status: false,
+                        msg: "Invalid bank account",
+                        statusCode: UtilEnum_1.StatusCode.NOT_FOUND
+                    };
+                }
+            }
+            else {
+                return {
+                    status: false,
+                    msg: "Campign not found",
+                    statusCode: UtilEnum_1.StatusCode.NOT_FOUND
+                };
+            }
+        });
     }
     getActiveBankAccount(fundId, page, limit) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -48,10 +97,10 @@ class BankAccountService {
             }
         });
     }
-    getAllBankAccount(fundId, page, limit) {
+    getAllBankAccount(fundId, page, limit, isActive) {
         return __awaiter(this, void 0, void 0, function* () {
             const skip = (page - 1) * limit;
-            const findAllAccount = yield this.bankRepo.findPaginatedAccountsByProfile(fundId, skip, limit);
+            const findAllAccount = !isActive ? yield this.bankRepo.findPaginatedAccountsByProfile(fundId, skip, limit) : yield this.bankRepo.findActivePaginatedAccountsByProfile(fundId, skip, limit);
             console.log("Finding all bank account");
             console.log(findAllAccount);
             if (findAllAccount.paginated.length) {
@@ -90,9 +139,9 @@ class BankAccountService {
                 console.log(addBeneficiary);
                 if (addBeneficiary.status) {
                     const utilHelper = new utilHelper_1.default();
-                    const benfId = utilHelper.convertFundIdToBeneficiaryId(fundId);
+                    const benfId = utilHelper.convertFundIdToBeneficiaryId(fundId, ifsc_code);
                     const data = {
-                        is_active: false,
+                        is_active: true,
                         is_closed: false,
                         account_number,
                         account_type: accountType,
