@@ -14,7 +14,8 @@ const DonateHistoryScheme = new Schema<IDonateHistoryCollection>({
     },
     order_id: {
         type: String,
-        required: true
+        required: true,
+        unique: true
     },
     amount: {
         type: Number,
