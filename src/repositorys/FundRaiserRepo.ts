@@ -359,8 +359,26 @@ class FundRaiserRepo implements IFundRaiserRepo {
 
     async findFundPostByFundId(fund_id: string): Promise<iFundRaiseModel | null> {
         try {
-            const fund_post = this.FundRaiserModel.findOne({ fund_id });
-            return fund_post
+            const fund_post = await this.FundRaiserModel.aggregate([
+                {
+                    $match: {
+                        fund_id
+                    }
+                },
+                {
+                    $lookup: {
+                        from: "bank-accounts",
+                        localField: "befId",
+                        foreignField: "befId",
+                        as: "bank_account"
+                    }
+                },
+                {
+                    $unwind: "bank_account"
+                }
+            ]);
+
+            return fund_post[0]
         } catch (e) {
             return null
         }

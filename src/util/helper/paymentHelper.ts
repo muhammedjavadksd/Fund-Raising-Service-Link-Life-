@@ -87,7 +87,7 @@ class PaymentHelper implements IPaymentHelper {
                 order_meta: {
                     return_url: `${process.env.PAYMENT_SUCCESS_ENDPOINT}/${order_id}`
                 },
-                paymentMethod: via != PaymentVia.Manual && via,
+                paymentMethod: "UPI" // via != PaymentVia.Manual && via,
             };
 
 

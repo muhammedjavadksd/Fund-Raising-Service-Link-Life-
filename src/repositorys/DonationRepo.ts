@@ -221,6 +221,11 @@ class DonationRepo implements IDonationRepo {
                     $facet: {
                         paginated: [
                             {
+                                $sort: {
+                                    date: -1
+                                }
+                            },
+                            {
                                 $skip: skip
                             },
                             {
@@ -234,11 +239,7 @@ class DonationRepo implements IDonationRepo {
                         ]
                     }
                 },
-                {
-                    $sort: {
-                        _id: -1
-                    }
-                },
+
                 {
                     $unwind: "$total_records"
                 },
