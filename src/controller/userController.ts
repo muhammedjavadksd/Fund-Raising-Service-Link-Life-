@@ -200,7 +200,7 @@ class UserController implements IUserController {
         const paymentVia: PaymentVia = req.body.type
 
         const profile_id = context?.profile_id
-        const createOrder = await this.donationService.creatOrder(profile_id, full_name, phone_number, email_id, amount, fund_id, hide_profile);
+        const createOrder = await this.donationService.creatOrder(profile_id, full_name, phone_number, email_id, amount, fund_id, hide_profile, paymentVia);
         res.status(createOrder.statusCode).json({ status: createOrder.status, msg: createOrder.msg, data: createOrder.data })
 
     }

@@ -7,8 +7,8 @@ enum FundRaiserFileType {
 
 
 enum PaymentVia {
-    UPI = "QR",
-    PAYTM = "PAYTM",
+    UPI = "UPI",
+    PAYTM = "QR",
     Manual = "MANUAL"
 }
 

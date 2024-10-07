@@ -223,7 +223,7 @@ class DonationService implements IDonationService {
                 item_details_url: `${process.env.FRONT_END}/fund-raising/view/${fund_id}`,
                 item_id: fund_id,
                 item_name: itemName
-            }], profile_id, email_address, phone_number, name);
+            }], profile_id, email_address, phone_number, name, via);
             const paymentOrder: IPaymentOrder = {
                 amount: amount,
                 email: email_address,
