@@ -236,7 +236,7 @@ class DonationRepo implements IDonationRepo {
                 },
                 {
                     $sort: {
-                        date: -1
+                        _id: -1
                     }
                 },
                 {
