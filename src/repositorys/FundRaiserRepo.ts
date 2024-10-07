@@ -368,7 +368,7 @@ class FundRaiserRepo implements IFundRaiserRepo {
                 {
                     $lookup: {
                         from: "bank-accounts",
-                        localField: "befId",
+                        localField: "benf_id",
                         foreignField: "befId",
                         as: "bank_account"
                     }
