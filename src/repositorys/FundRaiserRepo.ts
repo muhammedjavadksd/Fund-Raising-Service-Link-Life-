@@ -21,7 +21,7 @@ class FundRaiserRepo implements IFundRaiserRepo {
         this.getOrganizationPosts = this.getOrganizationPosts.bind(this)
         this.createFundRaiserPost = this.createFundRaiserPost.bind(this)
         this.updateFundRaiser = this.updateFundRaiser.bind(this)
-        this.updateFundRaiserByModel = this.updateFundRaiserByModel.bind(this)
+        // this.updateFundRaiserByModel = this.updateFundRaiserByModel.bind(this)
         this.findFundPostByFundId = this.findFundPostByFundId.bind(this)
         this.getSingleFundRaiseOfUser = this.getSingleFundRaiseOfUser.bind(this)
         this.fundRaiserPaginatedByCategory = this.fundRaiserPaginatedByCategory.bind(this);
@@ -185,6 +185,11 @@ class FundRaiserRepo implements IFundRaiserRepo {
                     $facet: {
                         paginated: [
                             {
+                                $sort: {
+                                    _id: -1
+                                }
+                            },
+                            {
                                 $skip: skip
                             },
                             {
@@ -344,18 +349,18 @@ class FundRaiserRepo implements IFundRaiserRepo {
         }
     }
 
-    async updateFundRaiserByModel(model: iFundRaiseModel): Promise<boolean> {
-        try {
-            const save = await model.save();
-            console.log("Save the data");
+    // async updateFundRaiserByModel(model: iFundRaiseModel): Promise<boolean> {
+    //     try {
+    //         const save = await model.save();
+    //         console.log("Save the data");
 
-            console.log(save);
-            return true
-        } catch (e) {
-            console.log(e);
-            return false
-        }
-    }
+    //         console.log(save);
+    //         return true
+    //     } catch (e) {
+    //         console.log(e);
+    //         return false
+    //     }
+    // }
 
     async findFundPostByFundId(fund_id: string): Promise<iFundRaiseModel | null> {
         try {
@@ -368,18 +373,25 @@ class FundRaiserRepo implements IFundRaiserRepo {
                 {
                     $lookup: {
                         from: "bank-accounts",
-                        localField: "benf_id",
+                        localField: "withdraw_docs.benf_id",
                         foreignField: "befId",
                         as: "bank_account"
                     }
                 },
                 {
-                    $unwind: "bank_account"
+                    $unwind: {
+                        path: "$bank_account",
+                        preserveNullAndEmptyArrays: true,
+                    }
                 }
             ]);
 
+            console.log(fund_post);
+
             return fund_post[0]
         } catch (e) {
+            console.log(e);
+
             return null
         }
     }

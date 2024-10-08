@@ -121,6 +121,7 @@ class AdminController implements IAdminController {
                     filter['amount'].$lte = +req.query.max;
                 }
             }
+
             const fundRaisersPost: IPaginatedResponse<iFundRaiseModel> = await this.fundRaiserRepo.getAllFundRaiserPost(page, limit, status, filter)
 
             if (fundRaisersPost?.paginated.length) {

@@ -9,7 +9,7 @@ var FundRaiserFileType;
 var PaymentVia;
 (function (PaymentVia) {
     PaymentVia["UPI"] = "UPI";
-    PaymentVia["PAYTM"] = "PAYTM";
+    PaymentVia["PAYTM"] = "QR";
     PaymentVia["Manual"] = "MANUAL";
 })(PaymentVia || (exports.PaymentVia = PaymentVia = {}));
 var PresignedType;

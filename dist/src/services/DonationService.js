@@ -195,7 +195,7 @@ class DonationService {
             }
         });
     }
-    creatOrder(profile_id, name, phone_number, email_address, amount, fund_id, hide_profile) {
+    creatOrder(profile_id, name, phone_number, email_address, amount, fund_id, hide_profile, via) {
         return __awaiter(this, void 0, void 0, function* () {
             const utilHelper = new utilHelper_1.default();
             let randomNumber = utilHelper.generateAnOTP(4);
@@ -216,7 +216,7 @@ class DonationService {
                         item_details_url: `${process.env.FRONT_END}/fund-raising/view/${fund_id}`,
                         item_id: fund_id,
                         item_name: itemName
-                    }], profile_id, email_address, phone_number, name);
+                    }], profile_id, email_address, phone_number, name, via);
                 const paymentOrder = {
                     amount: amount,
                     email: email_address,
@@ -252,7 +252,7 @@ class DonationService {
         return __awaiter(this, void 0, void 0, function* () {
             var _a, _b, _c, _d, _e, _f;
             const verifyPayment = yield this.paymentHelper.verifyPayment(order_id);
-            let receipt = '';
+            let receipt = 'donation';
             const utilHelper = new utilHelper_1.default();
             if (verifyPayment) {
                 const findOrder = yield this.orderRepo.findOne(order_id);
@@ -269,6 +269,7 @@ class DonationService {
                             }
                         }
                         catch (e) {
+                            console.log(e);
                             console.log("Certification creation failed");
                         }
                         let randomNumber = utilHelper.generateAnOTP(4);
@@ -299,8 +300,8 @@ class DonationService {
                         };
                         console.log("Donation history");
                         console.log(donationHistory);
-                        fundRaise.collected += (_f = (_e = verifyPayment === null || verifyPayment === void 0 ? void 0 : verifyPayment.data) === null || _e === void 0 ? void 0 : _e.order) === null || _f === void 0 ? void 0 : _f.order_amount;
-                        yield this.fundRepo.updateFundRaiserByModel(fundRaise);
+                        const updatedAmount = fundRaise.collected + (((_f = (_e = verifyPayment === null || verifyPayment === void 0 ? void 0 : verifyPayment.data) === null || _e === void 0 ? void 0 : _e.order) === null || _f === void 0 ? void 0 : _f.order_amount) || 0);
+                        yield this.fundRepo.updateFundRaiser(fundRaise.fund_id, { collected: updatedAmount });
                         yield this.webHookRepo.updateWebhookStatus(order_id, true);
                         const insertHistory = yield this.donationHistoryRepo.insertDonationHistory(donationHistory);
                         const notification = new provider_1.default(process.env.DONATION_SUCCESS_QUEUE || "");

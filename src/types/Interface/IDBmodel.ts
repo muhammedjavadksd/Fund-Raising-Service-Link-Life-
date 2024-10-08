@@ -38,7 +38,10 @@ interface IFundRaiseInitialData {
 
 interface IEditableFundRaiser {
     "benf_id"?: string
+    "status"?: FundRaiserStatus,
+    "close_token"?: string
     "amount"?: number,
+    "collected"?: number,
     "category"?: string,
     "sub_category"?: string,
     "about"?: string,
@@ -52,7 +55,7 @@ interface IEditableFundRaiser {
     "state"?: string
     "deadline"?: Date
     "description"?: string
-    "withdraw_docs": IWithdrawDetails
+    "withdraw_docs"?: IWithdrawDetails
 }
 
 interface IWithdrawDetails {

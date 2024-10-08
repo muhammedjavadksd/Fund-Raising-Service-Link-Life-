@@ -70,7 +70,7 @@ class PaymentHelper implements IPaymentHelper {
 
             const customeProfileId = full_name.replace(/[^a-zA-Z0-9]/g, '')
             config()
-            const data = {
+            const data: Record<string, any> = {
                 cart_details: {
                     cart_name: item_name,
                     cart_items: items
@@ -85,12 +85,11 @@ class PaymentHelper implements IPaymentHelper {
                 order_amount: amount,
                 order_currency: "INR",
                 order_meta: {
-                    return_url: `${process.env.PAYMENT_SUCCESS_ENDPOINT}/${order_id}`
-                },
-                paymentMethod: "UPI" // via != PaymentVia.Manual && via,
+                    return_url: `${process.env.PAYMENT_SUCCESS_ENDPOINT}/${order_id}`,
+
+                }
+
             };
-
-
             console.log(data);
 
             const configData = {

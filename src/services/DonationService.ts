@@ -265,7 +265,7 @@ class DonationService implements IDonationService {
 
         const verifyPayment: IVerifyPaymentResponse | false = await this.paymentHelper.verifyPayment(order_id);
 
-        let receipt: string = '';
+        let receipt: string = 'donation';
 
 
         const utilHelper = new UtilHelper();
@@ -283,6 +283,7 @@ class DonationService implements IDonationService {
                             receipt = certificateName;
                         }
                     } catch (e) {
+                        console.log(e);
                         console.log("Certification creation failed");
                     }
 
@@ -314,8 +315,8 @@ class DonationService implements IDonationService {
                     }
                     console.log("Donation history");
                     console.log(donationHistory)
-                    fundRaise.collected += verifyPayment?.data?.order?.order_amount
-                    await this.fundRepo.updateFundRaiserByModel(fundRaise)
+                    const updatedAmount = fundRaise.collected + (verifyPayment?.data?.order?.order_amount || 0)
+                    await this.fundRepo.updateFundRaiser(fundRaise.fund_id, { collected: updatedAmount })
                     await this.webHookRepo.updateWebhookStatus(order_id, true)
                     const insertHistory = await this.donationHistoryRepo.insertDonationHistory(donationHistory)
                     const notification = new FundRaiserProvider(process.env.DONATION_SUCCESS_QUEUE || "")

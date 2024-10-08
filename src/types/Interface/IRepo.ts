@@ -8,7 +8,7 @@ interface IFundRaiserRepo {
     getStatitics(): Promise<Record<string, any>>
     getSingleFundRaiseOfUser(user_id: string, fund_id: string): Promise<iFundRaiseModel | null>
     findFundPostByFundId(fund_id: string): Promise<iFundRaiseModel | null>
-    updateFundRaiserByModel(model: iFundRaiseModel): Promise<boolean>
+    // updateFundRaiserByModel(model: iFundRaiseModel): Promise<boolean>
     updateFundRaiser(fund_id: string, edit_data: IEditableFundRaiser): Promise<boolean>
     createFundRaiserPost(initialData: IFundRaise): Promise<HelperFuncationResponse>
     getOrganizationPosts(organization_id: string, skip: number, limit: number): Promise<iFundRaiseModel[]>

@@ -209,6 +209,8 @@ class DonationRepo implements IDonationRepo {
     }
 
     async findPrivateProfilePaginedtHistory(profile_id: string, limit: number, skip: number): Promise<IPaginatedResponse<IDonateHistoryCollection[]>> {
+        console.log(limit, skip);
+
         try {
             const find = await DonateHistoryCollection.aggregate([
                 {
@@ -222,7 +224,7 @@ class DonationRepo implements IDonationRepo {
                         paginated: [
                             {
                                 $sort: {
-                                    date: -1
+                                    _id: -1
                                 }
                             },
                             {
@@ -230,7 +232,8 @@ class DonationRepo implements IDonationRepo {
                             },
                             {
                                 $limit: limit
-                            }
+                            },
+
                         ],
                         total_records: [
                             {

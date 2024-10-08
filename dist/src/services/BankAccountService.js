@@ -154,9 +154,14 @@ class BankAccountService {
                     console.log(findProfile);
                     if (!((_a = findProfile.withdraw_docs) === null || _a === void 0 ? void 0 : _a.benf_id)) {
                         console.log("First time bank");
-                        findProfile.withdraw_docs.benf_id = benfId;
-                        const updateFund = yield this.fundRepo.updateFundRaiserByModel(findProfile);
-                        console.log(updateFund);
+                        // findProfile.withdraw_docs.benf_id = benfId;
+                        yield this.fundRepo.updateFundRaiser(fundId, {
+                            withdraw_docs: {
+                                benf_id: benfId
+                            }
+                        });
+                        // const updateFund = await this.fundRepo.updateFundRaiserByModel(findProfile)
+                        // console.log(updateFund);
                     }
                     const add = yield this.bankRepo.insertOne(data);
                     console.log("Adding cause error");

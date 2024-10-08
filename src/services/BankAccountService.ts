@@ -164,9 +164,14 @@ class BankAccountService implements IBankAccountService {
 
                 if (!findProfile.withdraw_docs?.benf_id) {
                     console.log("First time bank");
-                    findProfile.withdraw_docs.benf_id = benfId;
-                    const updateFund = await this.fundRepo.updateFundRaiserByModel(findProfile)
-                    console.log(updateFund);
+                    // findProfile.withdraw_docs.benf_id = benfId;
+                    await this.fundRepo.updateFundRaiser(fundId, {
+                        withdraw_docs: {
+                            benf_id: benfId
+                        }
+                    })
+                    // const updateFund = await this.fundRepo.updateFundRaiserByModel(findProfile)
+                    // console.log(updateFund);
                 }
 
                 const add = await this.bankRepo.insertOne(data);
@@ -205,6 +210,11 @@ class BankAccountService implements IBankAccountService {
                 statusCode: StatusCode.BAD_REQUESR
             }
         }
+    }
+
+
+    async deleteAllBenificiary() {
+
     }
 
     async deleteAccount(benfId: string, fund_id: string): Promise<HelperFuncationResponse> {

@@ -65,7 +65,7 @@ class PaymentHelper {
             }
         });
     }
-    createOrder(order_id, amount, item_name, items, profile_id, email_address, phone, full_name) {
+    createOrder(order_id, amount, item_name, items, profile_id, email_address, phone, full_name, via) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const customeProfileId = full_name.replace(/[^a-zA-Z0-9]/g, '');
@@ -85,9 +85,8 @@ class PaymentHelper {
                     order_amount: amount,
                     order_currency: "INR",
                     order_meta: {
-                        return_url: `${process.env.PAYMENT_SUCCESS_ENDPOINT}/${order_id}`
-                    },
-                    paymentMethod: 'QR',
+                        return_url: `${process.env.PAYMENT_SUCCESS_ENDPOINT}/${order_id}`,
+                    }
                 };
                 console.log(data);
                 const configData = {

@@ -188,6 +188,7 @@ class DonationRepo {
     }
     findPrivateProfilePaginedtHistory(profile_id, limit, skip) {
         return __awaiter(this, void 0, void 0, function* () {
+            console.log(limit, skip);
             try {
                 const find = yield DonationHistory_1.default.aggregate([
                     {
@@ -200,22 +201,22 @@ class DonationRepo {
                         $facet: {
                             paginated: [
                                 {
+                                    $sort: {
+                                        _id: -1
+                                    }
+                                },
+                                {
                                     $skip: skip
                                 },
                                 {
                                     $limit: limit
-                                }
+                                },
                             ],
                             total_records: [
                                 {
                                     $count: "total_records"
                                 }
                             ]
-                        }
-                    },
-                    {
-                        $sort: {
-                            date: -1
                         }
                     },
                     {

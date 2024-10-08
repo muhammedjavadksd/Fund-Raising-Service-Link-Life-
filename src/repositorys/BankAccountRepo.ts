@@ -1,3 +1,4 @@
+import { bool } from "aws-sdk/clients/signer";
 import BankAccountCollection from "../db/model/BankAccount";
 import { IBankAccount, IBankAccountCollection } from "../types/Interface/IDBmodel";
 import { IPaginatedResponse } from "../types/Interface/Util";
@@ -10,10 +11,23 @@ interface IBankAccountRepo {
     updateOne(benId: string, data: Partial<IBankAccount>): Promise<boolean>
     insertOne(data: IBankAccount): Promise<boolean>
     findLiveAccountByNumber(account: number): Promise<IBankAccountCollection | null>
+    findBenfIdsByFundId(fundId: string): Promise<string[]>
+    closeBankAccount(fundId: string): Promise<boolean>
 }
 
 
 class BankAccountRepo implements IBankAccountRepo {
+
+    async closeBankAccount(fundId: string): Promise<boolean> {
+        const findByAccountNumber = await BankAccountCollection.updateMany({ fund_id: fundId }, { $set: { is_closed: true } })
+        return findByAccountNumber.modifiedCount > 0
+    }
+
+
+    async findBenfIdsByFundId(fundId: string): Promise<string[]> {
+        const findByAccountNumber = await BankAccountCollection.find({ fund_id: fundId }).projection({ _id: 0, befId: 1 }).toArray()
+        return findByAccountNumber
+    }
 
     async findLiveAccountByNumber(account: number): Promise<IBankAccountCollection | null> {
         const findByAccountNumber = await BankAccountCollection.findOne({ account_number: account, is_closed: false });

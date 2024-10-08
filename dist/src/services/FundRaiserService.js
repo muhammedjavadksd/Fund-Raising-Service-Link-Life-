@@ -254,6 +254,8 @@ class FundRaiserService {
                     };
                     console.log(options);
                     const addBeneficiary = yield (yield axios_1.default.request(options)).data;
+                    console.log("Added");
+                    console.log(addBeneficiary);
                     if (addBeneficiary.status == "SUCCESS") {
                         return {
                             msg: "Beneficiary added success",
@@ -399,8 +401,11 @@ class FundRaiserService {
                         }
                     }
                     const filterImage = findData[field].filter((each) => each != image);
-                    findData[field] = [...filterImage];
-                    yield this.FundRaiserRepo.updateFundRaiserByModel(findData);
+                    const newDocs = [...filterImage];
+                    // await this.FundRaiserRepo.updateFundRaiserByModel(findData);
+                    yield this.FundRaiserRepo.updateFundRaiser(fund_id, {
+                        [field]: newDocs,
+                    });
                     return {
                         msg: "Image deletion success",
                         status: true,
@@ -514,7 +519,7 @@ class FundRaiserService {
                             if (token) {
                                 currentFund.close_token = token;
                                 // currentFund.closed = true;
-                                yield this.FundRaiserRepo.updateFundRaiserByModel(currentFund);
+                                yield this.FundRaiserRepo.updateFundRaiser(fund_id, { close_token: token });
                                 return {
                                     msg: "A verification email has been sent to the registered email address.",
                                     status: true,
@@ -579,8 +584,10 @@ class FundRaiserService {
                         };
                     }
                     else {
-                        currentFund.status = newStatus;
-                        yield this.FundRaiserRepo.updateFundRaiserByModel(currentFund);
+                        // currentFund.status = newStatus;
+                        yield this.FundRaiserRepo.updateFundRaiser(fund_id, {
+                            status: newStatus,
+                        });
                         return {
                             status: true,
                             msg: "Status has been updated",
@@ -683,8 +690,9 @@ class FundRaiserService {
                 console.log(initFundRaise);
                 if (initFundRaise) {
                     const replaceImage = initFundRaise[field]; //initFundRaise[field] as string[]
-                    initFundRaise[field] = [...replaceImage, ...newImages];
-                    yield this.FundRaiserRepo.updateFundRaiserByModel(initFundRaise);
+                    const newDocs = [...replaceImage, ...newImages];
+                    // await this.FundRaiserRepo.updateFundRaiserByModel(initFundRaise);
+                    yield this.FundRaiserRepo.updateFundRaiser(fundRaiserID, { [field]: newDocs });
                     return {
                         msg: "Image uploaded success",
                         status: true,

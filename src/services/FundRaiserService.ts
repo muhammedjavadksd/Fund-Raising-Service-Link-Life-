@@ -148,8 +148,6 @@ class FundRaiserService implements IFundRaiserService {
     // }
 
     async removeBeneficiary(benfId: string): Promise<HelperFuncationResponse> {
-
-
         try {
             cashfreedocsNew.auth(process.env.CASHFREE_PAYOUT_KEY || "");
             cashfreedocsNew.auth(process.env.CASHFREE_PAYOUT_SECRET || "");
@@ -267,6 +265,10 @@ class FundRaiserService implements IFundRaiserService {
 
 
                 const addBeneficiary = await (await axios.request(options)).data
+                console.log("Added");
+
+                console.log(addBeneficiary);
+
                 if (addBeneficiary.status == "SUCCESS") {
                     return {
                         msg: "Beneficiary added success",
@@ -297,6 +299,24 @@ class FundRaiserService implements IFundRaiserService {
         }
     }
 
+    async closeBankAccount(fund_id: string): Promise<boolean> {
+
+        try {
+            const findBankAccount: string[] = await this.bankRepo.findBenfIdsByFundId(fund_id)
+            if (findBankAccount.length) {
+                const bulkDelete: Promise<HelperFuncationResponse>[] = []
+                for (let index = 0; index < findBankAccount.length; index++) {
+                    bulkDelete.push(this.removeBeneficiary(findBankAccount[index]))
+                }
+                await Promise.all(bulkDelete);
+                await this.bankRepo.closeBankAccount(fund_id)
+            }
+            return true
+        } catch (e) {
+            return false
+        }
+    }
+
     async closeFundRaiserVerification(token: string): Promise<HelperFuncationResponse> {
         const tokenHelper = new TokenHelper();
         const verifyToken = await tokenHelper.checkTokenValidity(token);
@@ -306,15 +326,8 @@ class FundRaiserService implements IFundRaiserService {
 
             if (fund_id && type == JwtType.CloseFundRaise) {
                 console.log(fund_id);
-
                 await this.FundRaiserRepo.closeFundRaiser(fund_id)
-                // const findFund = await this.FundRaiserRepo.findFundPostByFundId(fund_id);
-                // if (findFund) {
-                //     // const findAccount = await this.bankRepo.find
-                //     // await this.removeBeneficiary()
-
-                // }
-
+                await this.closeBankAccount(fund_id)
                 return {
                     status: true,
                     msg: "Fund raising closed",
@@ -431,8 +444,11 @@ class FundRaiserService implements IFundRaiserService {
                     }
                 }
                 const filterImage = findData[field].filter((each) => each != image)
-                findData[field] = [...filterImage]
-                await this.FundRaiserRepo.updateFundRaiserByModel(findData);
+                const newDocs = [...filterImage]
+                // await this.FundRaiserRepo.updateFundRaiserByModel(findData);
+                await this.FundRaiserRepo.updateFundRaiser(fund_id, {
+                    [field]: newDocs,
+                });
                 return {
                     msg: "Image deletion success",
                     status: true,
@@ -543,7 +559,9 @@ class FundRaiserService implements IFundRaiserService {
                         if (token) {
                             currentFund.close_token = token;
                             // currentFund.closed = true;
-                            await this.FundRaiserRepo.updateFundRaiserByModel(currentFund);
+                            await this.closeBankAccount(fund_id)
+
+                            await this.FundRaiserRepo.updateFundRaiser(fund_id, { close_token: token });
                             return {
                                 msg: "A verification email has been sent to the registered email address.",
                                 status: true,
@@ -602,8 +620,12 @@ class FundRaiserService implements IFundRaiserService {
                         statusCode: StatusCode.UNAUTHORIZED
                     }
                 } else {
-                    currentFund.status = newStatus;
-                    await this.FundRaiserRepo.updateFundRaiserByModel(currentFund);
+                    // currentFund.status = newStatus;
+
+                    await this.FundRaiserRepo.updateFundRaiser(fund_id, {
+                        status: newStatus,
+
+                    });
                     return {
                         status: true,
                         msg: "Status has been updated",
@@ -713,8 +735,9 @@ class FundRaiserService implements IFundRaiserService {
 
             if (initFundRaise) {
                 const replaceImage: string[] = initFundRaise[field] //initFundRaise[field] as string[]
-                initFundRaise[field] = [...replaceImage, ...newImages]
-                await this.FundRaiserRepo.updateFundRaiserByModel(initFundRaise);
+                const newDocs = [...replaceImage, ...newImages]
+                // await this.FundRaiserRepo.updateFundRaiserByModel(initFundRaise);
+                await this.FundRaiserRepo.updateFundRaiser(fundRaiserID, { [field]: newDocs })
 
                 return {
                     msg: "Image uploaded success",

@@ -180,8 +180,9 @@ class UserController {
             const fund_id = req.params.fund_id;
             const context = req.context;
             const hide_profile = req.body.hide_profile;
+            const paymentVia = req.body.type;
             const profile_id = context === null || context === void 0 ? void 0 : context.profile_id;
-            const createOrder = yield this.donationService.creatOrder(profile_id, full_name, phone_number, email_id, amount, fund_id, hide_profile);
+            const createOrder = yield this.donationService.creatOrder(profile_id, full_name, phone_number, email_id, amount, fund_id, hide_profile, paymentVia);
             res.status(createOrder.statusCode).json({ status: createOrder.status, msg: createOrder.msg, data: createOrder.data });
         });
     }
@@ -381,6 +382,8 @@ class UserController {
                     const edit_type = req.body.image_type;
                     console.log("Image type is :" + edit_type);
                     const saveFundRaise = yield this.fundRaiserService.uploadImage(imagesPresignedUrl, fundRaiserID, edit_type);
+                    console.log("Upload");
+                    console.log(saveFundRaise);
                     res.status(saveFundRaise.statusCode).json({
                         status: saveFundRaise.status,
                         msg: saveFundRaise.msg,
@@ -391,6 +394,7 @@ class UserController {
                     });
                 }
                 else {
+                    console.log("Image not found");
                     res.status(UtilEnum_1.StatusCode.BAD_REQUESR).json({ status: false, msg: "Please provid valid images" });
                 }
             }

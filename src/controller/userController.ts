@@ -424,6 +424,10 @@ class UserController implements IUserController {
 
                 const saveFundRaise: HelperFuncationResponse = await this.fundRaiserService.uploadImage(imagesPresignedUrl, fundRaiserID, edit_type)
 
+                console.log("Upload");
+
+                console.log(saveFundRaise);
+
                 res.status(saveFundRaise.statusCode).json({
                     status: saveFundRaise.status,
                     msg: saveFundRaise.msg,
@@ -433,6 +437,8 @@ class UserController implements IUserController {
                     }
                 })
             } else {
+                console.log("Image not found");
+
                 res.status(StatusCode.BAD_REQUESR).json({ status: false, msg: "Please provid valid images" })
             }
         } catch (e) {

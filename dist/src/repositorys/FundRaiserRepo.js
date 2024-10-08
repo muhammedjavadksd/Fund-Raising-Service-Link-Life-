@@ -25,7 +25,7 @@ class FundRaiserRepo {
         this.getOrganizationPosts = this.getOrganizationPosts.bind(this);
         this.createFundRaiserPost = this.createFundRaiserPost.bind(this);
         this.updateFundRaiser = this.updateFundRaiser.bind(this);
-        this.updateFundRaiserByModel = this.updateFundRaiserByModel.bind(this);
+        // this.updateFundRaiserByModel = this.updateFundRaiserByModel.bind(this)
         this.findFundPostByFundId = this.findFundPostByFundId.bind(this);
         this.getSingleFundRaiseOfUser = this.getSingleFundRaiseOfUser.bind(this);
         this.fundRaiserPaginatedByCategory = this.fundRaiserPaginatedByCategory.bind(this);
@@ -175,6 +175,11 @@ class FundRaiserRepo {
                     {
                         $facet: {
                             paginated: [
+                                {
+                                    $sort: {
+                                        _id: -1
+                                    }
+                                },
                                 {
                                     $skip: skip
                                 },
@@ -333,27 +338,46 @@ class FundRaiserRepo {
             }
         });
     }
-    updateFundRaiserByModel(model) {
-        return __awaiter(this, void 0, void 0, function* () {
-            try {
-                const save = yield model.save();
-                console.log("Save the data");
-                console.log(save);
-                return true;
-            }
-            catch (e) {
-                console.log(e);
-                return false;
-            }
-        });
-    }
+    // async updateFundRaiserByModel(model: iFundRaiseModel): Promise<boolean> {
+    //     try {
+    //         const save = await model.save();
+    //         console.log("Save the data");
+    //         console.log(save);
+    //         return true
+    //     } catch (e) {
+    //         console.log(e);
+    //         return false
+    //     }
+    // }
     findFundPostByFundId(fund_id) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const fund_post = this.FundRaiserModel.findOne({ fund_id });
-                return fund_post;
+                const fund_post = yield this.FundRaiserModel.aggregate([
+                    {
+                        $match: {
+                            fund_id
+                        }
+                    },
+                    {
+                        $lookup: {
+                            from: "bank-accounts",
+                            localField: "withdraw_docs.benf_id",
+                            foreignField: "befId",
+                            as: "bank_account"
+                        }
+                    },
+                    {
+                        $unwind: {
+                            path: "$bank_account",
+                            preserveNullAndEmptyArrays: true,
+                        }
+                    }
+                ]);
+                console.log(fund_post);
+                return fund_post[0];
             }
             catch (e) {
+                console.log(e);
                 return null;
             }
         });
