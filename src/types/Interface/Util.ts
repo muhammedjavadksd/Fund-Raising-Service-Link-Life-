@@ -1,4 +1,5 @@
 import { JwtType, StatusCode } from "../Enums/UtilEnum"
+import { Request } from 'express';
 
 interface IDonationStatitics {
     date: string,
@@ -139,7 +140,10 @@ interface OrderMeta {
     return_url: any
     notify_url: any
     payment_methods: any
+
+}
+interface CustomRequest extends Request {
+    context?: Record<string, any>
 }
 
-
-export { IVerifyPaymentResponse, IOrderTemplate, WebhookPayload, IPaymentItem, HelperFuncationResponse, IPaginatedResponse, ICloseFundRaiseJwtToken, IDonationStatitics }
+export { CustomRequest, IVerifyPaymentResponse, IOrderTemplate, WebhookPayload, IPaymentItem, HelperFuncationResponse, IPaginatedResponse, ICloseFundRaiseJwtToken, IDonationStatitics }

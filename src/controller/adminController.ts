@@ -1,21 +1,21 @@
 import { Request, Response } from "express";
-import { IAdminAddFundRaiser, IEditableFundRaiser, IFundRaise, IFundRaiseInitialData, iFundRaiseModel } from "../types/Interface/IDBmodel";
-import { FundRaiserCreatedBy, FundRaiserStatus } from "../types/Enums/DbEnum";
+import { IAdminAddFundRaiser, IEditableFundRaiser, iFundRaiseModel } from "../types/Interface/IDBmodel";
+import { BankAccountType, FundRaiserCreatedBy, FundRaiserStatus } from "../types/Enums/DbEnum";
 import FundRaiserRepo from "../repositorys/FundRaiserRepo";
-import { HelperFuncationResponse, IPaginatedResponse } from "../types/Interface/Util";
+import { CustomRequest, HelperFuncationResponse, IPaginatedResponse } from "../types/Interface/Util";
 import FundRaiserService from "../services/FundRaiserService";
 import UtilHelper from "../util/helper/utilHelper";
-import { IAdminController } from "../types/Interface/IController";
-import { FundRaiserBankAccountType, FundRaiserCategory, FundRaiserFileType, StatusCode } from "../types/Enums/UtilEnum";
-import { File } from "node:buffer";
+import { FundRaiserCategory, FundRaiserFileType, StatusCode } from "../types/Enums/UtilEnum";
 import DonationService from "../services/DonationService";
-import { CustomRequest } from "../types/DataType/Objects";
+import BankAccountService from "../services/BankAccountService";
+import { IAdminController } from "../types/Interface/MethodImplimentetion";
 
 class AdminController implements IAdminController {
 
     private readonly fundRaiserRepo;
     private readonly fundRaiserService;
     private readonly donationService;
+    private readonly bankAccountService;
 
 
     constructor() {
@@ -29,9 +29,44 @@ class AdminController implements IAdminController {
         this.presignedUrl = this.presignedUrl.bind(this)
         this.uploadImages = this.uploadImages.bind(this)
         this.deleteFundRaiserImage = this.deleteFundRaiserImage.bind(this)
+        this.addBankAccount = this.addBankAccount.bind(this)
+        this.getBankAccounts = this.getBankAccounts.bind(this)
+        this.activeBankAccount = this.activeBankAccount.bind(this)
         this.fundRaiserRepo = new FundRaiserRepo();
+        this.bankAccountService = new BankAccountService();
         this.fundRaiserService = new FundRaiserService();
         this.donationService = new DonationService()
+    }
+
+
+    async activeBankAccount(req: Request, res: Response): Promise<void> {
+        const fundId: string = req.params.edit_id;
+        const benfId: string = req.params.benf_id;
+
+        const activeAccount = await this.bankAccountService.activeBankAccount(fundId, benfId);
+        res.status(activeAccount.statusCode).json({ status: activeAccount.status, msg: activeAccount.msg, data: activeAccount.data })
+    }
+
+
+    async getBankAccounts(req: Request, res: Response): Promise<void> {
+        const fundId: string = req.params.edit_id;
+        const page: number = +req.params.page;
+        const limit: number = +req.params.limit;
+
+        const findAllBenificiary = await this.bankAccountService.getAllBankAccount(fundId, page, limit, false);
+        res.status(findAllBenificiary.statusCode).json({ status: findAllBenificiary.status, msg: findAllBenificiary.msg, data: findAllBenificiary.data })
+    }
+
+
+    async addBankAccount(req: Request, res: Response): Promise<void> {
+        const accountNumber: number = req.body.account_number
+        const ifsc_code: string = req.body.ifsc_code
+        const holderName: string = req.body.holder_name
+        const accountType: BankAccountType = req.body.account_type
+        const fund_id: string = req.params.edit_id
+
+        const addBankAccount = await this.bankAccountService.addBankAccount(accountNumber, ifsc_code, holderName, accountType, fund_id);
+        res.status(addBankAccount.statusCode).json({ status: addBankAccount.status, msg: addBankAccount.msg, data: addBankAccount.data });
     }
 
     async deleteFundRaiserImage(req: Request, res: Response): Promise<void> {
@@ -45,7 +80,7 @@ class AdminController implements IAdminController {
     }
 
 
-    async getStatitics(req: Request, res: Response): Promise<void> {
+    async getStatitics(_: Request, res: Response): Promise<void> {
         const findStatitics = await this.donationService.getStatitics()
         res.status(findStatitics.statusCode).json({ status: findStatitics.status, msg: findStatitics.msg, data: findStatitics.data });
     }
@@ -75,19 +110,11 @@ class AdminController implements IAdminController {
         const fund_id: string = req.params.edit_id
         const type: FundRaiserFileType = req.body.type
 
-        console.log("The images");
-
-        console.log(image);
-
-
         const uploadImage = await this.fundRaiserService.uploadImage(image, fund_id, type);
         res.status(uploadImage.statusCode).json({ status: uploadImage.status, msg: uploadImage.msg, data: uploadImage.data });
     }
 
     async getAllFundRaise(req: Request, res: Response): Promise<void> {
-        console.log("Reached here");
-
-
         try {
 
             const limit: number = Number(req.params.limit);

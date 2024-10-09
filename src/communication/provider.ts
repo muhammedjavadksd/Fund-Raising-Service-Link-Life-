@@ -1,9 +1,12 @@
 import amqplib from 'amqplib';
 
-// const queueName = process.env.AUTH_DATA_UPDATE_QUEUE!;
+interface IFundRaiserProvider {
+    _init__(): Promise<void>
+    transferData(data: any): boolean
+}
 
-class FundRaiserProvider {
 
+class FundRaiserProvider implements IFundRaiserProvider {
 
     channel: amqplib.Channel | undefined;
     queue;
@@ -12,7 +15,7 @@ class FundRaiserProvider {
         this.queue = queueName
     }
 
-    async _init__() {
+    async _init__(): Promise<void> {
         const connection = await amqplib.connect(process.env.RABBITMQ_URL || "");
         const channel = await connection.createChannel();
         await channel.assertQueue(this.queue);

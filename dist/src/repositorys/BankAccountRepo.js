@@ -14,6 +14,18 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const BankAccount_1 = __importDefault(require("../db/model/BankAccount"));
 class BankAccountRepo {
+    closeBankAccount(fundId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const findByAccountNumber = yield BankAccount_1.default.updateMany({ fund_id: fundId }, { $set: { is_closed: true } });
+            return findByAccountNumber.modifiedCount > 0;
+        });
+    }
+    findBenfIdsByFundId(fundId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const findByAccountNumber = yield BankAccount_1.default.find({ fund_id: fundId }).projection({ _id: 0, befId: 1 }).toArray();
+            return findByAccountNumber;
+        });
+    }
     findLiveAccountByNumber(account) {
         return __awaiter(this, void 0, void 0, function* () {
             const findByAccountNumber = yield BankAccount_1.default.findOne({ account_number: account, is_closed: false });

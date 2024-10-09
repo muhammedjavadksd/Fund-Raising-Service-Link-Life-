@@ -3,9 +3,9 @@ import InitFundRaisingModel from "../db/model/initFundRaiseModel";
 import { FundRaiserCreatedBy, FundRaiserStatus } from "../types/Enums/DbEnum";
 import { StatusCode } from "../types/Enums/UtilEnum";
 import { IAdminAddFundRaiser, IEditableFundRaiser, IFundRaise, IFundRaiseInitialData, iFundRaiseModel } from "../types/Interface/IDBmodel";
-import { IFundRaiserRepo } from "../types/Interface/IRepo";
 import { HelperFuncationResponse, IPaginatedResponse } from "../types/Interface/Util";
 import mongoose, { Schema } from "mongoose";
+import { IFundRaiserRepo } from "../types/Interface/MethodImplimentetion";
 
 
 
@@ -18,17 +18,13 @@ class FundRaiserRepo implements IFundRaiserRepo {
         this.getAllFundRaiserPost = this.getAllFundRaiserPost.bind(this)
         this.getRestrictedFundRaisePost = this.getRestrictedFundRaisePost.bind(this)
         this.getUserPosts = this.getUserPosts.bind(this)
-        this.getOrganizationPosts = this.getOrganizationPosts.bind(this)
         this.createFundRaiserPost = this.createFundRaiserPost.bind(this)
         this.updateFundRaiser = this.updateFundRaiser.bind(this)
-        // this.updateFundRaiserByModel = this.updateFundRaiserByModel.bind(this)
         this.findFundPostByFundId = this.findFundPostByFundId.bind(this)
         this.getSingleFundRaiseOfUser = this.getSingleFundRaiseOfUser.bind(this)
-        this.fundRaiserPaginatedByCategory = this.fundRaiserPaginatedByCategory.bind(this);
         this.closeFundRaiser = this.closeFundRaiser.bind(this);
         this.deleteOneDocument = this.deleteOneDocument.bind(this)
         this.deleteOnePicture = this.deleteOnePicture.bind(this)
-
         this.FundRaiserModel = InitFundRaisingModel
     }
 
@@ -78,25 +74,9 @@ class FundRaiserRepo implements IFundRaiserRepo {
         }
     }
 
-
-
-
     async closeFundRaiser(fund_id: string): Promise<boolean> {
         const findUpdate = await this.FundRaiserModel.updateOne({ fund_id }, { $set: { closed: true, status: FundRaiserStatus.CLOSED } })
         return findUpdate.modifiedCount > 0
-    }
-
-    async fundRaiserPaginatedByCategory(category: string, skip: number, limit: number): Promise<iFundRaiseModel[]> {
-        // try {
-        //     const findProfile = await this.FundRaiserModel.find({ category, status: FundRaiserStatus.APPROVED, closed: false }).skip(skip).limit(limit);
-        //     return findProfile
-        // } catch (e) {
-        //     return [];
-        // }
-
-
-        //dont need this function use getActiveFundRaiserPost
-        return []
     }
 
     async countRecords(): Promise<number> {
@@ -302,15 +282,6 @@ class FundRaiserRepo implements IFundRaiserRepo {
         }
     }
 
-    async getOrganizationPosts(organization_id: string, skip: number, limit: number): Promise<iFundRaiseModel[]> {
-        try {
-            const fundRaisePost: iFundRaiseModel[] = await this.FundRaiserModel.find({ created_by: FundRaiserCreatedBy.ORGANIZATION, user_id: organization_id }).skip(skip).limit(limit);
-            return fundRaisePost
-        } catch (e) {
-            console.log(e);
-            return []
-        }
-    }
 
     async createFundRaiserPost(initialData: IAdminAddFundRaiser | IFundRaiseInitialData): Promise<HelperFuncationResponse> {
 
@@ -349,18 +320,6 @@ class FundRaiserRepo implements IFundRaiserRepo {
         }
     }
 
-    // async updateFundRaiserByModel(model: iFundRaiseModel): Promise<boolean> {
-    //     try {
-    //         const save = await model.save();
-    //         console.log("Save the data");
-
-    //         console.log(save);
-    //         return true
-    //     } catch (e) {
-    //         console.log(e);
-    //         return false
-    //     }
-    // }
 
     async findFundPostByFundId(fund_id: string): Promise<iFundRaiseModel | null> {
         try {

@@ -11,11 +11,6 @@ interface IPaymentOrderRepo {
 
 class PaymentOrderRepo implements IPaymentOrderRepo {
 
-
-
-
-
-
     async insertOne(data: IPaymentOrder): Promise<ObjectId | null | undefined> {
         const instance = new PaymentOrderCollection(data);
         const save = await instance.save()

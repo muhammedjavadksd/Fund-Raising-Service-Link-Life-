@@ -7,10 +7,12 @@ import UtilHelper from "./utilHelper";
 
 interface IS3BucketHelper {
     generatePresignedUrl(key: string): Promise<string>
-    uploadFile(file: Buffer, presigned_url: string): Promise<boolean>
+    uploadFile(file: Buffer, presigned_url: string, fileType: string, imageName: string): Promise<false | string>
+    uploadObject(key: string, docs: Buffer, ftype: string): Promise<void>
+    findFile(fileName: string): Promise<boolean>
 }
 
-class S3BucketHelper {
+class S3BucketHelper implements IS3BucketHelper {
 
     private readonly bucketName;
     private readonly folderName;
@@ -30,11 +32,6 @@ class S3BucketHelper {
     async generatePresignedUrl(key: string): Promise<string> {
         const signedUrlExpireSeconds = 60 * 5
         const filePath = this.folderName ? `${this.folderName}/${key}` : key
-        console.log("Bucket name");
-        console.log(this.bucketName);
-
-
-
         const url = this.s3.getSignedUrl("putObject",
             {
                 Bucket: this.bucketName,
@@ -45,7 +42,7 @@ class S3BucketHelper {
     }
 
 
-    async uploadObject(key: string, docs: Buffer, ftype: string) {
+    async uploadObject(key: string, docs: Buffer, ftype: string): Promise<void> {
 
         const save = await this.s3.upload({
             Bucket: this.bucketName,

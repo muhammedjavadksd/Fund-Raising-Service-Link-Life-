@@ -1,19 +1,19 @@
 import { NextFunction, Request, Response } from "express";
-import { CustomRequest } from "../types/DataType/Objects";
 import TokenHelper from "../util/helper/tokenHelper";
 import { JwtPayload } from "jsonwebtoken";
 import FundRaiserRepo from "../repositorys/FundRaiserRepo";
-import { IAuthMiddleware } from "../types/Interface/IMiddleware";
 import { StatusCode } from "../types/Enums/UtilEnum";
 import CommentsRepo from "../repositorys/CommentRepo";
+import { IAuthMiddleware } from "../types/Interface/MethodImplimentetion";
+import { CustomRequest } from "../types/Interface/Util";
 
 
 class AuthMiddleware implements IAuthMiddleware {
 
 
     async isValidCommentOwner(req: CustomRequest, res: Response, next: NextFunction): Promise<void> {
-        const comment_id = req.params.comment_id;
-        const profile_id = req.context?.profile_id;
+        const comment_id: string = req.params.comment_id;
+        const profile_id: string = req.context?.profile_id;
         const commentRepo = new CommentsRepo();
         const findComment = await commentRepo.findCommentByCommentId(comment_id);
         if (findComment?.user_id == profile_id) {
@@ -58,12 +58,6 @@ class AuthMiddleware implements IAuthMiddleware {
         const headers: Request['headers'] = req.headers;
         const auth: string = headers['authorization'] as string;
 
-
-        console.log(auth);
-        console.log(headers);
-
-
-
         if (auth && auth.split(' ')[0] === 'Bearer') {
             if (!req.context) {
                 req.context = {}
@@ -103,8 +97,6 @@ class AuthMiddleware implements IAuthMiddleware {
                     })
                 }
             } else {
-                console.log("This error 2");
-
                 res.status(StatusCode.UNAUTHORIZED).json({
                     status: false,
                     msg: "Authorization is failed"
@@ -160,12 +152,6 @@ class AuthMiddleware implements IAuthMiddleware {
         const headers: CustomRequest['headers'] = req.headers;
         const auth: string | undefined = headers['authorization'];
 
-        console.log("token", auth);
-
-
-        console.log("Token recivied");
-
-
         if (auth && auth.split(' ')[0] === 'Bearer') {
 
             const tokenHelper = new TokenHelper();
@@ -191,14 +177,12 @@ class AuthMiddleware implements IAuthMiddleware {
                     console.log("Requested phone number is", checkValidity?.email);
                     next()
                 } else {
-                    console.log("This error 1");
                     res.status(StatusCode.UNAUTHORIZED).json({
                         status: false,
                         msg: "Authorization is failed"
                     })
                 }
             } else {
-                console.log("This error 2");
                 console.log(checkValidity);
 
                 res.status(StatusCode.UNAUTHORIZED).json({
@@ -207,23 +191,11 @@ class AuthMiddleware implements IAuthMiddleware {
                 })
             }
         } else {
-            console.log("Headers");
-            console.log(req.headers);
-            console.log("This error 3");
-
             res.status(StatusCode.UNAUTHORIZED).json({
                 status: false,
                 msg: "Invalid auth attempt"
             })
         }
-    }
-
-    async isValidOrganization(req: Request, res: Response, next: NextFunction): Promise<void> {
-        next()
-    }
-
-    async isOrganizationAuthraized(req: Request, res: Response, next: NextFunction): Promise<void> {
-        next()
     }
 
 }

@@ -1,22 +1,17 @@
 import { Request, Response } from "express";
 import FundRaiserService from "../services/FundRaiserService";
-import { CustomRequest } from "../types/DataType/Objects";
 import { BankAccountType, FundRaiserCreatedBy, FundRaiserStatus } from "../types/Enums/DbEnum";
-import { HelperFuncationResponse, ICloseFundRaiseJwtToken, IPaginatedResponse, IVerifyPaymentResponse } from "../types/Interface/Util";
+import { CustomRequest, HelperFuncationResponse, IPaginatedResponse, IVerifyPaymentResponse } from "../types/Interface/Util";
 import { IEditableFundRaiser, IFundRaise, IFundRaiseInitialData, iFundRaiseModel } from "../types/Interface/IDBmodel";
-import { FundRaiserFileType, JwtTimer, JwtType, PaymentVia, StatusCode } from "../types/Enums/UtilEnum";
+import { FundRaiserFileType, PaymentVia, StatusCode } from "../types/Enums/UtilEnum";
 import FundRaiserRepo from "../repositorys/FundRaiserRepo";
 import UtilHelper from "../util/helper/utilHelper";
 import { const_data } from "../types/Enums/ConstData";
-import { IUserController } from "../types/Interface/IController";
-import { UploadedFile } from "express-fileupload";
-import S3BucketHelper from "../util/helper/s3Bucket";
-import url from 'url'
 import CommentService from "../services/CommentService";
-import TokenHelper from "../util/helper/tokenHelper";
 import DonationService from "../services/DonationService";
 import BankAccountService from "../services/BankAccountService";
 import DonationRepo from "../repositorys/DonationRepo";
+import { IUserController } from "../types/Interface/MethodImplimentetion";
 
 class UserController implements IUserController {
 
@@ -98,19 +93,10 @@ class UserController implements IUserController {
         const dateTo = new Date(req.query.to_date?.toString() || new Date());
         const fund_id = req.params.fund_id;
 
-        console.log("The date");
-
-        console.log(dateFrom);
-        console.log(dateTo);
-
-
         if (dateFrom == null || dateTo == null) {
             res.status(StatusCode.BAD_REQUESR).json({ status: false, msg: "Please provide valid date" })
         } else {
             const findStatitics = await this.donationRepo.donationStatitics(dateFrom, dateTo, fund_id);
-            console.log("Find statitics");
-
-            console.log(findStatitics);
 
             if (findStatitics) {
                 res.status(StatusCode.OK).json({ status: true, msg: "Data found", data: findStatitics })
@@ -135,9 +121,6 @@ class UserController implements IUserController {
         const fundId: string = req.params.edit_id;
         const page: number = +req.params.page;
         const limit: number = +req.params.limit;
-
-        console.log("Get bank account");
-
 
         const findAllBenificiary = await this.bankAccountService.getAllBankAccount(fundId, page, limit, false);
         res.status(findAllBenificiary.statusCode).json({ status: findAllBenificiary.status, msg: findAllBenificiary.msg, data: findAllBenificiary.data })
@@ -190,13 +173,13 @@ class UserController implements IUserController {
 
     async payToFundRaiser(req: CustomRequest, res: Response): Promise<void> {
 
-        const full_name = req.body.full_name;
-        const phone_number = req.body.phone_number;
-        const email_id = req.body.email_id;
-        const amount = req.body.amount;
-        const fund_id = req.params.fund_id;
+        const full_name: string = req.body.full_name;
+        const phone_number: number = req.body.phone_number;
+        const email_id: string = req.body.email_id;
+        const amount: number = req.body.amount;
+        const fund_id: string = req.params.fund_id;
         const context = req.context
-        const hide_profile = req.body.hide_profile
+        const hide_profile: boolean = req.body.hide_profile
         const paymentVia: PaymentVia = req.body.type
 
         const profile_id = context?.profile_id
@@ -207,12 +190,8 @@ class UserController implements IUserController {
 
 
     async verifyPayment(req: Request, res: Response): Promise<void> {
-
         const verifyBody: IVerifyPaymentResponse = req.body
-
         const verifyPayment = await this.donationService.verifyPayment(verifyBody?.data?.order?.order_id);
-        console.log(verifyPayment);
-
         res.status(verifyPayment.statusCode).json({ status: verifyPayment.status, msg: verifyPayment.msg, data: verifyPayment.data })
     }
 
@@ -238,9 +217,6 @@ class UserController implements IUserController {
         const page: number = +req.params.page
         const limit: number = +req.params.limit
         const skip: number = (page - 1) * limit;
-
-
-
         let filter: Record<string, any> = {};
         if (req.query.sub_category) {
             filter['sub_category'] = req.query.sub_category
@@ -257,8 +233,6 @@ class UserController implements IUserController {
         if (req.query.max) {
             filter['max'] = req.query.max
         }
-
-
 
         const findProfile = await this.fundRaiserService.paginatedFundRaiserByCategory(category, limit, skip, filter);
         res.status(findProfile.statusCode).json({ status: findProfile.status, msg: findProfile.msg, data: findProfile.data })
@@ -309,37 +283,6 @@ class UserController implements IUserController {
     }
 
 
-    async uploadImageIntoS3(req: Request, res: Response) {
-        const pre_url = req.body.presigned_url;
-
-        // const file: Express.Multer.File | undefined = req.file;
-        // if (file) {
-        //     const presignedUrl = url.parse(pre_url, true).pathname //.parse(url, true)
-        //     if (presignedUrl) {
-        //         const extractPath = presignedUrl.split("/");
-        //         const imageName = extractPath[2];
-        //         if (imageName) {
-        //             console.log(presignedUrl);
-
-        //             const s3Bucket = new S3BucketHelper("file-bucket");
-        //             const buffer = file.buffer;
-        //             const uploadImage = await s3Bucket.uploadFile(buffer, pre_url, file.mimetype, imageName)
-        //             if (uploadImage) {
-        //                 res.status(200).json({ status: true, msg: "Image uploaded success", image_name: uploadImage })
-        //             } else {
-        //                 res.status(400).json({ status: false, msg: "Image uploaded failed" })
-        //             }
-        //         } else {
-        //             res.status(500).json({ status: false, msg: "No image found" })
-        //         }
-        //     }
-        // } else {
-        // }
-        res.status(400).json({ status: false, msg: "Please upload valid image" })
-
-    }
-
-
     async getPresignedUrl(req: Request, res: Response) {
         const type: FundRaiserFileType = req.query.type as FundRaiserFileType;
         const image = await this.fundRaiserService.createPresignedUrl(type);
@@ -353,15 +296,8 @@ class UserController implements IUserController {
         const status: FundRaiserStatus = req.params.status as FundRaiserStatus;
         const skip = (page - 1) * limit
 
-        console.log("The limit is");
-        console.log(limit);
-
-
-
         try {
-
             const user_id: string = req.context?.user_id;
-            console.log(user_id);
 
             if (user_id) {
                 const getMyFundRaisePost: HelperFuncationResponse = await this.fundRaiserService.getOwnerFundRaise(user_id, limit, skip, status);
@@ -408,26 +344,11 @@ class UserController implements IUserController {
     async uploadImage(req: Request, res: Response): Promise<void> {
 
         try {
-
-
-
             let imagesPresignedUrl: string[] = req.body.presigned_url;
             const fundRaiserID: string = req.params.edit_id;
-
-
-
             if (imagesPresignedUrl.length) {
                 const edit_type: FundRaiserFileType = req.body.image_type;
-
-                console.log("Image type is :" + edit_type);
-
-
                 const saveFundRaise: HelperFuncationResponse = await this.fundRaiserService.uploadImage(imagesPresignedUrl, fundRaiserID, edit_type)
-
-                console.log("Upload");
-
-                console.log(saveFundRaise);
-
                 res.status(saveFundRaise.statusCode).json({
                     status: saveFundRaise.status,
                     msg: saveFundRaise.msg,
@@ -437,18 +358,14 @@ class UserController implements IUserController {
                     }
                 })
             } else {
-                console.log("Image not found");
-
                 res.status(StatusCode.BAD_REQUESR).json({ status: false, msg: "Please provid valid images" })
             }
         } catch (e) {
-            console.log(e);
             res.status(500).json({
                 status: false,
                 msg: "Internal Server Error"
             })
         }
-
     }
 
     async editFundRaise(req: Request, res: Response): Promise<void> {
@@ -529,13 +446,13 @@ class UserController implements IUserController {
             const getLimitedData: IPaginatedResponse<IFundRaise[]> = await this.fundRaiserRepo.getActiveFundRaiserPost(page, limit, {})
 
             if (getLimitedData?.total_records) {
-                res.status(200).json({ status: true, data: getLimitedData })
+                res.status(StatusCode.OK).json({ status: true, data: getLimitedData })
             } else {
                 console.log("This works");
-                res.status(400).json({ status: false, msg: "No data found" })
+                res.status(StatusCode.NOT_FOUND).json({ status: false, msg: "No data found" })
             }
         } catch (e) {
-            res.status(500).json({ status: false, msg: "Internal Server Error" })
+            res.status(StatusCode.SERVER_ERROR).json({ status: false, msg: "Internal Server Error" })
         }
     }
 
@@ -548,20 +465,13 @@ class UserController implements IUserController {
             const isForce = req.query.isForce;
             const profile: iFundRaiseModel | null = await this.fundRaiserRepo.findFundPostByFundId(fund_id);
 
-
-
             if (profile) {
-
-
-                console.log("Profile");
-                console.log(isForce, user_id);
-
                 if (isForce && user_id) {
                     if (profile?.user_id != user_id) {
-                        res.status(400).json({ status: false, msg: "Profile not found" })
+                        res.status(StatusCode.NOT_FOUND).json({ status: false, msg: "Profile not found" })
                         return;
                     } else {
-                        res.status(200).json({ status: true, data: profile })
+                        res.status(StatusCode.OK).json({ status: true, data: profile })
                         return
                     }
                 } else {
@@ -569,14 +479,14 @@ class UserController implements IUserController {
                         res.status(StatusCode.FORBIDDEN).json({ status: false, msg: "This profile no longer requires contributions" })
                         return
                     } else {
-                        res.status(200).json({ status: true, data: profile })
+                        res.status(StatusCode.OK).json({ status: true, data: profile })
                     }
                 }
             } else {
-                res.status(400).json({ status: false, msg: "Profile not found" })
+                res.status(StatusCode.NOT_FOUND).json({ status: false, msg: "Profile not found" })
             }
         } catch (e) {
-            res.status(500).json({ status: false, msg: "Internal Server Error" })
+            res.status(StatusCode.SERVER_ERROR).json({ status: false, msg: "Internal Server Error" })
         }
     }
 }

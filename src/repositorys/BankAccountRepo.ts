@@ -44,9 +44,6 @@ class BankAccountRepo implements IBankAccountRepo {
 
         try {
 
-            const match: Record<string, any> = {
-
-            }
             const findProfile = await BankAccountCollection.aggregate([
                 {
                     $match: {

@@ -2,7 +2,6 @@
 
 enum FundRaiserCreatedBy {
     ADMIN = "ADMIN",
-    ORGANIZATION = "ORGANIZATION",
     USER = "USER"
 }
 

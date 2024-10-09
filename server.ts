@@ -19,14 +19,11 @@ dotenv.config({ path: envPath });
 const PORT = process.env.PORT || 7005
 fundRaiseDbConnection()
 
-
-
 app.use(morgan("dev"))
 
 import userRouter from './src/router/userRouter';
 import adminRouter from './src/router/adminRouter';
-// const s = new UtilHelper();
-// s.createFundRaiserReport()
+
 
 const SmeeClient = require('smee-client')
 

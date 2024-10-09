@@ -19,6 +19,7 @@ const FundRaiserService_1 = __importDefault(require("../services/FundRaiserServi
 const utilHelper_1 = __importDefault(require("../util/helper/utilHelper"));
 const UtilEnum_1 = require("../types/Enums/UtilEnum");
 const DonationService_1 = __importDefault(require("../services/DonationService"));
+const BankAccountService_1 = __importDefault(require("../services/BankAccountService"));
 class AdminController {
     constructor() {
         this.getAllFundRaise = this.getAllFundRaise.bind(this);
@@ -31,9 +32,41 @@ class AdminController {
         this.presignedUrl = this.presignedUrl.bind(this);
         this.uploadImages = this.uploadImages.bind(this);
         this.deleteFundRaiserImage = this.deleteFundRaiserImage.bind(this);
+        this.addBankAccount = this.addBankAccount.bind(this);
+        this.getBankAccounts = this.getBankAccounts.bind(this);
+        this.activeBankAccount = this.activeBankAccount.bind(this);
         this.fundRaiserRepo = new FundRaiserRepo_1.default();
+        this.bankAccountService = new BankAccountService_1.default();
         this.fundRaiserService = new FundRaiserService_1.default();
         this.donationService = new DonationService_1.default();
+    }
+    activeBankAccount(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const fundId = req.params.edit_id;
+            const benfId = req.params.benf_id;
+            const activeAccount = yield this.bankAccountService.activeBankAccount(fundId, benfId);
+            res.status(activeAccount.statusCode).json({ status: activeAccount.status, msg: activeAccount.msg, data: activeAccount.data });
+        });
+    }
+    getBankAccounts(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const fundId = req.params.edit_id;
+            const page = +req.params.page;
+            const limit = +req.params.limit;
+            const findAllBenificiary = yield this.bankAccountService.getAllBankAccount(fundId, page, limit, false);
+            res.status(findAllBenificiary.statusCode).json({ status: findAllBenificiary.status, msg: findAllBenificiary.msg, data: findAllBenificiary.data });
+        });
+    }
+    addBankAccount(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const accountNumber = req.body.account_number;
+            const ifsc_code = req.body.ifsc_code;
+            const holderName = req.body.holder_name;
+            const accountType = req.body.account_type;
+            const fund_id = req.params.edit_id;
+            const addBankAccount = yield this.bankAccountService.addBankAccount(accountNumber, ifsc_code, holderName, accountType, fund_id);
+            res.status(addBankAccount.statusCode).json({ status: addBankAccount.status, msg: addBankAccount.msg, data: addBankAccount.data });
+        });
     }
     deleteFundRaiserImage(req, res) {
         return __awaiter(this, void 0, void 0, function* () {

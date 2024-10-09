@@ -1,7 +1,7 @@
 
 import jwt from 'jsonwebtoken'
-import { ITokenHelper } from '../../types/Interface/IHelper';
 import { JwtTimer } from '../../types/Enums/UtilEnum';
+import { ITokenHelper } from '../../types/Interface/MethodImplimentetion';
 
 
 class TokenHelper implements ITokenHelper {

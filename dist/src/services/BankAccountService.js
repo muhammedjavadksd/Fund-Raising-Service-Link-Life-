@@ -201,6 +201,10 @@ class BankAccountService {
             }
         });
     }
+    deleteAllBenificiary() {
+        return __awaiter(this, void 0, void 0, function* () {
+        });
+    }
     deleteAccount(benfId, fund_id) {
         return __awaiter(this, void 0, void 0, function* () {
             const findFund = yield this.fundRepo.findFundPostByFundId(fund_id);

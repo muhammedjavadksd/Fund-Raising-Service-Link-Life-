@@ -289,6 +289,25 @@ class FundRaiserService {
             }
         });
     }
+    closeBankAccount(fund_id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const findBankAccount = yield this.bankRepo.findBenfIdsByFundId(fund_id);
+                if (findBankAccount.length) {
+                    const bulkDelete = [];
+                    for (let index = 0; index < findBankAccount.length; index++) {
+                        bulkDelete.push(this.removeBeneficiary(findBankAccount[index]));
+                    }
+                    yield Promise.all(bulkDelete);
+                    yield this.bankRepo.closeBankAccount(fund_id);
+                }
+                return true;
+            }
+            catch (e) {
+                return false;
+            }
+        });
+    }
     closeFundRaiserVerification(token) {
         return __awaiter(this, void 0, void 0, function* () {
             const tokenHelper = new tokenHelper_1.default();
@@ -299,11 +318,7 @@ class FundRaiserService {
                 if (fund_id && type == UtilEnum_1.JwtType.CloseFundRaise) {
                     console.log(fund_id);
                     yield this.FundRaiserRepo.closeFundRaiser(fund_id);
-                    // const findFund = await this.FundRaiserRepo.findFundPostByFundId(fund_id);
-                    // if (findFund) {
-                    //     // const findAccount = await this.bankRepo.find
-                    //     // await this.removeBeneficiary()
-                    // }
+                    yield this.closeBankAccount(fund_id);
                     return {
                         status: true,
                         msg: "Fund raising closed",
@@ -519,6 +534,7 @@ class FundRaiserService {
                             if (token) {
                                 currentFund.close_token = token;
                                 // currentFund.closed = true;
+                                yield this.closeBankAccount(fund_id);
                                 yield this.FundRaiserRepo.updateFundRaiser(fund_id, { close_token: token });
                                 return {
                                     msg: "A verification email has been sent to the registered email address.",

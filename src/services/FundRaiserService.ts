@@ -2,7 +2,6 @@ import FundRaiserRepo from "../repositorys/FundRaiserRepo";
 import { FundRaiserCreatedBy, FundRaiserStatus } from "../types/Enums/DbEnum";
 import { FundRaiserFileType, JwtTimer, JwtType, StatusCode } from "../types/Enums/UtilEnum";
 import { IAdminAddFundRaiser, IEditableFundRaiser, IFundRaise, IFundRaiseInitialData, iFundRaiseModel } from "../types/Interface/IDBmodel";
-import { IFundRaiserService } from "../types/Interface/IService";
 import { HelperFuncationResponse, ICloseFundRaiseJwtToken, IPaginatedResponse } from "../types/Interface/Util";
 import fs from 'fs'
 import { UploadedFile } from 'express-fileupload'
@@ -15,6 +14,7 @@ import FundRaiserProvider from "../communication/provider";
 import { config } from 'dotenv';
 import cashfreedocsNew from '../apis/cashfreedocs-new';
 import BankAccountRepo from "../repositorys/BankAccountRepo";
+import { IFundRaiserService } from "../types/Interface/MethodImplimentetion";
 
 
 class FundRaiserService implements IFundRaiserService {
@@ -128,24 +128,6 @@ class FundRaiserService implements IFundRaiserService {
         }
     }
 
-
-    // async editFundRaiser(editId: string, editData: IEditableFundRaiser): Promise<HelperFuncationResponse> {
-    //     const editResponse: boolean = await this.FundRaiserRepo.updateFundRaiser(editId, editData);
-    //     if (editResponse) {
-    //         return {
-    //             msg: "Update success",
-    //             status: true,
-    //             statusCode: StatusCode.OK
-    //         }
-    //     } else {
-    //         return {
-    //             msg: "Update failed",
-    //             status: false,
-    //             statusCode: StatusCode.BAD_REQUESR
-    //         }
-    //     }
-
-    // }
 
     async removeBeneficiary(benfId: string): Promise<HelperFuncationResponse> {
         try {

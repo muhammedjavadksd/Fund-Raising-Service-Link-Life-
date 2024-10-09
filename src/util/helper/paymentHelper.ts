@@ -1,12 +1,9 @@
 import axios from "axios"
 import { IOrderTemplate, IPaymentItem, IVerifyPaymentResponse } from "../../types/Interface/Util";
-import PDFDocument, { file, path } from 'pdfkit'
+import PDFDocument from 'pdfkit'
 import fs from 'fs'
 import qrcode from 'qrcode'
-import { Base64Encode } from 'base64-stream'
 import S3BucketHelper from "./s3Bucket";
-import { PassThrough } from 'stream';
-import blobStream from 'blob-stream'
 import { S3Folder } from "../../types/Enums/ConstData";
 import fspath from 'path'
 import { config } from 'dotenv'
@@ -66,8 +63,6 @@ class PaymentHelper implements IPaymentHelper {
 
     async createOrder(order_id: string, amount: number, item_name: string, items: IPaymentItem[], profile_id: string, email_address: string, phone: number, full_name: string, via: PaymentVia): Promise<IOrderTemplate | null> {
         try {
-
-
             const customeProfileId = full_name.replace(/[^a-zA-Z0-9]/g, '')
             config()
             const data: Record<string, any> = {

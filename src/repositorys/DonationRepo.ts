@@ -26,10 +26,6 @@ class DonationRepo implements IDonationRepo {
 
         try {
 
-            console.log("Filter");
-
-            console.log(from_date.getTime()); ///2023-01-08T18:30:00.000Z
-            console.log(to_date); //2024-01-08T18:30:00.000Z
 
             const match = {
                 $match: {
@@ -40,10 +36,6 @@ class DonationRepo implements IDonationRepo {
                     }
                 }
             }
-
-            console.log("Match");
-            console.log(match);
-
 
 
             const data = await DonateHistoryCollection.aggregate([

@@ -1,15 +1,10 @@
 import UserController from "../controller/userController";
 import express, { Router } from 'express'
 import AuthMiddleware from "../middleware/authMiddleware";
-import { Request, Response } from 'express'
 const userRouter: Router = express.Router();
 
 const UserControllers = new UserController();
 const authMiddleware = new AuthMiddleware()
-
-userRouter.get("/", (req: Request, res: Response) => {
-    res.status(200).send("Welcome to fund raiser service");
-})
 
 //Get method
 userRouter.get("/view/self/:limit/:page/:status?", authMiddleware.isValidUser, UserControllers.getUserFundRaisePost); //test completed

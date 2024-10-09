@@ -2,11 +2,10 @@ import BankAccountRepo from "../repositorys/BankAccountRepo";
 import FundRaiserRepo from "../repositorys/FundRaiserRepo";
 import { BankAccountType } from "../types/Enums/DbEnum";
 import { StatusCode } from "../types/Enums/UtilEnum";
-import { IBankAccount, IEditableFundRaiser, IFundRaise } from "../types/Interface/IDBmodel";
+import { IBankAccount, IEditableFundRaiser } from "../types/Interface/IDBmodel";
 import { HelperFuncationResponse } from "../types/Interface/Util";
 import UtilHelper from "../util/helper/utilHelper";
 import FundRaiserService from "./FundRaiserService";
-
 
 interface IBankAccountService {
     addBankAccount(account_number: number, ifsc_code: string, holder_name: string, accountType: BankAccountType, fundId: string): Promise<HelperFuncationResponse>
@@ -210,11 +209,6 @@ class BankAccountService implements IBankAccountService {
                 statusCode: StatusCode.BAD_REQUESR
             }
         }
-    }
-
-
-    async deleteAllBenificiary() {
-
     }
 
     async deleteAccount(benfId: string, fund_id: string): Promise<HelperFuncationResponse> {
