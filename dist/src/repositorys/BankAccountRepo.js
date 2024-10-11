@@ -22,8 +22,10 @@ class BankAccountRepo {
     }
     findBenfIdsByFundId(fundId) {
         return __awaiter(this, void 0, void 0, function* () {
-            const findByAccountNumber = yield BankAccount_1.default.find({ fund_id: fundId }).projection({ _id: 0, befId: 1 }).toArray();
-            return findByAccountNumber;
+            const findByAccountNumber = yield BankAccount_1.default.find({ fund_id: fundId });
+            const account = findByAccountNumber.map((each) => each.befId);
+            console.log(account);
+            return account;
         });
     }
     findLiveAccountByNumber(account) {
@@ -41,7 +43,6 @@ class BankAccountRepo {
     findPaginatedAccountsByProfile(fund_id, skip, limit) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const match = {};
                 const findProfile = yield BankAccount_1.default.aggregate([
                     {
                         $match: {

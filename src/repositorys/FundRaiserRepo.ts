@@ -242,6 +242,11 @@ class FundRaiserRepo implements IFundRaiserRepo {
                     $facet: {
                         paginated: [
                             {
+                                $sort: {
+                                    _id: -1
+                                }
+                            },
+                            {
                                 $skip: skip
                             },
                             {

@@ -29,8 +29,6 @@ class S3BucketHelper {
         return __awaiter(this, void 0, void 0, function* () {
             const signedUrlExpireSeconds = 60 * 5;
             const filePath = this.folderName ? `${this.folderName}/${key}` : key;
-            console.log("Bucket name");
-            console.log(this.bucketName);
             const url = this.s3.getSignedUrl("putObject", {
                 Bucket: this.bucketName,
                 Key: filePath,

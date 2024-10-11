@@ -264,13 +264,16 @@ class DonationService implements IDonationService {
     async verifyPayment(order_id: string): Promise<HelperFuncationResponse> {
 
         const verifyPayment: IVerifyPaymentResponse | false = await this.paymentHelper.verifyPayment(order_id);
+        const findOrder = await this.orderRepo.findOne(order_id)
 
         let receipt: string = 'donation';
 
 
         const utilHelper = new UtilHelper();
         if (verifyPayment) {
-            const findOrder = await this.orderRepo.findOne(order_id)
+            console.log("Verifiying payment")
+            console.log(verifyPayment)
+            console.log(findOrder)
             if (findOrder && !findOrder.status) {
                 const fundRaise = await this.fundRepo.findFundPostByFundId(findOrder.fund_id);
                 if (fundRaise) {

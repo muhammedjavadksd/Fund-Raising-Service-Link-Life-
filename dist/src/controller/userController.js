@@ -89,16 +89,11 @@ class UserController {
             const dateFrom = new Date(((_a = req.query.from_date) === null || _a === void 0 ? void 0 : _a.toString()) || new Date());
             const dateTo = new Date(((_b = req.query.to_date) === null || _b === void 0 ? void 0 : _b.toString()) || new Date());
             const fund_id = req.params.fund_id;
-            console.log("The date");
-            console.log(dateFrom);
-            console.log(dateTo);
             if (dateFrom == null || dateTo == null) {
                 res.status(UtilEnum_1.StatusCode.BAD_REQUESR).json({ status: false, msg: "Please provide valid date" });
             }
             else {
                 const findStatitics = yield this.donationRepo.donationStatitics(dateFrom, dateTo, fund_id);
-                console.log("Find statitics");
-                console.log(findStatitics);
                 if (findStatitics) {
                     res.status(UtilEnum_1.StatusCode.OK).json({ status: true, msg: "Data found", data: findStatitics });
                 }
@@ -122,7 +117,6 @@ class UserController {
             const fundId = req.params.edit_id;
             const page = +req.params.page;
             const limit = +req.params.limit;
-            console.log("Get bank account");
             const findAllBenificiary = yield this.bankAccountService.getAllBankAccount(fundId, page, limit, false);
             res.status(findAllBenificiary.statusCode).json({ status: findAllBenificiary.status, msg: findAllBenificiary.msg, data: findAllBenificiary.data });
         });
@@ -191,7 +185,6 @@ class UserController {
             var _a, _b;
             const verifyBody = req.body;
             const verifyPayment = yield this.donationService.verifyPayment((_b = (_a = verifyBody === null || verifyBody === void 0 ? void 0 : verifyBody.data) === null || _a === void 0 ? void 0 : _a.order) === null || _b === void 0 ? void 0 : _b.order_id);
-            console.log(verifyPayment);
             res.status(verifyPayment.statusCode).json({ status: verifyPayment.status, msg: verifyPayment.msg, data: verifyPayment.data });
         });
     }
@@ -278,34 +271,6 @@ class UserController {
             res.status(saveComment.statusCode).json({ status: saveComment.status, msg: saveComment.msg, data: saveComment.data });
         });
     }
-    uploadImageIntoS3(req, res) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const pre_url = req.body.presigned_url;
-            // const file: Express.Multer.File | undefined = req.file;
-            // if (file) {
-            //     const presignedUrl = url.parse(pre_url, true).pathname //.parse(url, true)
-            //     if (presignedUrl) {
-            //         const extractPath = presignedUrl.split("/");
-            //         const imageName = extractPath[2];
-            //         if (imageName) {
-            //             console.log(presignedUrl);
-            //             const s3Bucket = new S3BucketHelper("file-bucket");
-            //             const buffer = file.buffer;
-            //             const uploadImage = await s3Bucket.uploadFile(buffer, pre_url, file.mimetype, imageName)
-            //             if (uploadImage) {
-            //                 res.status(200).json({ status: true, msg: "Image uploaded success", image_name: uploadImage })
-            //             } else {
-            //                 res.status(400).json({ status: false, msg: "Image uploaded failed" })
-            //             }
-            //         } else {
-            //             res.status(500).json({ status: false, msg: "No image found" })
-            //         }
-            //     }
-            // } else {
-            // }
-            res.status(400).json({ status: false, msg: "Please upload valid image" });
-        });
-    }
     getPresignedUrl(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const type = req.query.type;
@@ -320,11 +285,8 @@ class UserController {
             const page = +req.params.page;
             const status = req.params.status;
             const skip = (page - 1) * limit;
-            console.log("The limit is");
-            console.log(limit);
             try {
                 const user_id = (_a = req.context) === null || _a === void 0 ? void 0 : _a.user_id;
-                console.log(user_id);
                 if (user_id) {
                     const getMyFundRaisePost = yield this.fundRaiserService.getOwnerFundRaise(user_id, limit, skip, status);
                     if (getMyFundRaisePost.status) {
@@ -380,9 +342,7 @@ class UserController {
                 const fundRaiserID = req.params.edit_id;
                 if (imagesPresignedUrl.length) {
                     const edit_type = req.body.image_type;
-                    console.log("Image type is :" + edit_type);
                     const saveFundRaise = yield this.fundRaiserService.uploadImage(imagesPresignedUrl, fundRaiserID, edit_type);
-                    console.log("Upload");
                     console.log(saveFundRaise);
                     res.status(saveFundRaise.statusCode).json({
                         status: saveFundRaise.status,
@@ -394,12 +354,10 @@ class UserController {
                     });
                 }
                 else {
-                    console.log("Image not found");
                     res.status(UtilEnum_1.StatusCode.BAD_REQUESR).json({ status: false, msg: "Please provid valid images" });
                 }
             }
             catch (e) {
-                console.log(e);
                 res.status(500).json({
                     status: false,
                     msg: "Internal Server Error"
@@ -480,15 +438,15 @@ class UserController {
                 const page = Number(req.params.page);
                 const getLimitedData = yield this.fundRaiserRepo.getActiveFundRaiserPost(page, limit, {});
                 if (getLimitedData === null || getLimitedData === void 0 ? void 0 : getLimitedData.total_records) {
-                    res.status(200).json({ status: true, data: getLimitedData });
+                    res.status(UtilEnum_1.StatusCode.OK).json({ status: true, data: getLimitedData });
                 }
                 else {
                     console.log("This works");
-                    res.status(400).json({ status: false, msg: "No data found" });
+                    res.status(UtilEnum_1.StatusCode.NOT_FOUND).json({ status: false, msg: "No data found" });
                 }
             }
             catch (e) {
-                res.status(500).json({ status: false, msg: "Internal Server Error" });
+                res.status(UtilEnum_1.StatusCode.SERVER_ERROR).json({ status: false, msg: "Internal Server Error" });
             }
         });
     }
@@ -501,15 +459,13 @@ class UserController {
                 const isForce = req.query.isForce;
                 const profile = yield this.fundRaiserRepo.findFundPostByFundId(fund_id);
                 if (profile) {
-                    console.log("Profile");
-                    console.log(isForce, user_id);
                     if (isForce && user_id) {
                         if ((profile === null || profile === void 0 ? void 0 : profile.user_id) != user_id) {
-                            res.status(400).json({ status: false, msg: "Profile not found" });
+                            res.status(UtilEnum_1.StatusCode.NOT_FOUND).json({ status: false, msg: "Profile not found" });
                             return;
                         }
                         else {
-                            res.status(200).json({ status: true, data: profile });
+                            res.status(UtilEnum_1.StatusCode.OK).json({ status: true, data: profile });
                             return;
                         }
                     }
@@ -519,16 +475,16 @@ class UserController {
                             return;
                         }
                         else {
-                            res.status(200).json({ status: true, data: profile });
+                            res.status(UtilEnum_1.StatusCode.OK).json({ status: true, data: profile });
                         }
                     }
                 }
                 else {
-                    res.status(400).json({ status: false, msg: "Profile not found" });
+                    res.status(UtilEnum_1.StatusCode.NOT_FOUND).json({ status: false, msg: "Profile not found" });
                 }
             }
             catch (e) {
-                res.status(500).json({ status: false, msg: "Internal Server Error" });
+                res.status(UtilEnum_1.StatusCode.SERVER_ERROR).json({ status: false, msg: "Internal Server Error" });
             }
         });
     }

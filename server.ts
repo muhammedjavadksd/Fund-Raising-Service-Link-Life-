@@ -19,20 +19,13 @@ dotenv.config({ path: envPath });
 const PORT = process.env.PORT || 7005
 fundRaiseDbConnection()
 
-app.use(morgan("dev"))
+// app.use(morgan("dev"))
 
 import userRouter from './src/router/userRouter';
 import adminRouter from './src/router/adminRouter';
 
 
-const SmeeClient = require('smee-client')
 
-const smee = new SmeeClient({
-    source: 'https://smee.io/XLWna6tXQfipghBJ',
-    target: `http://${process.env.FUND_RAISE_PAYMENT_VERIFY}/verify-payment`,
-    logger: console
-})
-smee.start()
 
 const staticPath = path.join(__dirname, 'public/images');
 console.log(`Serving static files from: ${staticPath}`);

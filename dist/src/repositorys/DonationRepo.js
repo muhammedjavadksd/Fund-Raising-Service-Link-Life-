@@ -18,9 +18,6 @@ class DonationRepo {
     donationStatitics(from_date, to_date, fund_id) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                console.log("Filter");
-                console.log(from_date.getTime()); ///2023-01-08T18:30:00.000Z
-                console.log(to_date); //2024-01-08T18:30:00.000Z
                 const match = {
                     $match: {
                         fund_id,
@@ -30,8 +27,6 @@ class DonationRepo {
                         }
                     }
                 };
-                console.log("Match");
-                console.log(match);
                 const data = yield DonationHistory_1.default.aggregate([
                     match,
                     {
@@ -132,6 +127,11 @@ class DonationRepo {
                     {
                         $facet: {
                             paginated: [
+                                {
+                                    $sort: {
+                                        _id: -1
+                                    }
+                                },
                                 {
                                     $skip: skip
                                 },

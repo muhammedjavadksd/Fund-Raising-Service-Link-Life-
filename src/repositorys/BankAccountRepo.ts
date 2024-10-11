@@ -25,8 +25,10 @@ class BankAccountRepo implements IBankAccountRepo {
 
 
     async findBenfIdsByFundId(fundId: string): Promise<string[]> {
-        const findByAccountNumber = await BankAccountCollection.find({ fund_id: fundId }).projection({ _id: 0, befId: 1 }).toArray()
-        return findByAccountNumber
+        const findByAccountNumber = await BankAccountCollection.find({ fund_id: fundId })
+        const account = findByAccountNumber.map((each) => each.befId)
+        console.log(account)
+        return account
     }
 
     async findLiveAccountByNumber(account: number): Promise<IBankAccountCollection | null> {

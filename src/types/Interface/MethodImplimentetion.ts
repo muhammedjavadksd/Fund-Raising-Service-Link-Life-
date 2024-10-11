@@ -106,7 +106,7 @@ interface IFundRaiserService {
     uploadImage(images: string[], fundRaiserID: string, document_type: FundRaiserFileType): Promise<HelperFuncationResponse>
     getOwnerSingleProfile(user_id: string): Promise<HelperFuncationResponse>
     paginatedFundRaiserByCategory(category: string, limit: number, skip: number, filter: Record<string, any>): Promise<HelperFuncationResponse>
-    addBeneficiary(fund_id: string, name: string, email: string, phone: string, accountNumber: string, ifsc: string, address: string): Promise<HelperFuncationResponse>
+    addBeneficiary(benfId: string,fund_id: string, name: string, email: string, phone: string, accountNumber: string, ifsc: string, address: string): Promise<HelperFuncationResponse>
     editFundRaiser(editId: string, editData: IEditableFundRaiser): Promise<HelperFuncationResponse>
 }
 

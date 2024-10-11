@@ -137,14 +137,15 @@ class BankAccountService implements IBankAccountService {
         const findProfile = await this.fundRepo.findFundPostByFundId(fundId);
         const fundService = new FundRaiserService();
         if (findProfile) {
-            const addBeneficiary = await fundService.addBeneficiary(fundId, findProfile.full_name, findProfile.email_id, findProfile.phone_number.toString(), account_number.toString(), ifsc_code, findProfile.full_address);
+            const utilHelper = new UtilHelper();
+
+            const benfId = utilHelper.convertFundIdToBeneficiaryId(fundId, ifsc_code);
+            const addBeneficiary = await fundService.addBeneficiary(benfId, fundId, holder_name, findProfile.email_id, findProfile.phone_number.toString(), account_number.toString(), ifsc_code, findProfile.full_address);
             console.log("Add benificiary details");
             console.log(addBeneficiary);
 
 
             if (addBeneficiary.status) {
-                const utilHelper = new UtilHelper();
-                const benfId = utilHelper.convertFundIdToBeneficiaryId(fundId, ifsc_code);
 
                 const data: IBankAccount = {
                     is_active: true,

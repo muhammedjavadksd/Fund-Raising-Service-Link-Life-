@@ -195,12 +195,11 @@ class FundRaiserService implements IFundRaiserService {
     }
 
 
-    async addBeneficiary(fund_id: string, name: string, email: string, phone: string, accountNumber: string, ifsc: string, address: string): Promise<HelperFuncationResponse> {
+    async addBeneficiary(benfId: string, fund_id: string, name: string, email: string, phone: string, accountNumber: string, ifsc: string, address: string): Promise<HelperFuncationResponse> {
 
 
         try {
             const utilHelper = new UtilHelper();
-            const benfId = utilHelper.convertFundIdToBeneficiaryId(fund_id, ifsc);
             cashfreedocsNew.auth(process.env.CASHFREE_PAYOUT_KEY || "");
             cashfreedocsNew.auth(process.env.CASHFREE_PAYOUT_SECRET || "");
             const authOptions = {
@@ -290,11 +289,13 @@ class FundRaiserService implements IFundRaiserService {
                 for (let index = 0; index < findBankAccount.length; index++) {
                     bulkDelete.push(this.removeBeneficiary(findBankAccount[index]))
                 }
-                await Promise.all(bulkDelete);
+                const remove = await Promise.all(bulkDelete);
+                console.log(remove)
                 await this.bankRepo.closeBankAccount(fund_id)
             }
             return true
         } catch (e) {
+            console.log(e);
             return false
         }
     }
@@ -372,7 +373,7 @@ class FundRaiserService implements IFundRaiserService {
             return {
                 status: false,
                 msg: "No profile found",
-                statusCode: StatusCode.BAD_REQUESR,
+                statusCode: StatusCode.NOT_FOUND,
             }
         }
     }
@@ -721,14 +722,21 @@ class FundRaiserService implements IFundRaiserService {
                 // await this.FundRaiserRepo.updateFundRaiserByModel(initFundRaise);
                 await this.FundRaiserRepo.updateFundRaiser(fundRaiserID, { [field]: newDocs })
 
+                const newData = {
+                    picture: initFundRaise.picture,
+                    documents: initFundRaise.documents
+                }
+                newData[field] = newImages;
+
+                console.log("New images")
+                console.log(newData)
+
+
                 return {
                     msg: "Image uploaded success",
                     status: true,
                     statusCode: StatusCode.CREATED,
-                    data: {
-                        picture: initFundRaise.picture,
-                        documents: initFundRaise.documents
-                    }
+                    data: newData
                 }
             } else {
                 return {

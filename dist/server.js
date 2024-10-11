@@ -5,7 +5,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const dotenv_1 = __importDefault(require("dotenv"));
-const morgan_1 = __importDefault(require("morgan"));
 const path_1 = __importDefault(require("path"));
 const cors_1 = __importDefault(require("cors"));
 const app = (0, express_1.default)();
@@ -20,18 +19,9 @@ console.log(envPath);
 dotenv_1.default.config({ path: envPath });
 const PORT = process.env.PORT || 7005;
 (0, mongo_connection_1.default)();
-app.use((0, morgan_1.default)("dev"));
+// app.use(morgan("dev"))
 const userRouter_1 = __importDefault(require("./src/router/userRouter"));
 const adminRouter_1 = __importDefault(require("./src/router/adminRouter"));
-// const s = new UtilHelper();
-// s.createFundRaiserReport()
-const SmeeClient = require('smee-client');
-const smee = new SmeeClient({
-    source: 'https://smee.io/XLWna6tXQfipghBJ',
-    target: `http://${process.env.FUND_RAISE_PAYMENT_VERIFY}/verify-payment`,
-    logger: console
-});
-smee.start();
 const staticPath = path_1.default.join(__dirname, 'public/images');
 console.log(`Serving static files from: ${staticPath}`);
 app.use("/", userRouter_1.default);

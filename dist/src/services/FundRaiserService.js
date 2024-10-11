@@ -131,22 +131,6 @@ class FundRaiserService {
             }
         });
     }
-    // async editFundRaiser(editId: string, editData: IEditableFundRaiser): Promise<HelperFuncationResponse> {
-    //     const editResponse: boolean = await this.FundRaiserRepo.updateFundRaiser(editId, editData);
-    //     if (editResponse) {
-    //         return {
-    //             msg: "Update success",
-    //             status: true,
-    //             statusCode: StatusCode.OK
-    //         }
-    //     } else {
-    //         return {
-    //             msg: "Update failed",
-    //             status: false,
-    //             statusCode: StatusCode.BAD_REQUESR
-    //         }
-    //     }
-    // }
     removeBeneficiary(benfId) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
@@ -211,11 +195,10 @@ class FundRaiserService {
             }
         });
     }
-    addBeneficiary(fund_id, name, email, phone, accountNumber, ifsc, address) {
+    addBeneficiary(benfId, fund_id, name, email, phone, accountNumber, ifsc, address) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const utilHelper = new utilHelper_1.default();
-                const benfId = utilHelper.convertFundIdToBeneficiaryId(fund_id, ifsc);
                 cashfreedocs_new_1.default.auth(process.env.CASHFREE_PAYOUT_KEY || "");
                 cashfreedocs_new_1.default.auth(process.env.CASHFREE_PAYOUT_SECRET || "");
                 const authOptions = {
@@ -298,12 +281,14 @@ class FundRaiserService {
                     for (let index = 0; index < findBankAccount.length; index++) {
                         bulkDelete.push(this.removeBeneficiary(findBankAccount[index]));
                     }
-                    yield Promise.all(bulkDelete);
+                    const remove = yield Promise.all(bulkDelete);
+                    console.log(remove);
                     yield this.bankRepo.closeBankAccount(fund_id);
                 }
                 return true;
             }
             catch (e) {
+                console.log(e);
                 return false;
             }
         });
@@ -367,7 +352,7 @@ class FundRaiserService {
                 return {
                     status: false,
                     msg: "No profile found",
-                    statusCode: UtilEnum_1.StatusCode.BAD_REQUESR,
+                    statusCode: UtilEnum_1.StatusCode.NOT_FOUND,
                 };
             }
         });
@@ -709,14 +694,18 @@ class FundRaiserService {
                     const newDocs = [...replaceImage, ...newImages];
                     // await this.FundRaiserRepo.updateFundRaiserByModel(initFundRaise);
                     yield this.FundRaiserRepo.updateFundRaiser(fundRaiserID, { [field]: newDocs });
+                    const newData = {
+                        picture: initFundRaise.picture,
+                        documents: initFundRaise.documents
+                    };
+                    newData[field] = newImages;
+                    console.log("New images");
+                    console.log(newData);
                     return {
                         msg: "Image uploaded success",
                         status: true,
                         statusCode: UtilEnum_1.StatusCode.CREATED,
-                        data: {
-                            picture: initFundRaise.picture,
-                            documents: initFundRaise.documents
-                        }
+                        data: newData
                     };
                 }
                 else {

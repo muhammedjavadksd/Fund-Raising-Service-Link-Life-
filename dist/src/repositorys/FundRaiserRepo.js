@@ -22,13 +22,10 @@ class FundRaiserRepo {
         this.getAllFundRaiserPost = this.getAllFundRaiserPost.bind(this);
         this.getRestrictedFundRaisePost = this.getRestrictedFundRaisePost.bind(this);
         this.getUserPosts = this.getUserPosts.bind(this);
-        this.getOrganizationPosts = this.getOrganizationPosts.bind(this);
         this.createFundRaiserPost = this.createFundRaiserPost.bind(this);
         this.updateFundRaiser = this.updateFundRaiser.bind(this);
-        // this.updateFundRaiserByModel = this.updateFundRaiserByModel.bind(this)
         this.findFundPostByFundId = this.findFundPostByFundId.bind(this);
         this.getSingleFundRaiseOfUser = this.getSingleFundRaiseOfUser.bind(this);
-        this.fundRaiserPaginatedByCategory = this.fundRaiserPaginatedByCategory.bind(this);
         this.closeFundRaiser = this.closeFundRaiser.bind(this);
         this.deleteOneDocument = this.deleteOneDocument.bind(this);
         this.deleteOnePicture = this.deleteOnePicture.bind(this);
@@ -84,18 +81,6 @@ class FundRaiserRepo {
         return __awaiter(this, void 0, void 0, function* () {
             const findUpdate = yield this.FundRaiserModel.updateOne({ fund_id }, { $set: { closed: true, status: DbEnum_1.FundRaiserStatus.CLOSED } });
             return findUpdate.modifiedCount > 0;
-        });
-    }
-    fundRaiserPaginatedByCategory(category, skip, limit) {
-        return __awaiter(this, void 0, void 0, function* () {
-            // try {
-            //     const findProfile = await this.FundRaiserModel.find({ category, status: FundRaiserStatus.APPROVED, closed: false }).skip(skip).limit(limit);
-            //     return findProfile
-            // } catch (e) {
-            //     return [];
-            // }
-            //dont need this function use getActiveFundRaiserPost
-            return [];
         });
     }
     countRecords() {
@@ -249,6 +234,11 @@ class FundRaiserRepo {
                         $facet: {
                             paginated: [
                                 {
+                                    $sort: {
+                                        _id: -1
+                                    }
+                                },
+                                {
                                     $skip: skip
                                 },
                                 {
@@ -285,18 +275,6 @@ class FundRaiserRepo {
                     paginated: [],
                     total_records: 0
                 };
-            }
-        });
-    }
-    getOrganizationPosts(organization_id, skip, limit) {
-        return __awaiter(this, void 0, void 0, function* () {
-            try {
-                const fundRaisePost = yield this.FundRaiserModel.find({ created_by: DbEnum_1.FundRaiserCreatedBy.ORGANIZATION, user_id: organization_id }).skip(skip).limit(limit);
-                return fundRaisePost;
-            }
-            catch (e) {
-                console.log(e);
-                return [];
             }
         });
     }
@@ -338,17 +316,6 @@ class FundRaiserRepo {
             }
         });
     }
-    // async updateFundRaiserByModel(model: iFundRaiseModel): Promise<boolean> {
-    //     try {
-    //         const save = await model.save();
-    //         console.log("Save the data");
-    //         console.log(save);
-    //         return true
-    //     } catch (e) {
-    //         console.log(e);
-    //         return false
-    //     }
-    // }
     findFundPostByFundId(fund_id) {
         return __awaiter(this, void 0, void 0, function* () {
             try {

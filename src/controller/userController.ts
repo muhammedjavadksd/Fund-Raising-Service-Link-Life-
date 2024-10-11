@@ -349,6 +349,7 @@ class UserController implements IUserController {
             if (imagesPresignedUrl.length) {
                 const edit_type: FundRaiserFileType = req.body.image_type;
                 const saveFundRaise: HelperFuncationResponse = await this.fundRaiserService.uploadImage(imagesPresignedUrl, fundRaiserID, edit_type)
+                console.log(saveFundRaise)
                 res.status(saveFundRaise.statusCode).json({
                     status: saveFundRaise.status,
                     msg: saveFundRaise.msg,

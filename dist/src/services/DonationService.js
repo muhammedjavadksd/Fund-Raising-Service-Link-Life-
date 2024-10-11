@@ -252,10 +252,13 @@ class DonationService {
         return __awaiter(this, void 0, void 0, function* () {
             var _a, _b, _c, _d, _e, _f;
             const verifyPayment = yield this.paymentHelper.verifyPayment(order_id);
+            const findOrder = yield this.orderRepo.findOne(order_id);
             let receipt = 'donation';
             const utilHelper = new utilHelper_1.default();
             if (verifyPayment) {
-                const findOrder = yield this.orderRepo.findOne(order_id);
+                console.log("Verifiying payment");
+                console.log(verifyPayment);
+                console.log(findOrder);
                 if (findOrder && !findOrder.status) {
                     const fundRaise = yield this.fundRepo.findFundPostByFundId(findOrder.fund_id);
                     if (fundRaise) {

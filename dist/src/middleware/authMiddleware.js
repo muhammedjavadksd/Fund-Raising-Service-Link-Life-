@@ -61,8 +61,6 @@ class AuthMiddleware {
         return __awaiter(this, void 0, void 0, function* () {
             const headers = req.headers;
             const auth = headers['authorization'];
-            console.log(auth);
-            console.log(headers);
             if (auth && auth.split(' ')[0] === 'Bearer') {
                 if (!req.context) {
                     req.context = {};
@@ -93,7 +91,6 @@ class AuthMiddleware {
                     }
                 }
                 else {
-                    console.log("This error 2");
                     res.status(UtilEnum_1.StatusCode.UNAUTHORIZED).json({
                         status: false,
                         msg: "Authorization is failed"
@@ -148,8 +145,6 @@ class AuthMiddleware {
         return __awaiter(this, void 0, void 0, function* () {
             const headers = req.headers;
             const auth = headers['authorization'];
-            console.log("token", auth);
-            console.log("Token recivied");
             if (auth && auth.split(' ')[0] === 'Bearer') {
                 const tokenHelper = new tokenHelper_1.default();
                 const token = auth.split(' ')[1];
@@ -169,7 +164,6 @@ class AuthMiddleware {
                         next();
                     }
                     else {
-                        console.log("This error 1");
                         res.status(UtilEnum_1.StatusCode.UNAUTHORIZED).json({
                             status: false,
                             msg: "Authorization is failed"
@@ -177,7 +171,6 @@ class AuthMiddleware {
                     }
                 }
                 else {
-                    console.log("This error 2");
                     console.log(checkValidity);
                     res.status(UtilEnum_1.StatusCode.UNAUTHORIZED).json({
                         status: false,
@@ -186,24 +179,11 @@ class AuthMiddleware {
                 }
             }
             else {
-                console.log("Headers");
-                console.log(req.headers);
-                console.log("This error 3");
                 res.status(UtilEnum_1.StatusCode.UNAUTHORIZED).json({
                     status: false,
                     msg: "Invalid auth attempt"
                 });
             }
-        });
-    }
-    isValidOrganization(req, res, next) {
-        return __awaiter(this, void 0, void 0, function* () {
-            next();
-        });
-    }
-    isOrganizationAuthraized(req, res, next) {
-        return __awaiter(this, void 0, void 0, function* () {
-            next();
         });
     }
 }

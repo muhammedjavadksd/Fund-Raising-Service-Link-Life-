@@ -145,6 +145,11 @@ class DonationRepo implements IDonationRepo {
                     $facet: {
                         paginated: [
                             {
+                                $sort: {
+                                    _id: -1
+                                }
+                            },
+                            {
                                 $skip: skip
                             },
                             {

@@ -134,12 +134,12 @@ class BankAccountService {
             const findProfile = yield this.fundRepo.findFundPostByFundId(fundId);
             const fundService = new FundRaiserService_1.default();
             if (findProfile) {
-                const addBeneficiary = yield fundService.addBeneficiary(fundId, findProfile.full_name, findProfile.email_id, findProfile.phone_number.toString(), account_number.toString(), ifsc_code, findProfile.full_address);
+                const utilHelper = new utilHelper_1.default();
+                const benfId = utilHelper.convertFundIdToBeneficiaryId(fundId, ifsc_code);
+                const addBeneficiary = yield fundService.addBeneficiary(benfId, fundId, holder_name, findProfile.email_id, findProfile.phone_number.toString(), account_number.toString(), ifsc_code, findProfile.full_address);
                 console.log("Add benificiary details");
                 console.log(addBeneficiary);
                 if (addBeneficiary.status) {
-                    const utilHelper = new utilHelper_1.default();
-                    const benfId = utilHelper.convertFundIdToBeneficiaryId(fundId, ifsc_code);
                     const data = {
                         is_active: true,
                         is_closed: false,
@@ -199,10 +199,6 @@ class BankAccountService {
                     statusCode: UtilEnum_1.StatusCode.BAD_REQUESR
                 };
             }
-        });
-    }
-    deleteAllBenificiary() {
-        return __awaiter(this, void 0, void 0, function* () {
         });
     }
     deleteAccount(benfId, fund_id) {

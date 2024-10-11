@@ -78,7 +78,7 @@ class AdminController {
             res.status(deleteImage.statusCode).json({ status: deleteImage.status, msg: deleteImage.msg, data: deleteImage.data });
         });
     }
-    getStatitics(req, res) {
+    getStatitics(_, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const findStatitics = yield this.donationService.getStatitics();
             res.status(findStatitics.statusCode).json({ status: findStatitics.status, msg: findStatitics.msg, data: findStatitics.data });
@@ -105,15 +105,12 @@ class AdminController {
             const image = req.body.image;
             const fund_id = req.params.edit_id;
             const type = req.body.type;
-            console.log("The images");
-            console.log(image);
             const uploadImage = yield this.fundRaiserService.uploadImage(image, fund_id, type);
             res.status(uploadImage.statusCode).json({ status: uploadImage.status, msg: uploadImage.msg, data: uploadImage.data });
         });
     }
     getAllFundRaise(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            console.log("Reached here");
             try {
                 const limit = Number(req.params.limit);
                 const page = Number(req.params.page);

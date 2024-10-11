@@ -4,7 +4,6 @@ exports.BankAccountType = exports.FundRaiserStatus = exports.FundRaiserCreatedBy
 var FundRaiserCreatedBy;
 (function (FundRaiserCreatedBy) {
     FundRaiserCreatedBy["ADMIN"] = "ADMIN";
-    FundRaiserCreatedBy["ORGANIZATION"] = "ORGANIZATION";
     FundRaiserCreatedBy["USER"] = "USER";
 })(FundRaiserCreatedBy || (exports.FundRaiserCreatedBy = FundRaiserCreatedBy = {}));
 var FundRaiserStatus;

@@ -9,9 +9,6 @@ const authMiddleware_1 = __importDefault(require("../middleware/authMiddleware")
 const userRouter = express_1.default.Router();
 const UserControllers = new userController_1.default();
 const authMiddleware = new authMiddleware_1.default();
-userRouter.get("/", (req, res) => {
-    res.status(200).send("Welcome to fund raiser service");
-});
 //Get method
 userRouter.get("/view/self/:limit/:page/:status?", authMiddleware.isValidUser, UserControllers.getUserFundRaisePost); //test completed
 userRouter.get("/view/:category/:limit/:page", UserControllers.categoryFundRaiserPaginated); //test completed
