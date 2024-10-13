@@ -81,10 +81,11 @@ class PaymentHelper implements IPaymentHelper {
                 order_currency: "INR",
                 order_meta: {
                     return_url: `${process.env.PAYMENT_SUCCESS_ENDPOINT}/${order_id}`,
-
                 }
-
             };
+
+            // console.log(${process.env.PAYMENT_SUCCESS_ENDPOINT}/${order_id});
+
             console.log(data);
 
             const configData = {

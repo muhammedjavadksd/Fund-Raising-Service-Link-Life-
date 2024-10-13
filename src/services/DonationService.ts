@@ -10,6 +10,7 @@ import PaymentHelper from "../util/helper/paymentHelper"
 import UtilHelper from "../util/helper/utilHelper"
 import BankAccountRepo from "../repositorys/BankAccountRepo"
 import FundRaiserProvider from "../communication/provider"
+import { clear } from "console"
 
 
 interface IDonationService {
@@ -289,6 +290,12 @@ class DonationService implements IDonationService {
                         console.log(e);
                         console.log("Certification creation failed");
                     }
+
+
+                    clear()
+                    console.log("Certificate created");
+                    console.log(receipt);
+
 
                     let randomNumber: number = utilHelper.generateAnOTP(4)
                     let randomText: string = utilHelper.createRandomText(4)

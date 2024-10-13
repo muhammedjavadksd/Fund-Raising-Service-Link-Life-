@@ -22,7 +22,7 @@ userRouter.get("/profile-bank-account/:edit_id/:limit/:page", authMiddleware.isV
 userRouter.get("/donation-statistics/:fund_id", UserControllers.getDonationStatitics);//test completed
 
 //payemnt post
-userRouter.post("/pay/:fund_id", UserControllers.payToFundRaiser)
+userRouter.post("/pay/:fund_id", authMiddleware.hasUser, UserControllers.payToFundRaiser)
 userRouter.post("/verify-payment", UserControllers.verifyPayment)
 
 // POST method
