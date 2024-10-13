@@ -22,7 +22,7 @@ class FundRaiserProvider {
         return __awaiter(this, void 0, void 0, function* () {
             console.log(process.env.RABBITMQ_URL || "");
             (0, dotenv_1.config)();
-            console.log(process.env.RABBITMQ_URL || "");
+            console.log(process.env);
             const connection = yield amqplib_1.default.connect(process.env.RABBITMQ_URL || "");
             const channel = yield connection.createChannel();
             yield channel.assertQueue(this.queue);
@@ -30,6 +30,8 @@ class FundRaiserProvider {
         });
     }
     transferData(data) {
+        console.log("Transfering data");
+        console.log(data);
         if (this.channel) {
             this.channel.sendToQueue(this.queue, Buffer.from(JSON.stringify(data)));
             return true;

@@ -266,6 +266,10 @@ class DonationService implements IDonationService {
 
         const verifyPayment: IVerifyPaymentResponse | false = await this.paymentHelper.verifyPayment(order_id);
         const findOrder = await this.orderRepo.findOne(order_id)
+        console.log("The irder");
+
+        console.log(findOrder);
+
 
         let receipt: string = 'donation';
 
@@ -275,7 +279,8 @@ class DonationService implements IDonationService {
             console.log("Verifiying payment")
             console.log(verifyPayment)
             console.log(findOrder)
-            if (findOrder && !findOrder.status) {
+            // if (findOrder && !findOrder.status) {
+            if (findOrder) {
                 const fundRaise = await this.fundRepo.findFundPostByFundId(findOrder.fund_id);
                 if (fundRaise) {
                     await this.orderRepo.updateStatus(order_id, true)
@@ -328,7 +333,7 @@ class DonationService implements IDonationService {
                     const updatedAmount = fundRaise.collected + (verifyPayment?.data?.order?.order_amount || 0)
                     await this.fundRepo.updateFundRaiser(fundRaise.fund_id, { collected: updatedAmount })
                     await this.webHookRepo.updateWebhookStatus(order_id, true)
-                    const insertHistory = await this.donationHistoryRepo.insertDonationHistory(donationHistory)
+                    // const insertHistory = await this.donationHistoryRepo.insertDonationHistory(donationHistory)
                     const notification = new FundRaiserProvider(process.env.DONATION_SUCCESS_QUEUE || "")
                     await notification._init__();
                     const transterData = notification.transferData({
@@ -347,7 +352,7 @@ class DonationService implements IDonationService {
 
 
 
-                    console.log(insertHistory);
+                    // console.log(insertHistory);
 
                     return {
                         status: true,

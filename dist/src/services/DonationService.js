@@ -254,13 +254,16 @@ class DonationService {
             var _a, _b, _c, _d, _e, _f;
             const verifyPayment = yield this.paymentHelper.verifyPayment(order_id);
             const findOrder = yield this.orderRepo.findOne(order_id);
+            console.log("The irder");
+            console.log(findOrder);
             let receipt = 'donation';
             const utilHelper = new utilHelper_1.default();
             if (verifyPayment) {
                 console.log("Verifiying payment");
                 console.log(verifyPayment);
                 console.log(findOrder);
-                if (findOrder && !findOrder.status) {
+                // if (findOrder && !findOrder.status) {
+                if (findOrder) {
                     const fundRaise = yield this.fundRepo.findFundPostByFundId(findOrder.fund_id);
                     if (fundRaise) {
                         yield this.orderRepo.updateStatus(order_id, true);
@@ -310,17 +313,21 @@ class DonationService {
                         const updatedAmount = fundRaise.collected + (((_f = (_e = verifyPayment === null || verifyPayment === void 0 ? void 0 : verifyPayment.data) === null || _e === void 0 ? void 0 : _e.order) === null || _f === void 0 ? void 0 : _f.order_amount) || 0);
                         yield this.fundRepo.updateFundRaiser(fundRaise.fund_id, { collected: updatedAmount });
                         yield this.webHookRepo.updateWebhookStatus(order_id, true);
-                        const insertHistory = yield this.donationHistoryRepo.insertDonationHistory(donationHistory);
+                        // const insertHistory = await this.donationHistoryRepo.insertDonationHistory(donationHistory)
                         const notification = new provider_1.default(process.env.DONATION_SUCCESS_QUEUE || "");
                         yield notification._init__();
-                        notification.transferData({
+                        const transterData = notification.transferData({
                             certificate_url: receipt,
                             name: findOrder.name,
                             amount: findOrder.amount,
                             campign_title: campignTitle,
                             email: findOrder.email
                         });
-                        console.log(insertHistory);
+                        console.log("Transfer data");
+                        console.log(transterData);
+                        console.log(process.env.DONATION_SUCCESS_QUEUE);
+                        console.log(process.env);
+                        // console.log(insertHistory);
                         return {
                             status: true,
                             msg: "Payment success",
