@@ -22,6 +22,7 @@ const paymentHelper_1 = __importDefault(require("../util/helper/paymentHelper"))
 const utilHelper_1 = __importDefault(require("../util/helper/utilHelper"));
 const BankAccountRepo_1 = __importDefault(require("../repositorys/BankAccountRepo"));
 const provider_1 = __importDefault(require("../communication/provider"));
+const console_1 = require("console");
 class DonationService {
     constructor() {
         this.paymentHelper = new paymentHelper_1.default();
@@ -275,6 +276,9 @@ class DonationService {
                             console.log(e);
                             console.log("Certification creation failed");
                         }
+                        (0, console_1.clear)();
+                        console.log("Certificate created");
+                        console.log(receipt);
                         let randomNumber = utilHelper.generateAnOTP(4);
                         let randomText = utilHelper.createRandomText(4);
                         let donationId = randomText + randomNumber;

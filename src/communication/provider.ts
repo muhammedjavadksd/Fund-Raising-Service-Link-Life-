@@ -1,4 +1,5 @@
 import amqplib from 'amqplib';
+import { config } from 'dotenv';
 
 interface IFundRaiserProvider {
     _init__(): Promise<void>
@@ -16,6 +17,10 @@ class FundRaiserProvider implements IFundRaiserProvider {
     }
 
     async _init__(): Promise<void> {
+        console.log(process.env.RABBITMQ_URL || "");
+        config()
+        console.log(process.env.RABBITMQ_URL || "");
+
         const connection = await amqplib.connect(process.env.RABBITMQ_URL || "");
         const channel = await connection.createChannel();
         await channel.assertQueue(this.queue);

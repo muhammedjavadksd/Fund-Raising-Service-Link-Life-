@@ -13,12 +13,16 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const amqplib_1 = __importDefault(require("amqplib"));
+const dotenv_1 = require("dotenv");
 class FundRaiserProvider {
     constructor(queueName) {
         this.queue = queueName;
     }
     _init__() {
         return __awaiter(this, void 0, void 0, function* () {
+            console.log(process.env.RABBITMQ_URL || "");
+            (0, dotenv_1.config)();
+            console.log(process.env.RABBITMQ_URL || "");
             const connection = yield amqplib_1.default.connect(process.env.RABBITMQ_URL || "");
             const channel = yield connection.createChannel();
             yield channel.assertQueue(this.queue);

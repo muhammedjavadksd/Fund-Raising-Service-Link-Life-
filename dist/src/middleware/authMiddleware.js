@@ -16,6 +16,7 @@ const tokenHelper_1 = __importDefault(require("../util/helper/tokenHelper"));
 const FundRaiserRepo_1 = __importDefault(require("../repositorys/FundRaiserRepo"));
 const UtilEnum_1 = require("../types/Enums/UtilEnum");
 const CommentRepo_1 = __importDefault(require("../repositorys/CommentRepo"));
+const console_1 = require("console");
 class AuthMiddleware {
     isValidCommentOwner(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -44,6 +45,11 @@ class AuthMiddleware {
                 req.context.auth_token = token;
                 const tokenHelper = new tokenHelper_1.default();
                 const checkValidity = yield tokenHelper.checkTokenValidity(token);
+                console.log(auth);
+                console.log(token);
+                console.log("Token validity");
+                (0, console_1.clear)();
+                console.log(checkValidity);
                 if (checkValidity && typeof checkValidity == "object") {
                     if (checkValidity && checkValidity.email) {
                         req.context.email_id = checkValidity === null || checkValidity === void 0 ? void 0 : checkValidity.email;

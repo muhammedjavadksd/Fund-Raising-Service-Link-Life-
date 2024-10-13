@@ -6,6 +6,7 @@ import { StatusCode } from "../types/Enums/UtilEnum";
 import CommentsRepo from "../repositorys/CommentRepo";
 import { IAuthMiddleware } from "../types/Interface/MethodImplimentetion";
 import { CustomRequest } from "../types/Interface/Util";
+import { clear } from "console";
 
 
 class AuthMiddleware implements IAuthMiddleware {
@@ -39,6 +40,13 @@ class AuthMiddleware implements IAuthMiddleware {
             const tokenHelper = new TokenHelper();
 
             const checkValidity: JwtPayload | string | false = await tokenHelper.checkTokenValidity(token)
+            console.log(auth);
+            console.log(token);
+            console.log("Token validity");
+
+            clear()
+            console.log(checkValidity);
+
             if (checkValidity && typeof checkValidity == "object") {
                 if (checkValidity && checkValidity.email) {
                     req.context.email_id = checkValidity?.email;

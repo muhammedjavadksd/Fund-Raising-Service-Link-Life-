@@ -24,7 +24,7 @@ userRouter.get("/bank-active-accounts/:edit_id/:limit/:page", UserControllers.ge
 userRouter.get("/profile-bank-account/:edit_id/:limit/:page", authMiddleware.isValidUser, UserControllers.profileBankAccounts); //test completed
 userRouter.get("/donation-statistics/:fund_id", UserControllers.getDonationStatitics); //test completed
 //payemnt post
-userRouter.post("/pay/:fund_id", UserControllers.payToFundRaiser);
+userRouter.post("/pay/:fund_id", authMiddleware.hasUser, UserControllers.payToFundRaiser);
 userRouter.post("/verify-payment", UserControllers.verifyPayment);
 // POST method
 userRouter.post("/create", authMiddleware.isValidUser, UserControllers.createFundRaise); //test completed

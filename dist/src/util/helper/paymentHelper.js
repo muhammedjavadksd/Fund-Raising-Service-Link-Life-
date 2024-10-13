@@ -88,6 +88,7 @@ class PaymentHelper {
                         return_url: `${process.env.PAYMENT_SUCCESS_ENDPOINT}/${order_id}`,
                     }
                 };
+                // console.log(${process.env.PAYMENT_SUCCESS_ENDPOINT}/${order_id});
                 console.log(data);
                 const configData = {
                     headers: {
