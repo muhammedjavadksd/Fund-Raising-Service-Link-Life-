@@ -11,6 +11,7 @@ import UtilHelper from "../util/helper/utilHelper"
 import BankAccountRepo from "../repositorys/BankAccountRepo"
 import FundRaiserProvider from "../communication/provider"
 import { clear } from "console"
+import { config, configDotenv } from "dotenv"
 
 
 interface IDonationService {
@@ -43,6 +44,7 @@ class DonationService implements IDonationService {
         this.findPrivateProfileHistoryPaginated = this.findPrivateProfileHistoryPaginated.bind(this)
         this.findMyDonationHistory = this.findMyDonationHistory.bind(this)
         this.findDonationByOrderId = this.findDonationByOrderId.bind(this)
+        configDotenv()
     }
 
 

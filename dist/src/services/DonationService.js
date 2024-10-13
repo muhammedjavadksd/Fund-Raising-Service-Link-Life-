@@ -23,6 +23,7 @@ const utilHelper_1 = __importDefault(require("../util/helper/utilHelper"));
 const BankAccountRepo_1 = __importDefault(require("../repositorys/BankAccountRepo"));
 const provider_1 = __importDefault(require("../communication/provider"));
 const console_1 = require("console");
+const dotenv_1 = require("dotenv");
 class DonationService {
     constructor() {
         this.paymentHelper = new paymentHelper_1.default();
@@ -34,6 +35,7 @@ class DonationService {
         this.findPrivateProfileHistoryPaginated = this.findPrivateProfileHistoryPaginated.bind(this);
         this.findMyDonationHistory = this.findMyDonationHistory.bind(this);
         this.findDonationByOrderId = this.findDonationByOrderId.bind(this);
+        (0, dotenv_1.configDotenv)();
     }
     getStatitics() {
         return __awaiter(this, void 0, void 0, function* () {
