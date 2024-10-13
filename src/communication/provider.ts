@@ -19,7 +19,7 @@ class FundRaiserProvider implements IFundRaiserProvider {
     async _init__(): Promise<void> {
         console.log(process.env.RABBITMQ_URL || "");
         config()
-        console.log(process.env.RABBITMQ_URL || "");
+        console.log(process.env);
 
         const connection = await amqplib.connect(process.env.RABBITMQ_URL || "");
         const channel = await connection.createChannel();
@@ -28,6 +28,11 @@ class FundRaiserProvider implements IFundRaiserProvider {
     }
 
     transferData(data: any): boolean {
+
+        console.log("Transfering data");
+        console.log(data);
+
+
         if (this.channel) {
             this.channel.sendToQueue(this.queue, Buffer.from(JSON.stringify(data)));
             return true

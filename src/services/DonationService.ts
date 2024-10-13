@@ -331,13 +331,22 @@ class DonationService implements IDonationService {
                     const insertHistory = await this.donationHistoryRepo.insertDonationHistory(donationHistory)
                     const notification = new FundRaiserProvider(process.env.DONATION_SUCCESS_QUEUE || "")
                     await notification._init__();
-                    notification.transferData({
+                    const transterData = notification.transferData({
                         certificate_url: receipt,
                         name: findOrder.name,
                         amount: findOrder.amount,
                         campign_title: campignTitle,
                         email: findOrder.email
                     })
+
+                    console.log("Transfer data");
+                    console.log(transterData);
+                    console.log(process.env.DONATION_SUCCESS_QUEUE);
+                    console.log(process.env);
+
+
+
+
                     console.log(insertHistory);
 
                     return {

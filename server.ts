@@ -27,6 +27,8 @@ import adminRouter from './src/router/adminRouter';
 
 
 
+
+
 const staticPath = path.join(__dirname, 'public/images');
 console.log(`Serving static files from: ${staticPath}`);
 
