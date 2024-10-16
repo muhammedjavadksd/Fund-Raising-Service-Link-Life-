@@ -264,8 +264,7 @@ class DonationService {
                 console.log("Verifiying payment");
                 console.log(verifyPayment);
                 console.log(findOrder);
-                // if (findOrder && !findOrder.status) {
-                if (findOrder) {
+                if (findOrder && !findOrder.status) {
                     const fundRaise = yield this.fundRepo.findFundPostByFundId(findOrder.fund_id);
                     if (fundRaise) {
                         yield this.orderRepo.updateStatus(order_id, true);
@@ -315,7 +314,7 @@ class DonationService {
                         const updatedAmount = fundRaise.collected + (((_f = (_e = verifyPayment === null || verifyPayment === void 0 ? void 0 : verifyPayment.data) === null || _e === void 0 ? void 0 : _e.order) === null || _f === void 0 ? void 0 : _f.order_amount) || 0);
                         yield this.fundRepo.updateFundRaiser(fundRaise.fund_id, { collected: updatedAmount });
                         yield this.webHookRepo.updateWebhookStatus(order_id, true);
-                        // const insertHistory = await this.donationHistoryRepo.insertDonationHistory(donationHistory)
+                        yield this.donationHistoryRepo.insertDonationHistory(donationHistory);
                         const notification = new provider_1.default(process.env.DONATION_SUCCESS_QUEUE || "");
                         yield notification._init__();
                         const transterData = notification.transferData({

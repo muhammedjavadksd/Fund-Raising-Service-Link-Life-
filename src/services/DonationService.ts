@@ -67,19 +67,11 @@ class DonationService implements IDonationService {
     async findDonationByOrderId(order_id: string, profile_id: string): Promise<HelperFuncationResponse> {
         const profile = await this.donationHistoryRepo.findOrder(order_id);
         if (profile) {
-            if (!profile.profile_id || (profile.profile_id == profile_id)) {
-                return {
-                    status: true,
-                    msg: "Order found",
-                    statusCode: StatusCode.OK,
-                    data: profile
-                }
-            } else {
-                return {
-                    status: true,
-                    msg: "Un authrazied access",
-                    statusCode: StatusCode.UNAUTHORIZED,
-                }
+            return {
+                status: true,
+                msg: "Order found",
+                statusCode: StatusCode.OK,
+                data: profile
             }
         } else {
             return {
@@ -281,8 +273,7 @@ class DonationService implements IDonationService {
             console.log("Verifiying payment")
             console.log(verifyPayment)
             console.log(findOrder)
-            // if (findOrder && !findOrder.status) {
-            if (findOrder) {
+            if (findOrder && !findOrder.status) {
                 const fundRaise = await this.fundRepo.findFundPostByFundId(findOrder.fund_id);
                 if (fundRaise) {
                     await this.orderRepo.updateStatus(order_id, true)
@@ -335,7 +326,7 @@ class DonationService implements IDonationService {
                     const updatedAmount = fundRaise.collected + (verifyPayment?.data?.order?.order_amount || 0)
                     await this.fundRepo.updateFundRaiser(fundRaise.fund_id, { collected: updatedAmount })
                     await this.webHookRepo.updateWebhookStatus(order_id, true)
-                    // const insertHistory = await this.donationHistoryRepo.insertDonationHistory(donationHistory)
+                    await this.donationHistoryRepo.insertDonationHistory(donationHistory)
                     const notification = new FundRaiserProvider(process.env.DONATION_SUCCESS_QUEUE || "")
                     await notification._init__();
                     const transterData = notification.transferData({
