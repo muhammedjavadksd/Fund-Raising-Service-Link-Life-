@@ -363,6 +363,7 @@ class PaymentHelper implements IPaymentHelper {
                 })
                 doc.end()
             } catch (e) {
+                console.log(e)
                 reject(null)
             }
         })
