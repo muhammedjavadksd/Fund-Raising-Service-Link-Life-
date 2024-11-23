@@ -141,8 +141,8 @@ class PaymentHelper implements IPaymentHelper {
                     doc.page.height - distanceMargin * 2,
                 ).stroke();
 
-                const avatarImage = await axios.get('https://fund-raiser.s3.amazonaws.com/other-images/9189.jpg', { responseType: "arraybuffer" })
-                const signBuffer = await axios.get('https://fund-raiser.s3.amazonaws.com/other-images/sign.png', { responseType: "arraybuffer" })
+                const avatarImage = await axios.get('https://fund-raisers.s3.eu-north-1.amazonaws.com/9189.jpg', { responseType: "arraybuffer" })
+                const signBuffer = await axios.get('https://fund-raisers.s3.eu-north-1.amazonaws.com/sign.png', { responseType: "arraybuffer" })
                 doc.image(avatarImage.data, doc.page.width / 2 - maxWidth / 2, 60, {
                     fit: [maxWidth, maxHeight],
                     align: 'center',
